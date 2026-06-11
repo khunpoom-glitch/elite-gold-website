@@ -1,0 +1,4 @@
+interface:
+  display_name: "Premium Web Workflow"
+  short_description: "Reusable premium web workflow for frontend, automation, review, accessibility, security, and verification"
+  default_prompt: "Use $premium-web-workflow to build, review, debug, or refine a web experience with polished frontend quality, focused verification, and optional 3D/canvas depth."
