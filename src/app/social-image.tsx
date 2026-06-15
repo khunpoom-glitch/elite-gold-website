@@ -1,4 +1,3 @@
-import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -12,41 +11,23 @@ export const socialImageSize = {
 
 export const socialImageContentType = "image/png";
 
-async function getBannerDataUrl() {
+const socialImageHeaders = {
+  "cache-control": "public, max-age=31536000, immutable",
+  "content-type": socialImageContentType,
+};
+
+export function createEliteGoldSocialImageHeadResponse() {
+  return new Response(null, {
+    headers: socialImageHeaders,
+  });
+}
+
+export async function createEliteGoldSocialImageResponse() {
   const banner = await readFile(
     join(process.cwd(), "public/brand/elite-gold-social-banner.png"),
   );
 
-  return `data:image/png;base64,${banner.toString("base64")}`;
-}
-
-export async function createEliteGoldSocialImage() {
-  const bannerDataUrl = await getBannerDataUrl();
-
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          background: "#000000",
-          display: "flex",
-          height: "100%",
-          width: "100%",
-        }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          alt={socialImageAlt}
-          height="630"
-          src={bannerDataUrl}
-          style={{
-            height: "100%",
-            objectFit: "cover",
-            width: "100%",
-          }}
-          width="1200"
-        />
-      </div>
-    ),
-    socialImageSize,
-  );
+  return new Response(new Uint8Array(banner), {
+    headers: socialImageHeaders,
+  });
 }

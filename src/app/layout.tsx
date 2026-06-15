@@ -20,6 +20,8 @@ const sora = Sora({
   weight: ["600", "700", "800"],
 });
 
+const socialImageVersion = "b63492a";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   applicationName: siteConfig.name,
@@ -42,10 +44,10 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     images: [
       {
-        url: "/opengraph-image",
+        url: `/opengraph-image?v=${socialImageVersion}`,
         width: 1200,
         height: 630,
-        alt: "Elite Gold Community black and gold social preview banner",
+        alt: "Elite Gold Community black and gold logo banner",
       },
     ],
     locale: "th_TH",
@@ -57,8 +59,8 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [
       {
-        url: "/twitter-image",
-        alt: "Elite Gold Community black and gold social preview banner",
+        url: `/twitter-image?v=${socialImageVersion}`,
+        alt: "Elite Gold Community black and gold logo banner",
       },
     ],
   },
