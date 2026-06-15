@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Mail, MessageCircle } from "lucide-react";
 import { publicNavigation } from "@/config/navigation";
@@ -21,12 +22,16 @@ const footerGroups = [
   },
 ];
 
-export function PublicFooter() {
+type PublicFooterProps = {
+  logo?: ReactNode;
+};
+
+export function PublicFooter({ logo }: PublicFooterProps = {}) {
   return (
-    <footer className="border-t border-white/8 bg-black">
+    <footer className="border-t border-white/8 bg-black backdrop-blur-xl">
       <Container className="grid gap-10 py-12 lg:grid-cols-[1.2fr_1fr_1fr]">
         <div>
-          <Logo />
+          {logo ?? <Logo />}
           <p className="mt-4 max-w-md text-sm leading-7 text-text-secondary">
             {siteConfig.description}
           </p>

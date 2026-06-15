@@ -12,7 +12,7 @@ export default function NotFound() {
           </p>
           <h1 className="mt-4 text-4xl font-semibold text-white">ไม่พบหน้าที่ต้องการ</h1>
           <p className="mt-4 text-base leading-8 text-text-secondary">
-            หน้านี้อาจยังไม่ถูกสร้างใน Phase foundation หรือ URL ไม่ถูกต้อง
+            หน้านี้อาจยังไม่ถูกสร้าง หรือ URL ไม่ถูกต้อง
           </p>
           <Link className={buttonVariants({ className: "mt-8", size: "lg" })} href="/">
             กลับหน้า Home

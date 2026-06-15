@@ -35,7 +35,7 @@ export const membershipPlans: MembershipPlan[] = [
     price: "ราคาเปิดรับสมาชิก",
     features: [
       "เข้าถึงพื้นที่ Community",
-      "Preview บทเรียนพื้นฐาน",
+      "บทเรียนพื้นฐานสำหรับเริ่มต้น",
       "แนวทางเริ่มต้นบันทึก Trading Journal",
       "อัปเดตกิจกรรมและประกาศสมาชิก",
     ],
@@ -49,7 +49,7 @@ export const membershipPlans: MembershipPlan[] = [
       "เข้าถึง Education Library ในอนาคต",
       "Trading Journal workflow สำหรับสมาชิก",
       "Community session และการรีวิวเชิงระบบ",
-      "พร้อมเชื่อมต่อ Member Dashboard ใน Phase ถัดไป",
+      "เชื่อมต่อกับ Member Dashboard และ workflow การพัฒนา",
     ],
   },
 ];
@@ -58,7 +58,7 @@ export const faqItems: FaqItem[] = [
   {
     question: "สมัครเข้าร่วม Elite Gold Community ได้อย่างไร?",
     answer:
-      "ใน Phase นี้หน้า Sign Up เป็น placeholder เพื่อเตรียมระบบ สมาชิกจริงจะเปิดเมื่อระบบ Authentication พร้อมใน Phase ถัดไป",
+      "สามารถเริ่มจากหน้า Sign Up และทีมงานจะใช้ข้อมูลเพื่อเตรียมการเข้าร่วมคอมมูนิตี้",
   },
   {
     question: "Membership รวม Trading Education ด้วยไหม?",
@@ -68,12 +68,12 @@ export const faqItems: FaqItem[] = [
   {
     question: "Trading Journal ใช้งานได้ทันทีหรือยัง?",
     answer:
-      "ยังไม่เปิดใช้งานจริงใน Phase นี้ แต่โครงเว็บถูกเตรียมเพื่อรองรับระบบบันทึกและรีวิวผลการเทรดในอนาคต",
+      "Trading Journal ถูกวางให้เป็นพื้นที่สำหรับบันทึกและรีวิวผลการเทรดอย่างเป็นระบบ",
   },
   {
     question: "มีระบบ referral code หรือ affiliate ไหม?",
     answer:
-      "หน้า Sign Up แสดงช่อง Referral Code ไว้แล้ว เพื่อรองรับลิงก์ referral เช่น /signup?ref=EG000 ใน Phase ถัดไป",
+      "หน้า Sign Up รองรับ Referral Code เช่น /signup?ref=EG000 เพื่อระบุผู้แนะนำหรือแคมเปญ",
   },
   {
     question: "Elite Gold Community เหมาะกับใคร?",

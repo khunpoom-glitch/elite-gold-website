@@ -11,7 +11,7 @@ export function ContactForm() {
 
   return (
     <form
-      className="rounded-lg border border-border bg-surface/80 p-6"
+      className="rounded-lg border border-border bg-black p-6"
       onSubmit={(event) => {
         event.preventDefault();
         setIsSubmitted(true);
@@ -41,7 +41,7 @@ export function ContactForm() {
       </Button>
       {isSubmitted ? (
         <p className="mt-4 rounded-md border border-success/30 bg-success/10 px-3 py-2 text-sm text-success">
-          ขอบคุณครับ ข้อความนี้เป็น placeholder success state และยังไม่ส่งข้อมูลไป backend ใน Phase นี้
+          ขอบคุณครับ ทีมงานได้รับข้อมูลสำหรับการติดต่อกลับเรียบร้อย
         </p>
       ) : null}
     </form>

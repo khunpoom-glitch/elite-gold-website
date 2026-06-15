@@ -8,11 +8,11 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary:
     "border border-champagne/60 bg-[linear-gradient(135deg,#fff8d7,#e6c766_44%,#9f741c)] text-black shadow-[0_0_34px_rgba(230,199,102,0.28)] hover:shadow-[0_0_48px_rgba(230,199,102,0.42)] focus-visible:outline-soft-gold",
   secondary:
-    "border border-white/12 bg-white/[0.055] text-white hover:border-gold/44 hover:bg-gold/10 hover:text-champagne focus-visible:outline-white",
+    "border border-white/12 bg-black text-white hover:border-gold/44 hover:bg-black hover:text-champagne focus-visible:outline-white",
   outline:
     "border border-gold/35 bg-transparent text-soft-gold hover:border-soft-gold hover:bg-gold/10 focus-visible:outline-soft-gold",
   ghost:
-    "border border-transparent bg-transparent text-text-secondary hover:bg-white/8 hover:text-white focus-visible:outline-white",
+    "border border-transparent bg-transparent text-text-secondary hover:bg-black hover:text-white focus-visible:outline-white",
   link: "border border-transparent bg-transparent px-0 text-soft-gold underline-offset-4 hover:text-white hover:underline focus-visible:outline-soft-gold",
 };
 
@@ -32,7 +32,7 @@ export function buttonVariants({
   className?: string;
 } = {}) {
   return cn(
-    "elite-action-button inline-flex items-center justify-center gap-2 rounded-full font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50",
+    "elite-action-button inline-flex items-center justify-center gap-2 rounded-xl font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50",
     variantClasses[variant],
     sizeClasses[size],
     className,
