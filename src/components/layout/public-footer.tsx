@@ -12,7 +12,6 @@ const footerGroups = [
       { label: "Trading Education", href: "/education" },
       { label: "Membership", href: "/membership" },
       { label: "FAQ", href: "/faq" },
-      { label: "Support Center", href: "/support" },
     ],
   },
   {
