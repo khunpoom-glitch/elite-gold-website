@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Elite Gold Community
 
-## Getting Started
+Public website foundation for Elite Gold Community, a trading education and community experience focused on discipline, structured learning, journaling, and long-term trader development.
 
-First, run the development server:
+Production:
+
+https://elite-gold-website.vercel.app
+
+## Phase
+
+This repository is currently in **Phase 1 of 6**.
+
+Phase 1 covers the public website foundation:
+
+- Brand-forward one-page public website.
+- Public sections for About Community, Trading Education, Membership, and FAQ.
+- Login and Sign Up entry points with modal UI.
+- Referral-code-ready Sign Up URL handling.
+- Footer model for Platform, Member Portal, and Legal links.
+- Supabase environment wiring for future auth/data work.
+- Vercel and GitHub Actions deployment.
+
+Phase 1 does not include the final authenticated member dashboard, payment flow, live Trading Journal backend, or full course platform.
+
+## Stack
+
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- lucide-react
+- Supabase JavaScript client
+- Vercel
+
+## Routes
+
+| Route | Behavior |
+| --- | --- |
+| `/` | Main public one-page website |
+| `/home` | Redirects to `/` |
+| `/about` | Section URL for About Community, redirects to `/` |
+| `/education` | Section URL for Trading Education, redirects to `/` |
+| `/membership` | Section URL for Membership, redirects to `/` |
+| `/faq` | Section URL for FAQ, redirects to `/` |
+| `/login` | Opens the home page with Login modal active |
+| `/signup` | Opens the home page with Sign Up modal active |
+
+`/signup` supports referral query parameters such as:
+
+```bash
+/signup?ref=EG000
+```
+
+There is no active public Contact page in the current scope.
+
+## Environment
+
+Create `.env.local` from `.env.example`.
+
+```bash
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SECRET_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+```
+
+Use `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `SUPABASE_SECRET_KEY` for the current Supabase key model. The anon and service role names remain as fallback compatibility fields.
+
+Do not commit secrets.
+
+## Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the local development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Verification
 
-## Learn More
+Run lint:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run lint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Run production build:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run build
+```
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Deployment is automated through GitHub Actions and Vercel.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Push to `main` deploys production.
+- Push to any other branch deploys a preview.
+- Required GitHub secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
+
+Current production URL:
+
+```bash
+https://elite-gold-website.vercel.app
+```
+
+## Documentation
+
+See `CONTEXT.md` for project context, Phase 1 status, product language, design direction, and remaining Phase 1 work.
