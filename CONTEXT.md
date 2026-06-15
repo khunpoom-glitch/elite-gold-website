@@ -10,7 +10,7 @@ This project is in **Phase 1 of 6** for the website/member-platform build.
 
 - Brand-forward public website.
 - Navigation and public information architecture.
-- Foundation pages for About, Education, Membership, FAQ, Contact, Login, and Sign Up.
+- Foundation pages for About, Education, Membership, FAQ, Login, and Sign Up.
 - Visual system and assets for Elite Gold Community.
 - Preparation for future Authentication, Member Dashboard, Education Library, Trading Journal, Referral, and Community features.
 

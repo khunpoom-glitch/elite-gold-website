@@ -5,8 +5,6 @@ import {
   CircleDashed,
   Crown,
   LockKeyhole,
-  Mail,
-  MessageCircle,
   PlayCircle,
   ShieldCheck,
   Sparkles,
@@ -14,9 +12,8 @@ import {
   TrendingUp,
   UsersRound,
 } from "lucide-react";
-import { ContactForm } from "@/components/forms/contact-form";
 import { AuthLink } from "@/components/layout/auth-link";
-import { faqItems, membershipPlans, siteConfig } from "@/config/site";
+import { faqItems, membershipPlans } from "@/config/site";
 import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/utils";
@@ -73,24 +70,6 @@ const featuredLessons = [
 ] as const;
 
 const futureDashboardAccess = ["Dashboard", "Education", "Journal", "Community"] as const;
-
-const contactChannels = [
-  {
-    title: "Email Support",
-    description: siteConfig.contactEmail,
-    icon: Mail,
-  },
-  {
-    title: "Community Inquiry",
-    description: "สอบถามเกี่ยวกับ Membership และการเข้าร่วมคอมมูนิตี้",
-    icon: UsersRound,
-  },
-  {
-    title: "Support Channel",
-    description: siteConfig.supportLine,
-    icon: MessageCircle,
-  },
-] as const;
 
 function HomeSection({
   className,
@@ -429,42 +408,6 @@ export function HomeContentSections() {
         </Container>
       </HomeSection>
 
-      <HomeSection id="contact">
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr]">
-            <div>
-              <SectionIntro
-                description="ส่งข้อความหา Elite Gold Community เพื่อสอบถามเรื่องคอมมูนิตี้ การเรียนรู้ หรือ membership"
-                eyebrow="Contact"
-                title="ติดต่อทีม Elite Gold Community"
-              />
-              <div className="mt-8">
-                <SectionIntro
-                  description="ส่งรายละเอียดของคุณให้ทีมงานติดต่อกลับเกี่ยวกับคอมมูนิตี้ การเรียนรู้ หรือ membership"
-                  eyebrow="Contact Form"
-                  title="Contact Form"
-                />
-              </div>
-              <div className="mt-8 grid gap-4">
-                {contactChannels.map((channel) => {
-                  const Icon = channel.icon;
-
-                  return (
-                    <HomeCard className="p-5" key={channel.title}>
-                      <Icon aria-hidden="true" className="h-5 w-5 text-soft-gold" />
-                      <h3 className="mt-5 text-lg font-semibold text-white">{channel.title}</h3>
-                      <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                        {channel.description}
-                      </p>
-                    </HomeCard>
-                  );
-                })}
-              </div>
-            </div>
-            <ContactForm />
-          </div>
-        </Container>
-      </HomeSection>
     </>
   );
 }

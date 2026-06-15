@@ -6,7 +6,6 @@ export const publicNavigation: NavItem[] = [
   { label: "Trading Education", href: "/education" },
   { label: "Membership", href: "/membership" },
   { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact" },
 ];
 
 export const futureMemberNavigation: NavItem[] = [

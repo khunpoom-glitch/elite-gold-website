@@ -6,8 +6,6 @@ export const siteConfig = {
   description:
     "คอมมูนิตี้และแพลตฟอร์มการเรียนรู้สำหรับเทรดเดอร์ที่ต้องการพัฒนาทักษะ วินัย และระบบการเก็บสถิติอย่างยั่งยืน",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  contactEmail: "support@elitegold.community",
-  supportLine: "Elite Gold Support",
 };
 
 export const corePillars = [

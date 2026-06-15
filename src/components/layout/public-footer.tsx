@@ -1,23 +1,35 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Mail, MessageCircle } from "lucide-react";
-import { publicNavigation } from "@/config/navigation";
-import { siteConfig } from "@/config/site";
 import { Logo } from "@/components/shared/logo";
 import { Container } from "@/components/ui/container";
 
 const footerGroups = [
   {
-    title: "Platform",
-    links: publicNavigation,
+    title: "PLATFORM",
+    links: [
+      { label: "Home", href: "/" },
+      { label: "About Community", href: "/about" },
+      { label: "Trading Education", href: "/education" },
+      { label: "Membership", href: "/membership" },
+      { label: "FAQ", href: "/faq" },
+      { label: "Support Center", href: "/support" },
+    ],
   },
   {
-    title: "Future Member Area",
+    title: "MEMBER PORTAL",
     links: [
       { label: "Dashboard", href: "/login" },
       { label: "Education", href: "/education" },
       { label: "Journal", href: "/membership" },
       { label: "My Account", href: "/login" },
+    ],
+  },
+  {
+    title: "LEGAL",
+    links: [
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
+      { label: "Risk Disclosure", href: "/risk-disclosure" },
     ],
   },
 ];
@@ -29,23 +41,13 @@ type PublicFooterProps = {
 export function PublicFooter({ logo }: PublicFooterProps = {}) {
   return (
     <footer className="border-t border-white/8 bg-black backdrop-blur-xl">
-      <Container className="grid gap-10 py-12 lg:grid-cols-[1.2fr_1fr_1fr]">
+      <Container className="grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-[1.35fr_0.85fr_0.85fr_0.85fr]">
         <div>
           {logo ?? <Logo />}
           <p className="mt-4 max-w-md text-sm leading-7 text-text-secondary">
-            {siteConfig.description}
+            Elite Gold is a trading community and educational platform designed to
+            help traders build discipline, consistency, and long-term growth.
           </p>
-          <div className="mt-6 flex flex-col gap-3 text-sm text-text-secondary sm:flex-row sm:items-center">
-            <span className="inline-flex items-center gap-2">
-              <Mail aria-hidden="true" className="h-4 w-4 text-soft-gold" />
-              {siteConfig.contactEmail}
-            </span>
-            <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />
-            <span className="inline-flex items-center gap-2">
-              <MessageCircle aria-hidden="true" className="h-4 w-4 text-soft-gold" />
-              {siteConfig.supportLine}
-            </span>
-          </div>
         </div>
         {footerGroups.map((group) => (
           <div key={group.title}>
@@ -64,13 +66,19 @@ export function PublicFooter({ logo }: PublicFooterProps = {}) {
                 </li>
               ))}
             </ul>
+            {group.title === "LEGAL" ? (
+              <p className="mt-5 max-w-xs text-xs leading-6 text-text-muted">
+                Trading involves risk. Past performance does not guarantee future
+                results.
+              </p>
+            ) : null}
           </div>
         ))}
       </Container>
       <Container className="border-t border-white/8 py-5">
         <div className="flex flex-col gap-2 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Elite Gold Community. All rights reserved.</p>
-          <p>Education, Journal, Community, Membership foundation.</p>
+          <p>© 2026 Elite Gold Community. All rights reserved.</p>
+          <p>Education. Journal. Community. Membership.</p>
         </div>
       </Container>
     </footer>

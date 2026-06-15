@@ -3,7 +3,6 @@ export const HOME_SECTION_ROUTES = [
   { name: "Trading Education", href: "/education", sectionId: "trading-education" },
   { name: "Membership", href: "/membership", sectionId: "membership" },
   { name: "FAQ", href: "/faq", sectionId: "faq" },
-  { name: "Contact", href: "/contact", sectionId: "contact" },
 ] as const;
 
 export const HOME_PATH = "/home";
