@@ -4,6 +4,13 @@ import { HomePage } from "@/components/sections/home-page";
 export const metadata: Metadata = {
   title: "Sign Up",
   description: "Sign Up พร้อม Referral Code สำหรับ Elite Gold Community",
+  alternates: {
+    canonical: "/signup",
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 type SignupPageProps = {

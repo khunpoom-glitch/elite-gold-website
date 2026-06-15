@@ -22,11 +22,19 @@ const sora = Sora({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.name,
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  creator: siteConfig.brandName,
+  publisher: siteConfig.brandName,
+  category: "education",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: siteConfig.name,
     description: siteConfig.description,
@@ -34,14 +42,25 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     images: [
       {
-        url: "/brand/elite-gold-community-logo.png",
-        width: 1875,
-        height: 1875,
-        alt: "Elite Gold Community logo",
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Elite Gold Community black and gold social preview banner",
       },
     ],
     locale: "th_TH",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [
+      {
+        url: "/twitter-image",
+        alt: "Elite Gold Community black and gold social preview banner",
+      },
+    ],
   },
 };
 

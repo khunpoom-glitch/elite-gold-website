@@ -17,6 +17,8 @@ Phase 1 covers the public website foundation:
 - Login and Sign Up entry points with modal UI.
 - Referral-code-ready Sign Up URL handling.
 - Footer model for Platform, Member Portal, and Legal links.
+- Draft legal routes for Privacy Policy, Terms of Service, and Risk Disclosure.
+- SEO foundation with metadata, sitemap, robots, and generated black/gold social preview images.
 - Supabase environment wiring for future auth/data work.
 - Vercel and GitHub Actions deployment.
 
@@ -45,6 +47,13 @@ Phase 1 does not include the final authenticated member dashboard, payment flow,
 | `/faq` | Section URL for FAQ, redirects to `/` |
 | `/login` | Opens the home page with Login modal active |
 | `/signup` | Opens the home page with Sign Up modal active |
+| `/privacy` | Draft Privacy Policy page |
+| `/terms` | Draft Terms of Service page |
+| `/risk-disclosure` | Draft Risk Disclosure page |
+| `/sitemap.xml` | Generated sitemap |
+| `/robots.txt` | Generated robots file |
+| `/opengraph-image` | Generated black/gold Open Graph image |
+| `/twitter-image` | Generated black/gold Twitter image |
 
 `/signup` supports referral query parameters such as:
 
