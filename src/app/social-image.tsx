@@ -59,14 +59,14 @@ export async function createEliteGoldSocialImage() {
             width: 1040,
           }}
         >
-          <div style={{ alignItems: "center", display: "flex", gap: 30 }}>
+          <div style={{ alignItems: "center", display: "flex", gap: 10 }}>
             <div
               style={{
                 alignItems: "center",
                 display: "flex",
                 height: 154,
                 justifyContent: "center",
-                width: 154,
+                width: 140,
               }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -117,11 +117,11 @@ export async function createEliteGoldSocialImage() {
                 display: "flex",
                 flexDirection: "column",
                 fontFamily: displayFont,
-                fontSize: 58,
-                fontWeight: 720,
-                letterSpacing: -0.5,
-                lineHeight: 1.08,
-                maxWidth: 760,
+                fontSize: 48,
+                fontWeight: 700,
+                letterSpacing: -0.35,
+                lineHeight: 1.12,
+                maxWidth: 700,
               }}
             >
               <span>Discipline.</span>
