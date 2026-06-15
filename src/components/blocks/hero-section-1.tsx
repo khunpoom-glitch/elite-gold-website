@@ -146,7 +146,7 @@ export function HeroSection() {
                                         ELITE GOLD COMMUNITY
                                     </h1>
                                     <p
-                                        className="mx-auto mt-7 max-w-3xl text-balance text-lg font-light leading-8 text-muted-foreground sm:text-xl">
+                                        className="mx-auto mt-7 max-w-[18rem] text-balance text-lg font-light leading-8 text-muted-foreground sm:max-w-3xl sm:text-xl">
                                         Empowering traders with knowledge, discipline, and a supportive community to navigate the markets with confidence and achieve their full potential.
 
                                     </p>

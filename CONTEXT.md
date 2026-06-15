@@ -22,11 +22,14 @@ Implemented:
 - Sign Up supports referral query parameters such as `/signup?ref=EG000`.
 - Footer refactored around Platform, Member Portal, and Legal groups.
 - Contact section, contact route, contact form, direct support email, and Support Center footer link removed from the public website.
-- Legal routes added for `/privacy`, `/terms`, and `/risk-disclosure`.
-- SEO foundation added with metadata, canonical URLs, noindex auth routes, sitemap, robots, and generated OG/Twitter social preview images.
-- Social preview banner uses a black Elite Gold background so shared links do not show the transparent logo on a white background.
-- Phase 1 visual QA has been checked on desktop and mobile for the hero, legal pages, auth modals, footer links, and social preview image.
+- Legal routes added for `/privacy`, `/terms`, and `/risk-disclosure` with Phase 1 public legal content.
+- SEO foundation added with metadata, canonical URLs, noindex auth routes, sitemap, robots, and versioned OG/Twitter social preview routes.
+- Social preview uses the approved black Elite Gold banner asset so shared links do not show the transparent logo on a white background.
+- Public copy for Home, About Community, Trading Education, FAQ, Login, Sign Up, footer, and legal pages has been aligned for the current Phase 1 scope.
+- Phase 1 internal legal-content consistency pass is complete. Professional legal review is still recommended before paid/commercial launch, but it is not tracked as a remaining Phase 1 implementation blocker.
+- Phase 1 responsive, accessibility, and keyboard-flow QA has been checked on desktop and mobile for the hero, navbar, legal pages, auth modals, footer links, and social preview image.
 - Supabase client/server environment wiring prepared with publishable and secret key support.
+- Supabase and site URL environment variables are configured locally and in Vercel Production/Development. Secret values are not committed.
 - Vercel production deployment configured.
 - GitHub Actions deploys every push to Vercel. `main` deploys production; other branches deploy previews.
 
@@ -34,18 +37,16 @@ Partially prepared:
 
 - Supabase project and environment variables are connected, but full auth logic is reserved for Phase 2.
 - Login and Sign Up are visual/member-entry flows, not final production authentication yet.
-- Legal pages are Phase 1 draft content and should receive final legal/business review before a full public launch.
 - Membership package names, prices, and benefits are still placeholder-level and need final business confirmation.
 
 Still needed to close Phase 1:
 
-- Final production domain decision and DNS setup when the domain is purchased.
-- Final copy for Home, About Community, Trading Education, Membership, FAQ, Login, Sign Up, and footer legal text.
 - Final membership package names, pricing, and feature lists.
-- Final SEO wording and final social preview art if the brand needs a custom launch asset beyond the generated banner.
-- Final legal review for Privacy Policy, Terms of Service, and Risk Disclosure.
-- Final responsive visual QA on the exact launch viewport priorities.
-- Final accessibility and keyboard-flow pass for navbar, auth modals, forms, buttons, and footer links.
+- Final production domain decision and DNS setup when the domain is purchased.
+
+Recommended before launch changes:
+
+- Re-run lint, build, route checks, and desktop/mobile visual QA after final membership copy or custom-domain changes.
 
 ## Current Routes
 
@@ -57,12 +58,12 @@ Still needed to close Phase 1:
 - `/faq` - Section URL for FAQ, redirects to `/`.
 - `/login` - Opens the public home page with Login modal active.
 - `/signup` - Opens the public home page with Sign Up modal active.
-- `/privacy` - Privacy Policy draft page.
-- `/terms` - Terms of Service draft page.
-- `/risk-disclosure` - Risk Disclosure draft page.
+- `/privacy` - Phase 1 Privacy Policy page.
+- `/terms` - Phase 1 Terms of Service page.
+- `/risk-disclosure` - Phase 1 Risk Disclosure page.
 - `/sitemap.xml` - Generated sitemap for the main public and legal pages.
 - `/robots.txt` - Generated robots file.
-- `/opengraph-image` and `/twitter-image` - Generated black/gold social preview images.
+- `/opengraph-image` and `/twitter-image` - Versioned Elite Gold social preview banner routes.
 
 There is no active `/contact` route in the current public website.
 

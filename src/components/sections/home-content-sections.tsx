@@ -362,7 +362,7 @@ export function HomeContentSections() {
               {futureDashboardAccess.map((item) => (
                 <HomeCard className="p-5" key={item}>
                   <p className="text-lg font-semibold text-white">{item}</p>
-                  <p className="mt-2 text-sm text-muted-foreground">Future member area</p>
+                  <p className="mt-2 text-sm text-muted-foreground">Planned member area</p>
                 </HomeCard>
               ))}
             </div>

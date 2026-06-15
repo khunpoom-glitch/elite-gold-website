@@ -17,12 +17,18 @@ Phase 1 covers the public website foundation:
 - Login and Sign Up entry points with modal UI.
 - Referral-code-ready Sign Up URL handling.
 - Footer model for Platform, Member Portal, and Legal links.
-- Draft legal routes for Privacy Policy, Terms of Service, and Risk Disclosure.
-- SEO foundation with metadata, sitemap, robots, and generated black/gold social preview images.
+- Phase 1 legal routes for Privacy Policy, Terms of Service, and Risk Disclosure.
+- SEO foundation with metadata, sitemap, robots, and a versioned Elite Gold social preview banner.
 - Supabase environment wiring for future auth/data work.
 - Vercel and GitHub Actions deployment.
 
 Phase 1 does not include the final authenticated member dashboard, payment flow, live Trading Journal backend, or full course platform.
+
+Current Phase 1 closure status:
+
+- Public website structure, section copy, legal-content pass, SEO/social preview setup, Supabase env wiring, and deployment workflow are in place.
+- Remaining business decisions: final membership package names, pricing, and feature lists.
+- Remaining infrastructure decision: custom domain and DNS setup after a domain is purchased.
 
 ## Stack
 
@@ -47,13 +53,13 @@ Phase 1 does not include the final authenticated member dashboard, payment flow,
 | `/faq` | Section URL for FAQ, redirects to `/` |
 | `/login` | Opens the home page with Login modal active |
 | `/signup` | Opens the home page with Sign Up modal active |
-| `/privacy` | Draft Privacy Policy page |
-| `/terms` | Draft Terms of Service page |
-| `/risk-disclosure` | Draft Risk Disclosure page |
+| `/privacy` | Phase 1 Privacy Policy page |
+| `/terms` | Phase 1 Terms of Service page |
+| `/risk-disclosure` | Phase 1 Risk Disclosure page |
 | `/sitemap.xml` | Generated sitemap |
 | `/robots.txt` | Generated robots file |
-| `/opengraph-image` | Generated black/gold Open Graph image |
-| `/twitter-image` | Generated black/gold Twitter image |
+| `/opengraph-image` | Versioned Elite Gold Open Graph banner |
+| `/twitter-image` | Versioned Elite Gold Twitter banner |
 
 `/signup` supports referral query parameters such as:
 

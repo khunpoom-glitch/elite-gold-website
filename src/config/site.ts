@@ -6,7 +6,7 @@ export const siteConfig = {
   description:
     "คอมมูนิตี้และแพลตฟอร์มการเรียนรู้สำหรับเทรดเดอร์ที่ต้องการพัฒนาทักษะ วินัย และระบบการเก็บสถิติอย่างยั่งยืน",
   shortDescription:
-    "Trading education, journaling discipline, and community for long term trader growth.",
+    "Trading education, journaling discipline, and community for long-term trader growth.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   keywords: [
     "Elite Gold",
