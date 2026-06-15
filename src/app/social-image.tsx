@@ -14,13 +14,17 @@ export const socialImageSize = {
 export const socialImageContentType = "image/png";
 
 async function getLogoDataUrl() {
-  const logo = await readFile(join(process.cwd(), "public/brand/elite-gold-mark.png"));
+  const logo = await readFile(
+    join(process.cwd(), "public/brand/elite-gold-mark-social.png"),
+  );
 
   return `data:image/png;base64,${logo.toString("base64")}`;
 }
 
 export async function createEliteGoldSocialImage() {
   const logoDataUrl = await getLogoDataUrl();
+  const displayFont =
+    '"Sora", "Avenir Next", "Helvetica Neue", Arial, sans-serif';
 
   return new ImageResponse(
     (
@@ -43,36 +47,49 @@ export async function createEliteGoldSocialImage() {
             border: "1px solid rgba(212,175,55,0.28)",
             borderRadius: 34,
             boxShadow:
-              "0 0 80px rgba(212,175,55,0.15), inset 0 1px 0 rgba(255,255,255,0.08)",
+              "0 0 90px rgba(212,175,55,0.16), inset 0 1px 0 rgba(255,255,255,0.08)",
             display: "flex",
             flexDirection: "column",
             height: 510,
             justifyContent: "space-between",
-            padding: 58,
+            paddingBottom: 64,
+            paddingLeft: 64,
+            paddingRight: 64,
+            paddingTop: 48,
             width: 1040,
           }}
         >
-          <div style={{ alignItems: "center", display: "flex", gap: 24 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt=""
-              height="112"
-              src={logoDataUrl}
+          <div style={{ alignItems: "center", display: "flex", gap: 30 }}>
+            <div
               style={{
-                filter: "drop-shadow(0 18px 34px rgba(212,175,55,0.22))",
-                height: 112,
-                objectFit: "contain",
-                width: 112,
+                alignItems: "center",
+                display: "flex",
+                height: 154,
+                justifyContent: "center",
+                width: 154,
               }}
-              width="112"
-            />
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt=""
+                height="154"
+                src={logoDataUrl}
+                style={{
+                  height: 154,
+                  objectFit: "contain",
+                  width: 154,
+                }}
+                width="154"
+              />
+            </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div
                 style={{
                   color: "#ffffff",
-                  fontSize: 42,
-                  fontWeight: 800,
-                  lineHeight: 1,
+                  fontFamily: displayFont,
+                  fontSize: 54,
+                  fontWeight: 780,
+                  lineHeight: 0.96,
                 }}
               >
                 Elite Gold
@@ -80,10 +97,11 @@ export async function createEliteGoldSocialImage() {
               <div
                 style={{
                   color: "#e6c766",
-                  fontSize: 18,
+                  fontFamily: displayFont,
+                  fontSize: 19,
                   fontWeight: 700,
-                  letterSpacing: 3,
-                  marginTop: 10,
+                  letterSpacing: 4.2,
+                  marginTop: 12,
                   textTransform: "uppercase",
                 }}
               >
@@ -92,17 +110,18 @@ export async function createEliteGoldSocialImage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
             <div
               style={{
                 color: "#ffffff",
                 display: "flex",
                 flexDirection: "column",
-                fontSize: 76,
-                fontWeight: 800,
-                letterSpacing: -1,
-                lineHeight: 0.98,
-                maxWidth: 820,
+                fontFamily: displayFont,
+                fontSize: 58,
+                fontWeight: 720,
+                letterSpacing: -0.5,
+                lineHeight: 1.08,
+                maxWidth: 760,
               }}
             >
               <span>Discipline.</span>
@@ -112,10 +131,11 @@ export async function createEliteGoldSocialImage() {
             <div
               style={{
                 color: "#d4d4d8",
-                fontSize: 28,
+                fontFamily: displayFont,
+                fontSize: 26,
                 fontWeight: 400,
-                lineHeight: 1.35,
-                maxWidth: 860,
+                lineHeight: 1.38,
+                maxWidth: 820,
               }}
             >
               {siteConfig.shortDescription}
