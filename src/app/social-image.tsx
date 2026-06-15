@@ -117,7 +117,7 @@ export async function createEliteGoldSocialImage() {
                 display: "flex",
                 flexDirection: "column",
                 fontFamily: displayFont,
-                fontSize: 48,
+                fontSize: 38,
                 fontWeight: 700,
                 letterSpacing: -0.35,
                 lineHeight: 1.12,
