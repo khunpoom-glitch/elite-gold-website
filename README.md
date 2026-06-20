@@ -10,11 +10,19 @@ https://elitegoldcommunity.com
 
 ## Phase
 
-This repository is in Phase 1 of 6: the public website foundation.
+This repository has completed Phase 2 of 6 and is ready to continue into Phase 3 dashboard expansion.
 
-Phase 1 includes the brand-forward public site, one-page public sections, Login/Sign Up modal entry points, access-code-ready signup URLs, legal pages, SEO/social preview routes, Supabase environment wiring for later auth/data work, and Vercel/GitHub Actions deployment.
+Phase 1 delivered the brand-forward public site, one-page public sections, Login/Sign Up modal entry points, legal pages, SEO/social preview routes, and Vercel/GitHub Actions deployment.
 
-Phase 1 does not include the final authenticated member dashboard, payment flow, live Trading Journal backend, or full course platform.
+Phase 2 delivered custom-domain production setup, Supabase Auth, Google OAuth signup completion, member profile capture, transactional email wiring through Resend, dashboard/account shells, and production-enforced Access Code signup rules.
+
+Access Code behavior:
+
+- The first member can bootstrap the system and receives `EG000`.
+- After the first member exists, new signups must use an existing Access Code such as `/signup?ref=EG000`.
+- Successful new members receive the next sequential code: `EG001`, `EG002`, and onward.
+
+Phase 2 does not include payment flow, live Trading Journal backend, full course platform, affiliate payouts, or production member operations. Those belong to later phases.
 
 For current scope, routes, product language, and deployment notes, see `CONTEXT.md`.
 

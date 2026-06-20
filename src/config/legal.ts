@@ -15,21 +15,21 @@ export const legalPages = {
     slug: "privacy",
     title: "Privacy Policy",
     eyebrow: "Legal",
-    updatedAt: "June 15, 2026",
+    updatedAt: "June 20, 2026",
     description:
-      "How Elite Gold Community plans to handle personal information during the public website and future member-platform phases.",
+      "How Elite Gold Community handles personal information across the public website and Phase 2 member onboarding foundation.",
     sections: [
       {
         title: "Overview",
         paragraphs: [
-          "Elite Gold Community is currently in its public website foundation phase. This Privacy Policy explains how information may be collected, used, and protected as the website and future member experience are developed.",
-          "The current public website is designed for education, community interest, and member onboarding preparation. Full production authentication and member-platform data flows are planned for a later phase.",
+          "Elite Gold Community is currently in its Phase 2 member onboarding foundation. This Privacy Policy explains how information may be collected, used, and protected as the website and member experience are developed.",
+          "The current website supports public education content, authentication, profile capture, Access Code-based signup entry, and early member dashboard shells. Full education delivery, trading journal, payment, and production member operations are planned for later phases.",
         ],
       },
       {
         title: "Information We May Collect",
         paragraphs: [
-          "When you interact with future sign-up or member entry points, we may collect information such as your name, email address, phone number, nationality, nickname, access code, and account preferences.",
+          "When you interact with sign-up or member entry points, we may collect information such as your name, email address, phone number, nationality, nickname, Access Code, signup source, and account preferences.",
           "We may also collect basic technical information such as device type, browser, approximate location, and usage events to improve reliability, security, and user experience.",
         ],
       },
@@ -43,14 +43,14 @@ export const legalPages = {
       {
         title: "Data Protection",
         paragraphs: [
-          "The project is prepared to use Supabase and Vercel infrastructure for future authentication, hosting, and secure platform operations. Secrets and service keys should never be exposed in client-side code or public repositories.",
+          "The project uses Supabase, Vercel, and Resend infrastructure for authentication, hosting, member profile storage, and transactional email delivery. Secrets and service keys should never be exposed in client-side code or public repositories.",
           "As the platform moves into later phases, access control, database policies, and data retention practices should be reviewed before production member launch.",
         ],
       },
       {
         title: "Updates",
         paragraphs: [
-          "This policy may be updated as the website moves from Phase 1 into full authentication, member dashboard, education, journal, community, payment, and admin features.",
+          "This policy may be updated as the website moves from Phase 2 onboarding into full member dashboard, education, journal, community, payment, and admin features.",
         ],
       },
     ],
@@ -59,7 +59,7 @@ export const legalPages = {
     slug: "terms",
     title: "Terms of Service",
     eyebrow: "Legal",
-    updatedAt: "June 15, 2026",
+    updatedAt: "June 20, 2026",
     description:
       "The expected terms for using Elite Gold Community as an education-focused trading community and future member platform.",
     sections: [
@@ -67,7 +67,7 @@ export const legalPages = {
         title: "Use of the Website",
         paragraphs: [
           "Elite Gold Community provides public information about trading education, journaling discipline, community structure, and future member-platform access.",
-          "By using the website, visitors should use the content responsibly and understand that the current Phase 1 experience is a public foundation, not the final member dashboard or paid service flow.",
+          "By using the website, visitors and early members should use the content responsibly and understand that the current Phase 2 experience is an onboarding foundation, not the final paid member service flow.",
         ],
       },
       {
@@ -80,7 +80,7 @@ export const legalPages = {
       {
         title: "Member Access",
         paragraphs: [
-          "Login, Sign Up, access code, dashboard, journal, education library, and membership references describe the planned member experience. Full production behavior will be completed in later phases.",
+          "Login, Sign Up, Access Code, profile, and dashboard shell features are part of the current onboarding foundation. Journal, education library, payments, and full production member services will be completed in later phases.",
           "Future paid membership, account access, community rules, and cancellation terms should be defined before accepting production payments or activating full member services.",
         ],
       },
