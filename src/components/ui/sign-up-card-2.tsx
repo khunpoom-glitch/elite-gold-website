@@ -608,6 +608,7 @@ export function Component({
   );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isGoogleProfileSyncing, setIsGoogleProfileSyncing] = useState(isGoogleSignup);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
   const autoAccessCode = useMemo(() => getInitialAccessCode(accessCode), [accessCode]);
   const [selectedNationality, setSelectedNationality] = useState<string>(defaultCountryCode);
@@ -630,12 +631,28 @@ export function Component({
   const validationPopupTitle = state.fieldErrors?.signupAccessCode
     ? "ตรวจสอบ Access Code"
     : "กรุณากรอกข้อมูลให้ครบ";
+  const googleSyncedInputClassName =
+    isGoogleSignup && isGoogleProfileSyncing
+      ? "animate-pulse shadow-[0_0_0_1px_rgba(212,175,55,0.18)]"
+      : null;
 
   useEffect(() => {
     if (state.status === "success" && state.redirectTo) {
       window.location.assign(state.redirectTo);
     }
   }, [state]);
+
+  useEffect(() => {
+    if (!isGoogleSignup) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setIsGoogleProfileSyncing(false);
+    }, 950);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [googleSignupProfile?.email, isGoogleSignup]);
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -774,12 +791,46 @@ export function Component({
             ) : null}
 
             {isGoogleSignup ? (
-              <div className="mb-3 rounded-lg border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-3 py-2 text-xs leading-5 text-white/72">
-                <span className="inline-flex items-center gap-2 font-semibold text-[#F6E3A3]">
-                  <GoogleLogo />
-                  Google account connected
-                </span>
+              <div className="mb-3 overflow-hidden rounded-lg border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-3 py-2 text-xs leading-5 text-white/72" role="status" aria-live="polite">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-2 font-semibold text-[#F6E3A3]">
+                    <GoogleLogo />
+                    Google account connected
+                  </span>
+                  <AnimatePresence mode="wait">
+                    {isGoogleProfileSyncing ? (
+                      <motion.span
+                        animate={{ opacity: 1, x: 0 }}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#D4AF37]/25 bg-black/30 px-2 py-0.5 text-[0.66rem] font-semibold uppercase tracking-normal text-[#F6E3A3]"
+                        exit={{ opacity: 0, x: 6 }}
+                        initial={{ opacity: 0, x: 6 }}
+                        key="syncing"
+                      >
+                        <span className="size-2.5 rounded-full border-2 border-[#F6E3A3]/75 border-t-transparent animate-spin" />
+                        Syncing
+                      </motion.span>
+                    ) : null}
+                  </AnimatePresence>
+                </div>
                 <span className="mt-1 block break-words">{googleSignupProfile?.email}</span>
+                <AnimatePresence>
+                  {isGoogleProfileSyncing ? (
+                    <motion.div
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-2 grid gap-1.5"
+                      exit={{ opacity: 0, y: -4 }}
+                      initial={{ opacity: 0, y: -4 }}
+                    >
+                      <span className="h-1.5 w-2/3 overflow-hidden rounded-full bg-white/10">
+                        <motion.span
+                          animate={{ x: ["-45%", "145%"] }}
+                          className="block h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#F6E3A3]/70 to-transparent"
+                          transition={{ duration: 1.05, ease: "easeInOut", repeat: Infinity }}
+                        />
+                      </span>
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
               </div>
             ) : (
               <>
@@ -842,7 +893,7 @@ export function Component({
                     <input
                       aria-invalid={Boolean(getFieldError("firstName"))}
                       autoComplete="given-name"
-                      className={getInputClassName("firstName", "pl-10 pr-3")}
+                      className={getInputClassName("firstName", cn("pl-10 pr-3", googleSyncedInputClassName))}
                       defaultValue={googleSignupProfile?.firstName}
                       name="firstName"
                       placeholder={nationalityProfile.firstNamePlaceholder}
@@ -861,7 +912,7 @@ export function Component({
                     <input
                       aria-invalid={Boolean(getFieldError("lastName"))}
                       autoComplete="family-name"
-                      className={getInputClassName("lastName", "pl-10 pr-3")}
+                      className={getInputClassName("lastName", cn("pl-10 pr-3", googleSyncedInputClassName))}
                       defaultValue={googleSignupProfile?.lastName}
                       name="lastName"
                       placeholder={nationalityProfile.lastNamePlaceholder}
@@ -940,7 +991,11 @@ export function Component({
                       autoComplete="email"
                       className={getInputClassName(
                         "email",
-                        cn("pl-10 pr-3", isGoogleSignup ? "text-[#F6E3A3]/90" : null),
+                        cn(
+                          "pl-10 pr-3",
+                          isGoogleSignup ? "text-[#F6E3A3]/90" : null,
+                          googleSyncedInputClassName,
+                        ),
                       )}
                       defaultValue={googleSignupProfile?.email}
                       name="email"
