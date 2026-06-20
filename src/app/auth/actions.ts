@@ -3,10 +3,7 @@
 import type { User } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import {
-  sendEmailVerificationEmail,
-  sendGoogleSignupWelcomeEmail,
-} from "@/lib/email/resend";
+import { sendEmailVerificationEmail } from "@/lib/email/resend";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AuthActionState } from "@/lib/auth/action-state";
 import {
@@ -49,9 +46,6 @@ function successState(message: string, redirectTo?: string): AuthActionState {
 const signupSuccessMessage =
   "Signup successful. Please check your email and click Verify Email to activate member features.";
 
-const googleSignupSuccessMessage =
-  "Signup successful. Your Google account is connected and your member profile is ready.";
-
 function getStringField(formData: FormData, name: string) {
   const value = formData.get(name);
 
@@ -68,10 +62,6 @@ function getUserMetadataString(user: User, keys: string[]) {
   }
 
   return "";
-}
-
-function getUserEmailConfirmedAt(user: User) {
-  return user.email_confirmed_at ?? user.confirmed_at ?? null;
 }
 
 function getMemberDisplayName(fields: { firstName?: string; fullName?: string; nickname?: string }) {
@@ -109,21 +99,6 @@ async function issueEmailVerificationEmail(
   });
 
   return { ok: emailResult.ok } as const;
-}
-
-function getMemberAccessCode(row: unknown) {
-  if (typeof row !== "object" || row === null) {
-    return "";
-  }
-
-  const code =
-    "member_access_code" in row
-      ? row.member_access_code
-      : "member_referral_code" in row
-        ? row.member_referral_code
-        : "";
-
-  return typeof code === "string" ? code : "";
 }
 
 function getAccessCodeResolution(row: unknown) {
@@ -428,7 +403,6 @@ export async function completeGoogleSignupAction(
     });
   }
 
-  const emailConfirmedAt = getUserEmailConfirmedAt(user);
   const fullName = `${validation.data.firstName} ${validation.data.lastName}`.trim();
   const accessCode = await resolveSignupAccessCode(client.supabase, validation.data.signupAccessCode);
 
@@ -436,7 +410,7 @@ export async function completeGoogleSignupAction(
     return accessCode.state;
   }
 
-  const { data: insertedProfile, error } = await client.supabase
+  const { error } = await client.supabase
     .from("profiles")
     .insert({
       id: user.id,
@@ -452,36 +426,44 @@ export async function completeGoogleSignupAction(
       signup_referral_code: accessCode.accessCode,
       avatar_url: getUserMetadataString(user, ["avatar_url", "picture"]) || null,
       signup_provider: "google",
-      status: emailConfirmedAt ? "active" : "pending_email_confirmation",
-      email_confirmed_at: emailConfirmedAt,
-    })
-    .select("member_access_code, member_referral_code")
-    .single();
+      status: "pending_email_confirmation",
+      email_confirmed_at: null,
+    });
+
+  let memberProfile = await getMemberProfileByUserId(client.supabase, user.id);
 
   if (error) {
     if (error.code === "23505") {
-      return successState("บัญชีนี้สมัครสมาชิกไว้แล้ว กำลังพาไปยัง Member Dashboard", "/dashboard");
-    }
+      if (!memberProfile) {
+        return errorState("บัญชีนี้สมัครสมาชิกไว้แล้ว แต่ยังไม่พบข้อมูลโปรไฟล์ กรุณาติดต่อทีมงาน");
+      }
 
-    return errorState("ยังไม่สามารถบันทึกข้อมูลสมาชิกได้ กรุณาตรวจสอบข้อมูลแล้วลองใหม่");
+      if (memberProfile.status === "active") {
+        return successState("This account is already registered. Please login to continue.");
+      }
+    } else {
+      return errorState("ยังไม่สามารถบันทึกข้อมูลสมาชิกได้ กรุณาตรวจสอบข้อมูลแล้วลองใหม่");
+    }
+  }
+
+  if (!memberProfile) {
+    memberProfile = await getMemberProfileByUserId(client.supabase, user.id);
+  }
+
+  if (!memberProfile) {
+    return errorState("Signup was created, but the member profile could not be loaded. Please try logging in and resend the verification email from My Profile.");
+  }
+
+  const verification = await issueEmailVerificationEmail(client.supabase, memberProfile);
+
+  if (!verification.ok) {
+    return errorState("Signup was created, but the verification email could not be sent. Please login and resend it from My Profile.");
   }
 
   revalidatePath("/", "layout");
   revalidatePath("/dashboard");
 
-  const dashboardUrl = new URL("/dashboard", await getRequestOrigin()).toString();
-  await sendGoogleSignupWelcomeEmail({
-    dashboardUrl,
-    name: getMemberDisplayName({
-      firstName: validation.data.firstName,
-      fullName,
-      nickname: validation.data.nickname,
-    }),
-    memberAccessCode: getMemberAccessCode(insertedProfile),
-    to: userEmail,
-  });
-
-  return successState(googleSignupSuccessMessage);
+  return successState(signupSuccessMessage);
 }
 
 export async function requestPasswordResetAction(

@@ -141,45 +141,6 @@ function getEmailShell(title: string, body: string) {
 </html>`;
 }
 
-export function buildGoogleSignupWelcomeEmail({
-  dashboardUrl,
-  memberAccessCode,
-  name,
-}: {
-  dashboardUrl: string;
-  memberAccessCode: string;
-  name: string;
-}) {
-  const safeName = escapeHtml(name || "Elite Gold Member");
-  const safeMemberId = escapeHtml(getMemberIdFromAccessCode(memberAccessCode));
-  const safeDashboardUrl = escapeHtml(dashboardUrl);
-  const html = getEmailShell(
-    getWelcomeTitle(name),
-    `<p style="margin:0 0 16px;">Hi ${safeName},</p>
-     <p style="margin:0 0 16px;color:#CFCFCF;">Your Elite Gold account has been successfully created.</p>
-     <p style="margin:0 0 24px;color:#CFCFCF;">Your Google email is verified. Your member profile is active and ready for the Elite Gold member area.</p>
-     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 26px;border-collapse:collapse;">
-       <tr>
-         <td align="center" style="border:1px solid rgba(212,175,55,0.25);border-radius:16px;background:#0B0B0B;padding:16px 18px;color:#8A8A8A;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;">
-           Member ID<br>
-           <strong style="display:inline-block;margin-top:6px;color:#E6C85C;font-size:22px;letter-spacing:0.08em;">${safeMemberId}</strong>
-         </td>
-       </tr>
-     </table>
-     ${getButtonHtml(safeDashboardUrl, "Open Dashboard")}`,
-  );
-  const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold account has been successfully created.\nYour Google email is verified. Your member profile is active and ready for the Elite Gold member area.\n\nMember ID: ${getMemberIdFromAccessCode(memberAccessCode)}\n\nOpen Dashboard: ${dashboardUrl}`;
-
-  return {
-    headers: {
-      "X-Entity-Ref-ID": `elite-google-welcome-${safeMemberId}`,
-    },
-    html,
-    subject: "Welcome to Elite Gold",
-    text,
-  };
-}
-
 export function buildEmailVerificationEmail({
   memberAccessCode,
   name,
@@ -270,32 +231,6 @@ export async function sendTransactionalEmail({
 
     return { ok: false, reason: "network-error" };
   }
-}
-
-export async function sendGoogleSignupWelcomeEmail({
-  dashboardUrl,
-  memberAccessCode,
-  name,
-  to,
-}: {
-  dashboardUrl: string;
-  memberAccessCode: string;
-  name: string;
-  to: string;
-}) {
-  const email = buildGoogleSignupWelcomeEmail({
-    dashboardUrl,
-    memberAccessCode,
-    name,
-  });
-
-  return sendTransactionalEmail({
-    headers: email.headers,
-    html: email.html,
-    subject: email.subject,
-    text: email.text,
-    to,
-  });
 }
 
 export async function sendEmailVerificationEmail({
