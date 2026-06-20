@@ -4,14 +4,14 @@ import Link from "next/link";
 import type { ComponentProps, MouseEvent } from "react";
 import {
   AUTH_MODAL_EVENT_NAME,
-  AUTH_MODAL_ROUTES,
+  getAuthModalRouteHref,
   type AuthModalEventDetail,
   type AuthModalMode,
 } from "@/config/auth-modal";
 
 type AuthLinkProps = Omit<ComponentProps<typeof Link>, "href"> & {
+  accessCode?: string;
   mode: AuthModalMode;
-  referralCode?: string;
 };
 
 function shouldUseNativeLink(event: MouseEvent<HTMLAnchorElement>) {
@@ -26,15 +26,15 @@ function shouldUseNativeLink(event: MouseEvent<HTMLAnchorElement>) {
 }
 
 export function AuthLink({
+  accessCode,
   mode,
   onClick,
-  referralCode,
   ...props
 }: AuthLinkProps) {
   return (
     <Link
       {...props}
-      href={AUTH_MODAL_ROUTES[mode]}
+      href={getAuthModalRouteHref(mode, accessCode)}
       onClick={(event) => {
         onClick?.(event);
 
@@ -45,8 +45,8 @@ export function AuthLink({
         event.preventDefault();
 
         const detail: AuthModalEventDetail = {
+          accessCode,
           mode,
-          referralCode,
           returnHref: `${window.location.pathname}${window.location.search}`,
         };
 

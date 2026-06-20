@@ -4,17 +4,17 @@ import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type ReferralCopyButtonProps = {
+type AccessCodeCopyButtonProps = {
   className?: string;
   label?: string;
   value: string;
 };
 
-export function ReferralCopyButton({
+export function AccessCodeCopyButton({
   className,
   label = "Copy",
   value,
-}: ReferralCopyButtonProps) {
+}: AccessCodeCopyButtonProps) {
   const [status, setStatus] = useState<"idle" | "copied" | "error">("idle");
   const isCopied = status === "copied";
 

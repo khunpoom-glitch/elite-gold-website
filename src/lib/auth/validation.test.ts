@@ -52,7 +52,7 @@ describe("auth form validation", () => {
         email: "member@elitegold.com",
         password: "secret-password",
         confirmPassword: "different-password",
-        referralCode: "eg123",
+        signupAccessCode: "eg123",
       }),
     );
 
@@ -63,7 +63,7 @@ describe("auth form validation", () => {
     }
   });
 
-  it("normalizes signup data and referral code", () => {
+  it("normalizes signup data and signup access code", () => {
     const result = validateSignupForm(
       formDataFromEntries({
         nationality: "TH",
@@ -75,7 +75,7 @@ describe("auth form validation", () => {
         email: " Member@EliteGold.com ",
         password: "secret-password",
         confirmPassword: "secret-password",
-        referralCode: " eg123 ",
+        signupAccessCode: " eg123 ",
       }),
     );
 
@@ -91,8 +91,30 @@ describe("auth form validation", () => {
         phone: "0812345678",
         email: "member@elitegold.com",
         password: "secret-password",
-        referralCode: "EG123",
+        signupAccessCode: "EG123",
       });
+    }
+  });
+
+  it("leaves blank signup access code for server-side bootstrap resolution", () => {
+    const result = validateSignupForm(
+      formDataFromEntries({
+        nationality: "TH",
+        firstName: "Poom",
+        lastName: "Elite",
+        nickname: "P",
+        phoneCountry: "TH",
+        phone: "0812345678",
+        email: "member@elitegold.com",
+        password: "secret-password",
+        confirmPassword: "secret-password",
+      }),
+    );
+
+    assert.equal(result.ok, true);
+
+    if (result.ok) {
+      assert.equal(result.data.signupAccessCode, "");
     }
   });
 

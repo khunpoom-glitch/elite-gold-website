@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState, type FocusEvent, type KeyboardEvent, type MouseEvent } from "react";
+import { useActionState, useEffect, useMemo, useState, type FocusEvent, type KeyboardEvent, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
@@ -29,11 +29,11 @@ type SignUpCardProps = {
   notice?: string;
   onClose?: () => void;
   onLoginClick?: () => void;
-  referralCode?: string;
+  accessCode?: string;
   titleId?: string;
 };
 
-const defaultReferralCode = "EG000";
+const accessCodePlaceholder = "Access code from signup link";
 const defaultCountryCode = "TH";
 
 type CountryProfile = {
@@ -517,9 +517,9 @@ function SearchableCountrySelect<T extends CountryProfile>({
   );
 }
 
-function normalizeReferralCode(code?: string | null) {
+function normalizeAccessCode(code?: string | null) {
   const trimmedCode = code?.trim();
-  return trimmedCode ? trimmedCode.toUpperCase() : defaultReferralCode;
+  return trimmedCode ? trimmedCode.toUpperCase() : "";
 }
 
 function getCountryProfile(countryCode: string) {
@@ -552,13 +552,13 @@ function getPhoneCountryProfile(countryCode: string) {
   );
 }
 
-function getInitialReferralCode(referralCode: string) {
-  if (referralCode.trim()) {
-    return normalizeReferralCode(referralCode);
+function getInitialAccessCode(accessCode: string) {
+  if (accessCode.trim()) {
+    return normalizeAccessCode(accessCode);
   }
 
   if (typeof window === "undefined") {
-    return defaultReferralCode;
+    return "";
   }
 
   const searchParams = new URLSearchParams(window.location.search);
@@ -568,7 +568,7 @@ function getInitialReferralCode(referralCode: string) {
     searchParams.get("referral") ??
     searchParams.get("referralCode");
 
-  return normalizeReferralCode(referralFromLink);
+  return normalizeAccessCode(referralFromLink);
 }
 
 function getInitialNextPath() {
@@ -595,7 +595,7 @@ export function Component({
   notice,
   onClose,
   onLoginClick,
-  referralCode = "",
+  accessCode = "",
   titleId,
 }: SignUpCardProps) {
   const isGoogleSignup = Boolean(googleSignupProfile?.email);
@@ -609,7 +609,7 @@ export function Component({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
-  const [autoReferralCode] = useState(() => getInitialReferralCode(referralCode));
+  const autoAccessCode = useMemo(() => getInitialAccessCode(accessCode), [accessCode]);
   const [selectedNationality, setSelectedNationality] = useState<string>(defaultCountryCode);
   const [selectedPhoneCountry, setSelectedPhoneCountry] = useState<string>(defaultCountryCode);
   const [nextPath] = useState(getInitialNextPath);
@@ -627,6 +627,9 @@ export function Component({
   const isValidationPopupVisible = Boolean(
     validationPopupKey && dismissedValidationErrorKey !== validationPopupKey,
   );
+  const validationPopupTitle = state.fieldErrors?.signupAccessCode
+    ? "ตรวจสอบ Access Code"
+    : "กรุณากรอกข้อมูลให้ครบ";
 
   useEffect(() => {
     if (state.status === "success" && state.redirectTo) {
@@ -669,8 +672,11 @@ export function Component({
     const searchParams = new URLSearchParams({
       intent: "signup",
       next: nextPath,
-      ref: autoReferralCode,
     });
+
+    if (autoAccessCode) {
+      searchParams.set("ref", autoAccessCode);
+    }
 
     window.location.assign(`/auth/google?${searchParams.toString()}`);
   }
@@ -726,7 +732,7 @@ export function Component({
                       <AlertTriangle aria-hidden="true" className="size-4" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[#F6E3A3]">กรุณากรอกข้อมูลให้ครบ</p>
+                      <p className="text-sm font-semibold text-[#F6E3A3]">{validationPopupTitle}</p>
                       <p className="mt-1 text-xs leading-5 text-white/70">{state.message}</p>
                     </div>
                     <button
@@ -1008,21 +1014,21 @@ export function Component({
                 ) : null}
 
                 <label className={cn(labelClassName, "sm:col-span-2")}>
-                  Referral Code
+                  Access Code
                   <span className="relative">
                     <ShieldCheck aria-hidden="true" className={iconClassName} />
                     <input
                       aria-readonly="true"
-                      className={getInputClassName("referralCode", "pl-10 pr-3 text-[#F6E3A3]/90")}
-                      name="referralCode"
-                      placeholder={defaultReferralCode}
+                      className={getInputClassName("signupAccessCode", "pl-10 pr-3 text-[#F6E3A3]/90")}
+                      name="signupAccessCode"
+                      placeholder={accessCodePlaceholder}
                       readOnly
                       required
-                      value={autoReferralCode}
+                      value={autoAccessCode}
                     />
                   </span>
-                  {getFieldError("referralCode") ? (
-                    <span className={helperTextClassName}>{getFieldError("referralCode")}</span>
+                  {getFieldError("signupAccessCode") ? (
+                    <span className={helperTextClassName}>{getFieldError("signupAccessCode")}</span>
                   ) : null}
                 </label>
               </div>

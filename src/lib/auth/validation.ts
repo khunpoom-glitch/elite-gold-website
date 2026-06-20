@@ -15,7 +15,7 @@ export type SignupProfileFields = {
   phoneCountry: string;
   phone: string;
   email: string;
-  referralCode: string;
+  signupAccessCode: string;
 };
 
 export type SignupCredentials = SignupProfileFields & {
@@ -39,7 +39,7 @@ export type UpdateProfileFields = {
   phone: string;
 };
 
-const defaultReferralCode = "EG000";
+export const rootAccessCode = "EG000";
 const defaultRedirectPath = "/dashboard";
 const supportedEmailOtpTypes = new Set([
   "email",
@@ -62,12 +62,12 @@ function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
 
-export function normalizeReferralCode(code?: string | null) {
+export function normalizeAccessCode(code?: string | null) {
   if (!code) {
-    return defaultReferralCode;
+    return "";
   }
 
-  return code.trim().toUpperCase() || defaultReferralCode;
+  return code.trim().toUpperCase();
 }
 
 function invalid(
@@ -152,7 +152,12 @@ export function validateSignupProfileForm(
   const phoneCountry = getStringField(formData, "phoneCountry");
   const phone = getStringField(formData, "phone");
   const email = normalizeEmail(getStringField(formData, "email"));
-  const referralCode = normalizeReferralCode(getStringField(formData, "referralCode"));
+  const signupAccessCode = normalizeAccessCode(
+    getStringField(formData, "signupAccessCode") ||
+      getStringField(formData, "signupReferralCode") ||
+      getStringField(formData, "accessCode") ||
+      getStringField(formData, "referralCode"),
+  );
   const missingMessage = requireFields([
     ["nationality", "Nationality", nationality],
     ["firstName", "First Name", firstName],
@@ -161,7 +166,6 @@ export function validateSignupProfileForm(
     ["phoneCountry", "Phone Country", phoneCountry],
     ["phone", "Phone Number", phone],
     ["email", "Email", email],
-    ["referralCode", "Referral Code", referralCode],
   ]);
 
   if (missingMessage) {
@@ -184,7 +188,7 @@ export function validateSignupProfileForm(
       phoneCountry,
       phone,
       email,
-      referralCode,
+      signupAccessCode,
     },
   };
 }

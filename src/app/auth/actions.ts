@@ -17,6 +17,8 @@ import {
   validateUpdateProfileForm,
 } from "@/lib/auth/validation";
 
+type AccessCodeStatus = "bootstrap" | "valid" | "missing" | "invalid";
+
 function errorState(
   message: string,
   fieldErrors?: Record<string, string>,
@@ -60,6 +62,97 @@ function getUserEmailConfirmedAt(user: User) {
 
 function getMemberDisplayName(fields: { firstName?: string; fullName?: string; nickname?: string }) {
   return fields.nickname || fields.firstName || fields.fullName || "Elite Gold Member";
+}
+
+function getMemberAccessCode(row: unknown) {
+  if (typeof row !== "object" || row === null) {
+    return "";
+  }
+
+  const code =
+    "member_access_code" in row
+      ? row.member_access_code
+      : "member_referral_code" in row
+        ? row.member_referral_code
+        : "";
+
+  return typeof code === "string" ? code : "";
+}
+
+function getAccessCodeResolution(row: unknown) {
+  if (typeof row !== "object" || row === null) {
+    return null;
+  }
+
+  const status = "status" in row ? row.status : null;
+  const resolvedAccessCode = "resolved_access_code" in row ? row.resolved_access_code : null;
+
+  if (
+    status !== "bootstrap" &&
+    status !== "valid" &&
+    status !== "missing" &&
+    status !== "invalid"
+  ) {
+    return null;
+  }
+
+  return {
+    resolvedAccessCode: typeof resolvedAccessCode === "string" ? resolvedAccessCode : "",
+    status: status as AccessCodeStatus,
+  };
+}
+
+function accessCodeErrorState(status: "missing" | "invalid") {
+  const message =
+    status === "missing"
+      ? "ไม่พบ Access Code สำหรับการสมัคร กรุณาตรวจสอบลิงก์สมัครอีกครั้ง"
+      : "Access Code นี้ไม่ถูกต้องหรือยังไม่เปิดใช้งาน กรุณาตรวจสอบอีกครั้ง";
+
+  return errorState(message, {
+    signupAccessCode: message,
+  });
+}
+
+async function resolveSignupAccessCode(
+  supabase: NonNullable<Awaited<ReturnType<typeof createSupabaseServerClient>>>,
+  accessCode: string,
+): Promise<
+  | { ok: true; accessCode: string }
+  | { ok: false; state: AuthActionState }
+> {
+  const { data, error } = await supabase
+    .rpc("resolve_elite_access_code", {
+      input_code: accessCode,
+    })
+    .single();
+
+  if (error) {
+    return {
+      ok: false,
+      state: errorState("ยังไม่สามารถตรวจสอบ Access Code ได้ กรุณาลองใหม่อีกครั้ง"),
+    };
+  }
+
+  const resolution = getAccessCodeResolution(data);
+
+  if (!resolution) {
+    return {
+      ok: false,
+      state: errorState("ยังไม่สามารถตรวจสอบ Access Code ได้ กรุณาลองใหม่อีกครั้ง"),
+    };
+  }
+
+  if (resolution.status === "missing" || resolution.status === "invalid") {
+    return {
+      ok: false,
+      state: accessCodeErrorState(resolution.status),
+    };
+  }
+
+  return {
+    ok: true,
+    accessCode: resolution.resolvedAccessCode,
+  };
 }
 
 async function getAuthCallbackUrl(nextPath: string) {
@@ -162,6 +255,12 @@ export async function signupWithPasswordAction(
 
   const nextPath = getSafeRedirectPath(getStringField(formData, "next"));
   const { password, ...profile } = validation.data;
+  const accessCode = await resolveSignupAccessCode(client.supabase, profile.signupAccessCode);
+
+  if (!accessCode.ok) {
+    return accessCode.state;
+  }
+
   const { error, data } = await client.supabase.auth.signUp({
     email: profile.email,
     password,
@@ -175,7 +274,10 @@ export async function signupWithPasswordAction(
         nationality: profile.nationality,
         phone_country: profile.phoneCountry,
         phone: profile.phone,
-        referral_code: profile.referralCode,
+        access_code: accessCode.accessCode,
+        signup_access_code: accessCode.accessCode,
+        referral_code: accessCode.accessCode,
+        signup_referral_code: accessCode.accessCode,
         signup_provider: "email",
         elite_signup_complete: "true",
       },
@@ -230,22 +332,33 @@ export async function completeGoogleSignupAction(
 
   const emailConfirmedAt = getUserEmailConfirmedAt(user);
   const fullName = `${validation.data.firstName} ${validation.data.lastName}`.trim();
-  const { error } = await client.supabase.from("profiles").insert({
-    id: user.id,
-    email: userEmail,
-    first_name: validation.data.firstName,
-    last_name: validation.data.lastName,
-    full_name: fullName,
-    nickname: validation.data.nickname,
-    nationality: validation.data.nationality,
-    phone_country: validation.data.phoneCountry,
-    phone: validation.data.phone,
-    referral_code: validation.data.referralCode,
-    avatar_url: getUserMetadataString(user, ["avatar_url", "picture"]) || null,
-    signup_provider: "google",
-    status: emailConfirmedAt ? "active" : "pending_email_confirmation",
-    email_confirmed_at: emailConfirmedAt,
-  });
+  const accessCode = await resolveSignupAccessCode(client.supabase, validation.data.signupAccessCode);
+
+  if (!accessCode.ok) {
+    return accessCode.state;
+  }
+
+  const { data: insertedProfile, error } = await client.supabase
+    .from("profiles")
+    .insert({
+      id: user.id,
+      email: userEmail,
+      first_name: validation.data.firstName,
+      last_name: validation.data.lastName,
+      full_name: fullName,
+      nickname: validation.data.nickname,
+      nationality: validation.data.nationality,
+      phone_country: validation.data.phoneCountry,
+      phone: validation.data.phone,
+      signup_access_code: accessCode.accessCode,
+      signup_referral_code: accessCode.accessCode,
+      avatar_url: getUserMetadataString(user, ["avatar_url", "picture"]) || null,
+      signup_provider: "google",
+      status: emailConfirmedAt ? "active" : "pending_email_confirmation",
+      email_confirmed_at: emailConfirmedAt,
+    })
+    .select("member_access_code, member_referral_code")
+    .single();
 
   if (error) {
     if (error.code === "23505") {
@@ -266,7 +379,7 @@ export async function completeGoogleSignupAction(
       fullName,
       nickname: validation.data.nickname,
     }),
-    referralCode: validation.data.referralCode,
+    memberAccessCode: getMemberAccessCode(insertedProfile),
     to: userEmail,
   });
 

@@ -18,7 +18,8 @@ type MemberProfileFormProps = {
     | "nationality"
     | "phoneCountry"
     | "phone"
-    | "referralCode"
+    | "signupAccessCode"
+    | "memberAccessCode"
   >;
 };
 
@@ -124,18 +125,31 @@ export function MemberProfileForm({ profile }: MemberProfileFormProps) {
         </label>
 
         <label className="grid gap-2 text-sm font-semibold text-white/54">
-          Referral Code
+          My Access Code
           <Input
-            aria-describedby="referral-readonly-note"
-            defaultValue={profile.referralCode}
-            name="referralCodeDisplay"
+            aria-describedby="member-access-readonly-note"
+            defaultValue={profile.memberAccessCode}
+            name="memberAccessCodeDisplay"
             readOnly
           />
-          <span className="text-xs font-normal text-white/40" id="referral-readonly-note">
-            Referral code is locked for attribution integrity.
+          <span className="text-xs font-normal text-white/40" id="member-access-readonly-note">
+            This is the code members can share with new applicants.
           </span>
         </label>
       </div>
+
+      <label className="grid gap-2 text-sm font-semibold text-white/54">
+        Signup Access Source
+        <Input
+          aria-describedby="signup-access-readonly-note"
+          defaultValue={profile.signupAccessCode}
+          name="signupAccessCodeDisplay"
+          readOnly
+        />
+        <span className="text-xs font-normal text-white/40" id="signup-access-readonly-note">
+          This records the code used when this account was created.
+        </span>
+      </label>
 
       {state.status === "error" ? (
         <div className="flex items-start gap-2 rounded-md border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]" role="alert">
@@ -153,7 +167,7 @@ export function MemberProfileForm({ profile }: MemberProfileFormProps) {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-6 text-white/42">
-          Saved changes update your member profile only. Membership, billing, and referral payouts stay locked for later phases.
+          Saved changes update your member profile only. Membership, billing, and access attribution stay locked for later phases.
         </p>
         <Button className="rounded-md sm:w-auto" disabled={isPending} type="submit">
           <Save aria-hidden="true" className="size-4" />

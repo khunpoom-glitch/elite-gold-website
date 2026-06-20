@@ -13,7 +13,8 @@ export type MemberProfile = {
   nationality: string;
   phoneCountry: string;
   phone: string;
-  referralCode: string;
+  signupAccessCode: string;
+  memberAccessCode: string;
   avatarUrl: string | null;
   signupProvider: SignupProvider;
   status: MemberStatus;
@@ -38,7 +39,10 @@ export const memberProfileSelect = [
   "nationality",
   "phone_country",
   "phone",
-  "referral_code",
+  "signup_access_code",
+  "member_access_code",
+  "signup_referral_code",
+  "member_referral_code",
   "avatar_url",
   "signup_provider",
   "status",
@@ -111,7 +115,12 @@ export function parseMemberProfile(row: unknown): MemberProfile | null {
     nationality: getString(row.nationality),
     phoneCountry: getString(row.phone_country),
     phone: getString(row.phone),
-    referralCode: getString(row.referral_code),
+    signupAccessCode: getString(row.signup_access_code) || getString(row.signup_referral_code),
+    memberAccessCode:
+      getString(row.member_access_code) ||
+      getString(row.member_referral_code) ||
+      getString(row.signup_access_code) ||
+      getString(row.signup_referral_code),
     avatarUrl: getNullableString(row.avatar_url),
     signupProvider,
     status,

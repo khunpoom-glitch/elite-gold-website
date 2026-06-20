@@ -17,16 +17,16 @@ const prompt = Prompt({
 });
 
 export function HomePage({
+  initialAccessCode,
   initialAuthMode = null,
   initialAuthNotice,
   initialGoogleSignupProfile,
-  initialReferralCode,
   initialSection = TOP_SECTION_ID,
 }: {
+  initialAccessCode?: string;
   initialAuthMode?: AuthMode | null;
   initialAuthNotice?: string;
   initialGoogleSignupProfile?: GoogleSignupProfile;
-  initialReferralCode?: string;
   initialSection?: HomeSectionId;
 }) {
   return (
@@ -36,10 +36,10 @@ export function HomePage({
       <HomeScrollController initialSection={initialSection} />
       <HeroSection />
       <AuthRouteModal
+        accessCode={initialAccessCode}
         initialGoogleSignupProfile={initialGoogleSignupProfile}
         initialMode={initialAuthMode}
         initialNotice={initialAuthNotice}
-        referralCode={initialReferralCode}
       />
       <HomeContentSections />
       <PublicFooter logo={<EliteGoldNavbarLogo />} />

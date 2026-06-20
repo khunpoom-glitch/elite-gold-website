@@ -127,30 +127,30 @@ export async function sendTransactionalEmail({
 
 export async function sendGoogleSignupWelcomeEmail({
   dashboardUrl,
+  memberAccessCode,
   name,
-  referralCode,
   to,
 }: {
   dashboardUrl: string;
+  memberAccessCode: string;
   name: string;
-  referralCode: string;
   to: string;
 }) {
   const safeName = escapeHtml(name || "Elite Gold Member");
-  const safeReferralCode = escapeHtml(referralCode);
+  const safeAccessCode = escapeHtml(memberAccessCode || "Pending");
   const safeDashboardUrl = escapeHtml(dashboardUrl);
   const html = getEmailShell(
     "Welcome to Elite Gold",
     `<p style="margin:0 0 16px;">Hi ${safeName},</p>
      <p style="margin:0 0 16px;">Your Elite Gold member profile has been created successfully.</p>
-     <p style="margin:0 0 20px;">Referral code: <strong style="color:#f6e3a3;">${safeReferralCode}</strong></p>
+     <p style="margin:0 0 20px;">Your access code: <strong style="color:#f6e3a3;">${safeAccessCode}</strong></p>
      <p style="margin:0;"><a href="${safeDashboardUrl}" style="display:inline-block;border-radius:999px;background:#d4af37;color:#050505;font-weight:700;text-decoration:none;padding:12px 18px;">Open Dashboard</a></p>`,
   );
-  const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold member profile has been created successfully.\nReferral code: ${referralCode}\n\nOpen Dashboard: ${dashboardUrl}`;
+  const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold member profile has been created successfully.\nYour access code: ${memberAccessCode || "Pending"}\n\nOpen Dashboard: ${dashboardUrl}`;
 
   return sendTransactionalEmail({
     headers: {
-      "X-Entity-Ref-ID": `elite-google-welcome-${safeReferralCode}`,
+      "X-Entity-Ref-ID": `elite-google-welcome-${safeAccessCode}`,
     },
     html,
     subject: "Welcome to Elite Gold",

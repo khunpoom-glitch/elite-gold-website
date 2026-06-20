@@ -29,7 +29,7 @@ export const legalPages = {
       {
         title: "Information We May Collect",
         paragraphs: [
-          "When you interact with future sign-up or member entry points, we may collect information such as your name, email address, phone number, nationality, nickname, referral code, and account preferences.",
+          "When you interact with future sign-up or member entry points, we may collect information such as your name, email address, phone number, nationality, nickname, access code, and account preferences.",
           "We may also collect basic technical information such as device type, browser, approximate location, and usage events to improve reliability, security, and user experience.",
         ],
       },
@@ -80,7 +80,7 @@ export const legalPages = {
       {
         title: "Member Access",
         paragraphs: [
-          "Login, Sign Up, referral code, dashboard, journal, education library, and membership references describe the planned member experience. Full production behavior will be completed in later phases.",
+          "Login, Sign Up, access code, dashboard, journal, education library, and membership references describe the planned member experience. Full production behavior will be completed in later phases.",
           "Future paid membership, account access, community rules, and cancellation terms should be defined before accepting production payments or activating full member services.",
         ],
       },

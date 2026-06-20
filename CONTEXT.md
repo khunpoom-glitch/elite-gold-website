@@ -21,7 +21,7 @@ Implemented:
 - One-page public sections for Home, About Community, Trading Education, Membership, and FAQ.
 - Section URLs redirect back to `/`; `/home` also redirects to `/`.
 - `/login` and `/signup` open the public home experience with the auth modal active.
-- `/signup?ref=EG000` style referral query handling is prepared.
+- `/signup?ref=EG000` style Access Code handling is prepared.
 - Legal routes: `/privacy`, `/terms`, and `/risk-disclosure`.
 - SEO foundation: metadata, canonical URLs, noindex auth routes, sitemap, robots, and OG/Twitter social preview routes.
 - Supabase client/server environment wiring is prepared for later auth/data work.
@@ -71,7 +71,7 @@ There is no active public `/contact` route.
 - Reference repo: `https://github.com/khunpoom-glitch/elite-gold-website`
 - Verified reference commit: `3d58f630d01b50576338a481693b6463e25b83fd`
 - Reference stack: React + Vite + Tailwind CSS v4, Framer Motion, Three.js, Supabase Auth/Postgres.
-- Current workspace stack is Next.js App Router. Use the reference for design language, assets, content patterns, Supabase concepts, referral flow, dashboard/course/tools/journal ideas, and product direction.
+- Current workspace stack is Next.js App Router. Use the reference for design language, assets, content patterns, Supabase concepts, access flow, dashboard/course/tools/journal ideas, and product direction.
 - Do not replace the Next.js workspace with the Vite reference unless the user explicitly confirms a destructive stack migration.
 
 ## Design Language
@@ -98,6 +98,6 @@ Avoid:
 - Elite Gold Community: website and membership platform experience around education, journaling discipline, and trader community.
 - Trader: a person developing trading skill through structured education, trading records, and consistent review.
 - Trading Journal: a system or space for recording trading results and reviewing behavior to build discipline and long-term improvement.
-- Member Dashboard: future authenticated command center for education, journal, community, tools, referrals, and account settings.
-- Referral Code: member or campaign code used to attribute signups in future referral or affiliate flows.
+- Member Dashboard: future authenticated command center for education, journal, community, tools, access attribution, and account settings.
+- Access Code: member code used to open signup access and attribute new members.
 - Tools & Indicators: future educational trading support resources, not guaranteed signal products.

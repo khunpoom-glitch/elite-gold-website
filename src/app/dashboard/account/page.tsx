@@ -69,7 +69,7 @@ export default async function AccountPage() {
           </div>
           <div className="inline-flex items-center gap-2 rounded-md border border-gold/20 bg-gold/10 px-3 py-2 text-xs font-semibold text-soft-gold">
             <Sparkles aria-hidden="true" className="size-3.5" />
-            Referral: {profile.referralCode}
+            My Code: {profile.memberAccessCode}
           </div>
         </div>
 
@@ -79,7 +79,7 @@ export default async function AccountPage() {
       <section className="grid gap-4 md:grid-cols-3">
         {[
           ["Membership", "Current plan, expiry, renewal, and upgrade controls are reserved for Phase 5."],
-          ["Affiliate Program", "Invited users, referral tracking, commissions, and payouts are reserved for Phase 5."],
+          ["Access Tracking", "Invited users, access attribution, commissions, and payouts are reserved for Phase 5."],
           ["Billing History", "Receipts and payment records will be connected after the membership system is built."],
         ].map(([title, description]) => (
           <article className="rounded-md border border-white/10 bg-black/72 p-5" key={title}>

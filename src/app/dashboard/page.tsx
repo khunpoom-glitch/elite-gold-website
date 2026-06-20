@@ -11,7 +11,7 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
-import { ReferralCopyButton } from "@/components/dashboard/referral-copy-button";
+import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
 import { siteConfig } from "@/config/site";
 import { getAuthenticatedMember } from "@/lib/member/session";
 
@@ -52,16 +52,16 @@ function getStatusTone(status: string) {
     : "border-[#D4AF37]/28 bg-[#D4AF37]/10 text-[#F6E3A3]";
 }
 
-function getReferralSignupLink(referralCode: string) {
+function getAccessSignupLink(accessCode: string) {
   const signupUrl = new URL("/signup", siteConfig.url);
-  signupUrl.searchParams.set("ref", referralCode);
+  signupUrl.searchParams.set("ref", accessCode);
 
   return signupUrl.toString();
 }
 
 export default async function DashboardPage() {
   const { email, memberName, memberStatus, profile } = await getAuthenticatedMember("/dashboard");
-  const referralSignupLink = getReferralSignupLink(profile.referralCode);
+  const accessSignupLink = getAccessSignupLink(profile.memberAccessCode);
   const statusTone = getStatusTone(profile.status);
 
   return (
@@ -77,7 +77,7 @@ export default async function DashboardPage() {
               Welcome back, {memberName}
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-              Dashboard นี้เป็น command center สำหรับ profile, membership status, referral entry point และ preview ของ Education, Journal, Community ก่อนเข้าสู่ feature เต็มใน Phase 4.
+              Dashboard นี้เป็น command center สำหรับ profile, membership status, access entry point และ preview ของ Education, Journal, Community ก่อนเข้าสู่ feature เต็มใน Phase 4.
             </p>
           </div>
 
@@ -123,19 +123,19 @@ export default async function DashboardPage() {
         <article className="rounded-md border border-white/10 bg-black/72 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)] sm:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase text-soft-gold">Referral</p>
+              <p className="text-xs font-bold uppercase text-soft-gold">Access</p>
               <h2 className="mt-2 text-xl font-semibold text-white">Invite-ready link</h2>
             </div>
             <Sparkles aria-hidden="true" className="size-6 shrink-0 text-soft-gold" />
           </div>
           <p className="mt-4 text-sm leading-7 text-muted-foreground">
-            Referral tracking เต็มระบบจะอยู่ใน Phase 5 แต่ Phase 3 จะแสดง code และ signup link เพื่อเตรียม flow ให้พร้อม.
+            Access tracking เต็มระบบจะอยู่ใน Phase 5 แต่ Phase 3 จะแสดง code และ signup link เพื่อเตรียม flow ให้พร้อม.
           </p>
           <div className="mt-5 rounded-md border border-gold/20 bg-gold/10 p-4">
-            <p className="text-xs font-semibold uppercase text-soft-gold">Referral Code</p>
-            <p className="mt-2 text-2xl font-bold text-white">{profile.referralCode}</p>
-            <p className="mt-3 break-all text-xs leading-5 text-white/52">{referralSignupLink}</p>
-            <ReferralCopyButton className="mt-4" label="Copy Link" value={referralSignupLink} />
+            <p className="text-xs font-semibold uppercase text-soft-gold">My Access Code</p>
+            <p className="mt-2 text-2xl font-bold text-white">{profile.memberAccessCode}</p>
+            <p className="mt-3 break-all text-xs leading-5 text-white/52">{accessSignupLink}</p>
+            <AccessCodeCopyButton className="mt-4" label="Copy Link" value={accessSignupLink} />
           </div>
         </article>
       </section>

@@ -80,9 +80,9 @@ export const faqItems: FaqItem[] = [
       "Trading Journal ถูกวางให้เป็นพื้นที่สำหรับบันทึกและรีวิวผลการเทรดอย่างเป็นระบบ",
   },
   {
-    question: "มีระบบ referral code หรือ affiliate ไหม?",
+    question: "มีระบบ Access Code สำหรับสมัครสมาชิกไหม?",
     answer:
-      "หน้า Sign Up รองรับ Referral Code เช่น /signup?ref=EG000 เพื่อระบุผู้แนะนำหรือแคมเปญ",
+      "หน้า Sign Up รองรับ Access Code เช่น /signup?ref=EG000 สำหรับการสมัครผ่านลิงก์ที่ได้รับ",
   },
   {
     question: "Elite Gold Community เหมาะกับใคร?",

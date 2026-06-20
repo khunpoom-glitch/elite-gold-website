@@ -374,7 +374,7 @@ export function HomeContentSections() {
         <Container>
           <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr]">
             <SectionIntro
-              description="รวมคำถามสำคัญเกี่ยวกับ Membership, Trading Education, Trading Journal, Community และ Referral Code"
+              description="รวมคำถามสำคัญเกี่ยวกับ Membership, Trading Education, Trading Journal, Community และ Access Code"
               eyebrow="FAQ"
               title="คำถามที่พบบ่อยเกี่ยวกับ Elite Gold Community"
             />

@@ -10,7 +10,22 @@ export const AUTH_MODAL_ROUTES = {
 export type AuthModalMode = keyof typeof AUTH_MODAL_ROUTES;
 
 export type AuthModalEventDetail = {
+  accessCode?: string;
   mode: AuthModalMode;
-  referralCode?: string;
   returnHref?: string;
 };
+
+export function getAuthModalRouteHref(mode: AuthModalMode, accessCode?: string) {
+  const route = AUTH_MODAL_ROUTES[mode];
+  const normalizedAccessCode = accessCode?.trim();
+
+  if (mode !== "signup" || !normalizedAccessCode) {
+    return route;
+  }
+
+  const searchParams = new URLSearchParams({
+    ref: normalizedAccessCode.toUpperCase(),
+  });
+
+  return `${route}?${searchParams.toString()}`;
+}

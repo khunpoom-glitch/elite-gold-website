@@ -1098,15 +1098,6 @@ textarea {
   outline-offset: 2px;
 }
 
-.auth-modal-panel form input.auth-referral-input,
-.auth-referral-input {
-  cursor: not-allowed;
-  border-color: rgba(230, 199, 102, 0.32);
-  background: #000000;
-  color: var(--champagne);
-  font-weight: 700;
-}
-
 .auth-login-options {
   display: flex;
   align-items: center;
@@ -1200,10 +1191,6 @@ textarea {
 .auth-modal-panel form > p {
   margin-top: 0.48rem;
   line-height: 1.45;
-}
-
-.auth-modal-panel form > p.auth-referral-help {
-  margin-top: 0.62rem;
 }
 
 .auth-modal-panel form > p.auth-signup-switch-copy {

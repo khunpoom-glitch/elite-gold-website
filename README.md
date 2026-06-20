@@ -12,7 +12,7 @@ https://elitegoldcommunity.com
 
 This repository is in Phase 1 of 6: the public website foundation.
 
-Phase 1 includes the brand-forward public site, one-page public sections, Login/Sign Up modal entry points, referral-code-ready signup URLs, legal pages, SEO/social preview routes, Supabase environment wiring for later auth/data work, and Vercel/GitHub Actions deployment.
+Phase 1 includes the brand-forward public site, one-page public sections, Login/Sign Up modal entry points, access-code-ready signup URLs, legal pages, SEO/social preview routes, Supabase environment wiring for later auth/data work, and Vercel/GitHub Actions deployment.
 
 Phase 1 does not include the final authenticated member dashboard, payment flow, live Trading Journal backend, or full course platform.
 

@@ -6,16 +6,17 @@ import {
   AUTH_MODAL_EVENT_NAME,
   AUTH_MODAL_ROUTES,
   AUTH_MODAL_SKIP_SCROLL_EVENT_NAME,
+  getAuthModalRouteHref,
   type AuthModalEventDetail,
 } from "@/config/auth-modal";
 import { HOME_PATH } from "@/config/home-sections";
 import type { GoogleSignupProfile } from "@/lib/member/profile";
 
 type AuthRouteModalProps = {
+  accessCode?: string;
   initialGoogleSignupProfile?: GoogleSignupProfile;
   initialMode?: AuthMode | null;
   initialNotice?: string;
-  referralCode?: string;
 };
 
 function getModeFromPathname(pathname: string): AuthMode | null {
@@ -34,7 +35,7 @@ function getModeFromPathname(pathname: string): AuthMode | null {
   return null;
 }
 
-function getReferralCodeFromSearch(search: string) {
+function getAccessCodeFromSearch(search: string) {
   const searchParams = new URLSearchParams(search);
 
   return (
@@ -72,34 +73,34 @@ function getInitialMode(initialMode?: AuthMode | null) {
   return getModeFromPathname(window.location.pathname);
 }
 
-function getInitialReferralCode(referralCode?: string) {
-  if (referralCode) {
-    return referralCode;
+function getInitialAccessCode(accessCode?: string) {
+  if (accessCode) {
+    return accessCode;
   }
 
   if (typeof window === "undefined") {
     return undefined;
   }
 
-  return getReferralCodeFromSearch(window.location.search);
+  return getAccessCodeFromSearch(window.location.search);
 }
 
 export function AuthRouteModal({
+  accessCode,
   initialGoogleSignupProfile,
   initialMode = null,
   initialNotice,
-  referralCode,
 }: AuthRouteModalProps) {
   const [mode, setMode] = useState<AuthMode | null>(() => getInitialMode(initialMode));
-  const [activeReferralCode, setActiveReferralCode] = useState<string | undefined>(() =>
-    getInitialReferralCode(referralCode),
+  const [activeAccessCode, setActiveAccessCode] = useState<string | undefined>(() =>
+    getInitialAccessCode(accessCode),
   );
   const [returnHref, setReturnHref] = useState(HOME_PATH);
 
   useEffect(() => {
     function syncFromLocation() {
       setMode(getModeFromPathname(window.location.pathname));
-      setActiveReferralCode(getReferralCodeFromSearch(window.location.search));
+      setActiveAccessCode(getAccessCodeFromSearch(window.location.search));
     }
 
     function handleAuthModalEvent(event: Event) {
@@ -110,9 +111,11 @@ export function AuthRouteModal({
       }
 
       setMode(detail.mode);
-      setActiveReferralCode(detail.referralCode ?? getReferralCodeFromSearch(window.location.search));
+      const nextAccessCode = detail.accessCode ?? getAccessCodeFromSearch(window.location.search);
+
+      setActiveAccessCode(nextAccessCode);
       setReturnHref(detail.returnHref ?? HOME_PATH);
-      pushUrlWithoutRouteRefresh(AUTH_MODAL_ROUTES[detail.mode]);
+      pushUrlWithoutRouteRefresh(getAuthModalRouteHref(detail.mode, nextAccessCode));
     }
 
     window.addEventListener("popstate", syncFromLocation);
@@ -131,18 +134,17 @@ export function AuthRouteModal({
 
   function changeMode(nextMode: AuthMode) {
     setMode(nextMode);
-    setActiveReferralCode(undefined);
-    pushUrlWithoutRouteRefresh(AUTH_MODAL_ROUTES[nextMode]);
+    pushUrlWithoutRouteRefresh(getAuthModalRouteHref(nextMode, activeAccessCode));
   }
 
   return (
     <AuthModal
+      accessCode={activeAccessCode}
       googleSignupProfile={initialGoogleSignupProfile}
       mode={mode}
       notice={initialNotice}
       onClose={closeModal}
       onModeChange={changeMode}
-      referralCode={activeReferralCode}
     />
   );
 }

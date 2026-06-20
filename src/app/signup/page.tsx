@@ -10,7 +10,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Sign Up",
-  description: "Sign Up พร้อม Referral Code สำหรับ Elite Gold Community",
+  description: "Sign Up พร้อม Access Code สำหรับ Elite Gold Community",
   alternates: {
     canonical: "/signup",
   },
@@ -41,7 +41,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
   const authProvider = getFirstSearchParam(params.auth);
   const nextPath = getSafeRedirectPath(getFirstSearchParam(params.next));
   const notice = getFirstSearchParam(params.notice);
-  const referralCode =
+  const accessCode =
     getFirstSearchParam(params.ref) ??
     getFirstSearchParam(params.refCode) ??
     getFirstSearchParam(params.referral) ??
@@ -69,9 +69,9 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
 
   return (
     <HomePage
+      initialAccessCode={accessCode}
       initialAuthMode="signup"
       initialAuthNotice={notice}
-      initialReferralCode={referralCode}
       initialGoogleSignupProfile={googleSignupProfile}
     />
   );

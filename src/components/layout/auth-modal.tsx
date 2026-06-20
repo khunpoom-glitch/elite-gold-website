@@ -10,21 +10,21 @@ import type { GoogleSignupProfile } from "@/lib/member/profile";
 export type AuthMode = AuthModalMode;
 
 type AuthModalProps = {
+  accessCode?: string;
   googleSignupProfile?: GoogleSignupProfile;
   mode: AuthMode | null;
   notice?: string;
   onClose: () => void;
   onModeChange: (mode: AuthMode) => void;
-  referralCode?: string;
 };
 
 export function AuthModal({
+  accessCode,
   googleSignupProfile,
   mode,
   notice,
   onClose,
   onModeChange,
-  referralCode,
 }: AuthModalProps) {
   useEffect(() => {
     if (!mode) {
@@ -125,7 +125,7 @@ export function AuthModal({
           notice={notice}
           onClose={onClose}
           onLoginClick={() => onModeChange("login")}
-          referralCode={referralCode}
+          accessCode={accessCode}
           titleId="auth-modal-title"
         />
       </div>

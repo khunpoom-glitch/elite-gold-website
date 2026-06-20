@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { normalizeLocalOrigin } from "@/lib/auth/origin";
-import { getSafeRedirectPath, normalizeReferralCode } from "@/lib/auth/validation";
+import { getSafeRedirectPath, normalizeAccessCode } from "@/lib/auth/validation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   const origin = normalizeLocalOrigin(requestUrl.origin);
   const nextPath = getSafeRedirectPath(requestUrl.searchParams.get("next"));
   const intent = requestUrl.searchParams.get("intent") === "signup" ? "signup" : "login";
-  const referralCode = normalizeReferralCode(
+  const accessCode = normalizeAccessCode(
     requestUrl.searchParams.get("ref") ??
       requestUrl.searchParams.get("refCode") ??
       requestUrl.searchParams.get("referral") ??
@@ -18,7 +18,10 @@ export async function GET(request: NextRequest) {
 
   callbackUrl.searchParams.set("next", nextPath);
   callbackUrl.searchParams.set("intent", intent);
-  callbackUrl.searchParams.set("ref", referralCode);
+
+  if (accessCode) {
+    callbackUrl.searchParams.set("ref", accessCode);
+  }
 
   const supabase = await createSupabaseServerClient();
 
