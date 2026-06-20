@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { GraduationCap } from "lucide-react";
 import { ModulePlaceholder } from "@/components/dashboard/module-placeholder";
+import { getActiveMemberOrRedirect } from "@/lib/member/session";
 
 export const metadata: Metadata = {
   title: "Education",
 };
 
-export default function DashboardEducationPage() {
+export default async function DashboardEducationPage() {
+  await getActiveMemberOrRedirect("/dashboard/education");
+
   return (
     <ModulePlaceholder
       description="Education route นี้เปิด navigation และ preview shell สำหรับ Phase 3 ก่อนต่อ Course Library, Lessons, Progress Tracking และ Documents ใน Phase 4."

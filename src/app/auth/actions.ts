@@ -3,9 +3,16 @@
 import type { User } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { sendGoogleSignupWelcomeEmail } from "@/lib/email/resend";
+import {
+  sendEmailVerificationEmail,
+  sendGoogleSignupWelcomeEmail,
+} from "@/lib/email/resend";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AuthActionState } from "@/lib/auth/action-state";
+import {
+  createEmailVerificationToken,
+  getEmailVerificationExpiresAt,
+} from "@/lib/auth/email-verification";
 import { getRequestOrigin } from "@/lib/auth/origin";
 import {
   getSafeRedirectPath,
@@ -16,6 +23,7 @@ import {
   validateUpdatePasswordForm,
   validateUpdateProfileForm,
 } from "@/lib/auth/validation";
+import { getMemberProfileByUserId, type MemberProfile } from "@/lib/member/profile";
 
 type AccessCodeStatus = "bootstrap" | "valid" | "missing" | "invalid";
 
@@ -39,7 +47,7 @@ function successState(message: string, redirectTo?: string): AuthActionState {
 }
 
 const signupSuccessMessage =
-  "Signup successful. Please check your email and click Verify Email to activate your account.";
+  "Signup successful. Please check your email and click Verify Email to activate member features.";
 
 const googleSignupSuccessMessage =
   "Signup successful. Your Google account is connected and your member profile is ready.";
@@ -68,6 +76,39 @@ function getUserEmailConfirmedAt(user: User) {
 
 function getMemberDisplayName(fields: { firstName?: string; fullName?: string; nickname?: string }) {
   return fields.nickname || fields.firstName || fields.fullName || "Elite Gold Member";
+}
+
+async function issueEmailVerificationEmail(
+  supabase: NonNullable<Awaited<ReturnType<typeof createSupabaseServerClient>>>,
+  profile: MemberProfile,
+) {
+  const { token, tokenHash } = createEmailVerificationToken();
+  const expiresAt = getEmailVerificationExpiresAt();
+  const { error } = await supabase.rpc("create_elite_email_verification_token", {
+    input_expires_at: expiresAt.toISOString(),
+    input_token_hash: tokenHash,
+  });
+
+  if (error) {
+    console.error("[auth] Failed to create email verification token.", {
+      code: error.code,
+      message: error.message,
+    });
+
+    return { ok: false as const };
+  }
+
+  const verificationUrl = new URL("/auth/verify-email", await getRequestOrigin());
+  verificationUrl.searchParams.set("token", token);
+
+  const emailResult = await sendEmailVerificationEmail({
+    memberAccessCode: profile.memberAccessCode,
+    name: getMemberDisplayName(profile),
+    to: profile.email,
+    verificationUrl: verificationUrl.toString(),
+  });
+
+  return { ok: emailResult.ok } as const;
 }
 
 function getMemberAccessCode(row: unknown) {
@@ -259,7 +300,6 @@ export async function signupWithPasswordAction(
     return client.state;
   }
 
-  const nextPath = getSafeRedirectPath(getStringField(formData, "next"));
   const { password, ...profile } = validation.data;
   const accessCode = await resolveSignupAccessCode(client.supabase, profile.signupAccessCode);
 
@@ -267,11 +307,10 @@ export async function signupWithPasswordAction(
     return accessCode.state;
   }
 
-  const { error } = await client.supabase.auth.signUp({
+  const { error, data } = await client.supabase.auth.signUp({
     email: profile.email,
     password,
     options: {
-      emailRedirectTo: await getAuthCallbackUrl(nextPath),
       data: {
         first_name: profile.firstName,
         last_name: profile.lastName,
@@ -294,9 +333,66 @@ export async function signupWithPasswordAction(
     return errorState(getReadableAuthError(error.message));
   }
 
+  if (!data.user) {
+    return errorState("Signup was created, but the member profile could not be confirmed. Please try logging in and resend the verification email from My Profile.");
+  }
+
+  const memberProfile = await getMemberProfileByUserId(client.supabase, data.user.id);
+
+  if (!memberProfile) {
+    return errorState("Signup was created, but the member profile could not be loaded. Please try logging in and resend the verification email from My Profile.");
+  }
+
+  const verification = await issueEmailVerificationEmail(client.supabase, memberProfile);
+
+  if (!verification.ok) {
+    return errorState("Signup was created, but the verification email could not be sent. Please login and resend it from My Profile.");
+  }
+
   revalidatePath("/", "layout");
 
   return successState(signupSuccessMessage);
+}
+
+export async function resendEmailVerificationAction(
+  _previousState: AuthActionState,
+  _formData: FormData,
+): Promise<AuthActionState> {
+  void _previousState;
+  void _formData;
+
+  const client = await getConfiguredSupabaseClient();
+
+  if (!client.ok) {
+    return client.state;
+  }
+
+  const {
+    data: { user },
+    error: userError,
+  } = await client.supabase.auth.getUser();
+
+  if (userError || !user) {
+    return errorState("Please login before requesting a new verification email.");
+  }
+
+  const profile = await getMemberProfileByUserId(client.supabase, user.id);
+
+  if (!profile) {
+    return errorState("Member profile was not found. Please complete signup again.");
+  }
+
+  if (profile.status === "active") {
+    return successState("Your email is already verified.");
+  }
+
+  const verification = await issueEmailVerificationEmail(client.supabase, profile);
+
+  if (!verification.ok) {
+    return errorState("We could not send the verification email right now. Please try again.");
+  }
+
+  return successState("Verification email sent. Please check your inbox and click Verify Email.");
 }
 
 export async function completeGoogleSignupAction(

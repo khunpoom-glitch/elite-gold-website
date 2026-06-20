@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
 import { siteConfig } from "@/config/site";
-import { getAuthenticatedMember } from "@/lib/member/session";
+import { getActiveMemberOrRedirect } from "@/lib/member/session";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -60,7 +60,7 @@ function getAccessSignupLink(accessCode: string) {
 }
 
 export default async function DashboardPage() {
-  const { email, memberName, memberStatus, profile } = await getAuthenticatedMember("/dashboard");
+  const { email, memberName, memberStatus, profile } = await getActiveMemberOrRedirect("/dashboard");
   const accessSignupLink = getAccessSignupLink(profile.memberAccessCode);
   const statusTone = getStatusTone(profile.status);
 

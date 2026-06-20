@@ -1,6 +1,10 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { getMemberProfileByUserId, getReadableMemberStatus } from "@/lib/member/profile";
+import {
+  getMemberProfileByUserId,
+  getReadableMemberStatus,
+  isActiveMemberStatus,
+} from "@/lib/member/profile";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function getLoginRedirectPath(nextPath: string) {
@@ -32,12 +36,24 @@ export const getAuthenticatedMember = cache(async (nextPath = "/dashboard") => {
   const email = profile.email || user.email || "Elite Gold Member";
   const memberName = profile.nickname || profile.firstName || profile.fullName || "Elite Gold Member";
   const memberStatus = getReadableMemberStatus(profile.status);
+  const isMemberActive = isActiveMemberStatus(profile.status);
 
   return {
     email,
+    isMemberActive,
     memberName,
     memberStatus,
     profile,
     user,
   };
 });
+
+export async function getActiveMemberOrRedirect(nextPath = "/dashboard") {
+  const member = await getAuthenticatedMember(nextPath);
+
+  if (!member.isMemberActive) {
+    redirect("/dashboard/account?notice=verify_required");
+  }
+
+  return member;
+}

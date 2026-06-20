@@ -19,7 +19,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { email, memberName, memberStatus } = await getAuthenticatedMember();
+  const { email, isMemberActive, memberName, memberStatus } = await getAuthenticatedMember();
 
   return (
     <main className="airova-reference-page dark min-h-dvh bg-background text-foreground">
@@ -27,6 +27,7 @@ export default async function DashboardLayout({
         memberEmail={email}
         memberName={memberName}
         memberStatus={memberStatus}
+        isMemberActive={isMemberActive}
       />
 
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_22%_0%,rgba(212,175,55,0.16),transparent_34%),radial-gradient(circle_at_82%_18%,rgba(246,227,163,0.08),transparent_30%),linear-gradient(180deg,rgba(0,0,0,0.05),#000_74%)]" />

@@ -20,6 +20,7 @@ import { logoutAction } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
 
 type SessionNavBarProps = {
+  isMemberActive: boolean;
   memberEmail: string;
   memberName: string;
   memberStatus: string;
@@ -91,6 +92,22 @@ const navigationItems: NavItem[] = [
     status: "Live",
   },
 ];
+
+function getNavigationItems(isMemberActive: boolean) {
+  if (isMemberActive) {
+    return navigationItems;
+  }
+
+  return navigationItems.map((item) =>
+    item.href === "/dashboard/account"
+      ? item
+      : {
+          ...item,
+          href: undefined,
+          status: "Locked",
+        },
+  );
+}
 
 function getInitial(email: string) {
   return email.trim().charAt(0).toUpperCase() || "E";
@@ -174,6 +191,7 @@ function MobileNavItem({ item, pathname }: { item: NavItem; pathname: string }) 
 }
 
 export function SessionNavBar({
+  isMemberActive,
   memberEmail,
   memberName,
   memberStatus,
@@ -181,6 +199,7 @@ export function SessionNavBar({
   const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
   const memberInitial = getInitial(memberName || memberEmail);
+  const visibleNavigationItems = getNavigationItems(isMemberActive);
 
   function handleBlur(event: FocusEvent<HTMLElement>) {
     const nextTarget = event.relatedTarget as Node | null;
@@ -230,7 +249,7 @@ export function SessionNavBar({
           </div>
 
           <nav className="grid gap-1" aria-label="Dashboard sections">
-            {navigationItems.map((item) => (
+            {visibleNavigationItems.map((item) => (
               <SidebarNavItem
                 isCollapsed={isCollapsed}
                 item={item}
@@ -297,7 +316,7 @@ export function SessionNavBar({
         aria-label="Member navigation"
         className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-5 gap-1 rounded-full border border-white/10 bg-black/88 p-1 shadow-[0_22px_70px_rgba(0,0,0,0.46)] backdrop-blur-xl md:hidden"
       >
-        {navigationItems.map((item) => (
+        {visibleNavigationItems.map((item) => (
           <MobileNavItem item={item} key={item.label} pathname={pathname} />
         ))}
       </nav>

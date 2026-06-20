@@ -9,6 +9,7 @@ import { initialAuthActionState } from "@/lib/auth/action-state";
 import type { MemberProfile } from "@/lib/member/profile";
 
 type MemberProfileFormProps = {
+  isMemberActive?: boolean;
   profile: Pick<
     MemberProfile,
     | "email"
@@ -31,7 +32,10 @@ function FieldError({ message }: { message?: string }) {
   return <span className="text-xs font-medium text-[#F6E3A3]">{message}</span>;
 }
 
-export function MemberProfileForm({ profile }: MemberProfileFormProps) {
+export function MemberProfileForm({
+  isMemberActive = true,
+  profile,
+}: MemberProfileFormProps) {
   const [state, formAction, isPending] = useActionState(
     updateMemberProfileAction,
     initialAuthActionState,
@@ -128,12 +132,14 @@ export function MemberProfileForm({ profile }: MemberProfileFormProps) {
           My Access Code
           <Input
             aria-describedby="member-access-readonly-note"
-            defaultValue={profile.memberAccessCode}
+            defaultValue={isMemberActive ? profile.memberAccessCode : "Locked until email verification"}
             name="memberAccessCodeDisplay"
             readOnly
           />
           <span className="text-xs font-normal text-white/40" id="member-access-readonly-note">
-            This is the code members can share with new applicants.
+            {isMemberActive
+              ? "This is the code members can share with new applicants."
+              : "Verify your email before using member access features."}
           </span>
         </label>
       </div>

@@ -157,7 +157,7 @@ export function buildGoogleSignupWelcomeEmail({
     getWelcomeTitle(name),
     `<p style="margin:0 0 16px;">Hi ${safeName},</p>
      <p style="margin:0 0 16px;color:#CFCFCF;">Your Elite Gold account has been successfully created.</p>
-     <p style="margin:0 0 24px;color:#CFCFCF;">Please verify your email address to activate your account and access all member features.</p>
+     <p style="margin:0 0 24px;color:#CFCFCF;">Your Google email is verified. Your member profile is active and ready for the Elite Gold member area.</p>
      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 26px;border-collapse:collapse;">
        <tr>
          <td align="center" style="border:1px solid rgba(212,175,55,0.25);border-radius:16px;background:#0B0B0B;padding:16px 18px;color:#8A8A8A;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;">
@@ -166,9 +166,9 @@ export function buildGoogleSignupWelcomeEmail({
          </td>
        </tr>
      </table>
-     ${getButtonHtml(safeDashboardUrl, "Verify Email")}`,
+     ${getButtonHtml(safeDashboardUrl, "Open Dashboard")}`,
   );
-  const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold account has been successfully created.\nPlease verify your email address to activate your account and access all member features.\n\nMember ID: ${getMemberIdFromAccessCode(memberAccessCode)}\n\nVerify Email: ${dashboardUrl}`;
+  const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold account has been successfully created.\nYour Google email is verified. Your member profile is active and ready for the Elite Gold member area.\n\nMember ID: ${getMemberIdFromAccessCode(memberAccessCode)}\n\nOpen Dashboard: ${dashboardUrl}`;
 
   return {
     headers: {
@@ -176,6 +176,46 @@ export function buildGoogleSignupWelcomeEmail({
     },
     html,
     subject: "Welcome to Elite Gold",
+    text,
+  };
+}
+
+export function buildEmailVerificationEmail({
+  memberAccessCode,
+  name,
+  verificationUrl,
+}: {
+  memberAccessCode: string;
+  name: string;
+  verificationUrl: string;
+}) {
+  const safeName = escapeHtml(name || "Elite Gold Member");
+  const safeMemberId = escapeHtml(getMemberIdFromAccessCode(memberAccessCode));
+  const safeVerificationUrl = escapeHtml(verificationUrl);
+  const html = getEmailShell(
+    getWelcomeTitle(name),
+    `<p style="margin:0 0 16px;">Hi ${safeName},</p>
+     <p style="margin:0 0 16px;color:#CFCFCF;">Your Elite Gold account has been successfully created.</p>
+     <p style="margin:0 0 24px;color:#CFCFCF;">Please verify your email address to activate your account and unlock member features.</p>
+     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 26px;border-collapse:collapse;">
+       <tr>
+         <td align="center" style="border:1px solid rgba(212,175,55,0.25);border-radius:16px;background:#0B0B0B;padding:16px 18px;color:#8A8A8A;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;">
+           Member ID<br>
+           <strong style="display:inline-block;margin-top:6px;color:#E6C85C;font-size:22px;letter-spacing:0.08em;">${safeMemberId}</strong>
+         </td>
+       </tr>
+     </table>
+     ${getButtonHtml(safeVerificationUrl, "Verify Email")}
+     <p style="margin:22px 0 0;color:#8f8f99;font-size:12px;line-height:1.6;">If the button does not work, copy and paste this link into your browser:<br>${safeVerificationUrl}</p>`,
+  );
+  const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold account has been successfully created.\nPlease verify your email address to activate your account and unlock member features.\n\nMember ID: ${getMemberIdFromAccessCode(memberAccessCode)}\n\nVerify Email: ${verificationUrl}`;
+
+  return {
+    headers: {
+      "X-Entity-Ref-ID": `elite-email-verification-${safeMemberId}`,
+    },
+    html,
+    subject: "Verify your Elite Gold email",
     text,
   };
 }
@@ -247,6 +287,32 @@ export async function sendGoogleSignupWelcomeEmail({
     dashboardUrl,
     memberAccessCode,
     name,
+  });
+
+  return sendTransactionalEmail({
+    headers: email.headers,
+    html: email.html,
+    subject: email.subject,
+    text: email.text,
+    to,
+  });
+}
+
+export async function sendEmailVerificationEmail({
+  memberAccessCode,
+  name,
+  to,
+  verificationUrl,
+}: {
+  memberAccessCode: string;
+  name: string;
+  to: string;
+  verificationUrl: string;
+}) {
+  const email = buildEmailVerificationEmail({
+    memberAccessCode,
+    name,
+    verificationUrl,
   });
 
   return sendTransactionalEmail({

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { KeyRound, MailCheck, ReceiptText, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import { EmailVerificationBanner } from "@/components/dashboard/email-verification-banner";
 import { MemberProfileForm } from "@/components/dashboard/member-profile-form";
 import { getAuthenticatedMember } from "@/lib/member/session";
 
@@ -11,8 +12,56 @@ function formatEmailStatus(emailConfirmedAt: string | null) {
   return emailConfirmedAt ? "Email confirmed" : "Pending confirmation";
 }
 
-export default async function AccountPage() {
-  const { memberStatus, profile } = await getAuthenticatedMember("/dashboard/account");
+type AccountPageProps = {
+  searchParams: Promise<{
+    notice?: string | string[];
+    verified?: string | string[];
+  }>;
+};
+
+function getFirstSearchParam(value?: string | string[]) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function getAccountNotice(verified?: string, notice?: string) {
+  if (verified === "email") {
+    return {
+      message: "Email verified successfully. Your member status is Active.",
+      tone: "success" as const,
+    };
+  }
+
+  if (notice === "verify_required") {
+    return {
+      message: "Please verify your email before opening member features.",
+      tone: "warning" as const,
+    };
+  }
+
+  if (notice === "verification_expired") {
+    return {
+      message: "This verification link has expired. Send a new verification email below.",
+      tone: "warning" as const,
+    };
+  }
+
+  if (notice === "verification_invalid") {
+    return {
+      message: "This verification link is invalid or has already been used. Send a new verification email below.",
+      tone: "warning" as const,
+    };
+  }
+
+  return null;
+}
+
+export default async function AccountPage({ searchParams }: AccountPageProps) {
+  const params = await searchParams;
+  const accountNotice = getAccountNotice(
+    getFirstSearchParam(params.verified),
+    getFirstSearchParam(params.notice),
+  );
+  const { isMemberActive, memberStatus, profile } = await getAuthenticatedMember("/dashboard/account");
 
   return (
     <section className="grid gap-6">
@@ -30,6 +79,21 @@ export default async function AccountPage() {
           </p>
         </div>
       </header>
+
+      {accountNotice ? (
+        <div
+          className={
+            accountNotice.tone === "success"
+              ? "rounded-md border border-emerald-400/25 bg-emerald-400/10 px-4 py-3 text-sm font-medium text-emerald-100"
+              : "rounded-md border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-4 py-3 text-sm font-medium text-[#F6E3A3]"
+          }
+          role={accountNotice.tone === "success" ? "status" : "alert"}
+        >
+          {accountNotice.message}
+        </div>
+      ) : null}
+
+      {!isMemberActive ? <EmailVerificationBanner email={profile.email} /> : null}
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <article className="rounded-md border border-white/10 bg-black/72 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)]">
@@ -69,11 +133,11 @@ export default async function AccountPage() {
           </div>
           <div className="inline-flex items-center gap-2 rounded-md border border-gold/20 bg-gold/10 px-3 py-2 text-xs font-semibold text-soft-gold">
             <Sparkles aria-hidden="true" className="size-3.5" />
-            My Code: {profile.memberAccessCode}
+            {isMemberActive ? `My Code: ${profile.memberAccessCode}` : "Verify email to unlock member features"}
           </div>
         </div>
 
-        <MemberProfileForm profile={profile} />
+        <MemberProfileForm isMemberActive={isMemberActive} profile={profile} />
       </section>
 
       <section className="grid gap-4 md:grid-cols-3">

@@ -175,5 +175,9 @@ export function getReadableMemberStatus(status: MemberStatus) {
     return "Active";
   }
 
-  return "Pending Email Confirmation";
+  return "Pending Email Verification";
+}
+
+export function isActiveMemberStatus(status: MemberStatus) {
+  return status === "active";
 }
