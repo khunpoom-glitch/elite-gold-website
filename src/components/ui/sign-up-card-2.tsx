@@ -608,6 +608,7 @@ export function Component({
   );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isGoogleRedirecting, setIsGoogleRedirecting] = useState(false);
   const [isGoogleProfileSyncing, setIsGoogleProfileSyncing] = useState(isGoogleSignup);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
   const autoAccessCode = useMemo(() => getInitialAccessCode(accessCode), [accessCode]);
@@ -686,6 +687,8 @@ export function Component({
   }
 
   function handleGoogleSignup() {
+    setIsGoogleRedirecting(true);
+
     const searchParams = new URLSearchParams({
       intent: "signup",
       next: nextPath,
@@ -695,7 +698,9 @@ export function Component({
       searchParams.set("ref", autoAccessCode);
     }
 
-    window.location.assign(`/auth/google?${searchParams.toString()}`);
+    window.setTimeout(() => {
+      window.location.assign(`/auth/google?${searchParams.toString()}`);
+    }, 120);
   }
 
   return (
@@ -835,15 +840,40 @@ export function Component({
             ) : (
               <>
                 <motion.button
-                  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white"
+                  aria-busy={isGoogleRedirecting}
+                  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-80"
+                  disabled={isGoogleRedirecting}
                   onClick={handleGoogleSignup}
                   style={{ fontSize: "0.78rem", lineHeight: 1 }}
                   type="button"
-                  whileHover={{ scale: 1.018 }}
+                  whileHover={isGoogleRedirecting ? undefined : { scale: 1.018 }}
                   whileTap={{ scale: 0.985 }}
                 >
-                  <GoogleLogo />
-                  Sign Up with Google
+                  <AnimatePresence mode="wait">
+                    {isGoogleRedirecting ? (
+                      <motion.span
+                        animate={{ opacity: 1 }}
+                        className="inline-flex items-center gap-2"
+                        exit={{ opacity: 0 }}
+                        initial={{ opacity: 0 }}
+                        key="google-loading"
+                      >
+                        <span className="size-4 rounded-full border-2 border-[#F6E3A3]/80 border-t-transparent animate-spin" />
+                        Connecting Google...
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        animate={{ opacity: 1 }}
+                        className="inline-flex items-center gap-2"
+                        exit={{ opacity: 0 }}
+                        initial={{ opacity: 0 }}
+                        key="google-ready"
+                      >
+                        <GoogleLogo />
+                        Sign Up with Google
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </motion.button>
 
                 <div className="flex items-center gap-3 py-3">
