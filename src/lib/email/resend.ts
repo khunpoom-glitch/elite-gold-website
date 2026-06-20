@@ -12,6 +12,7 @@ type SendEmailResult =
 
 const resendApiUrl = "https://api.resend.com/emails";
 const fallbackSiteUrl = "https://elitegoldcommunity.com";
+const transactionalFooter = "This is a transactional email from Elite Gold Community.";
 
 function getEnvValue(name: string) {
   return process.env[name]?.trim() ?? "";
@@ -53,10 +54,10 @@ function getPublicAssetUrl(path: string) {
 }
 
 function getButtonHtml(url: string, label: string) {
-  return `<table role="presentation" cellspacing="0" cellpadding="0" align="center" style="margin:0 auto;">
+  return `<table role="presentation" cellspacing="0" cellpadding="0" align="center" style="border-collapse:separate;margin:0 auto;">
     <tr>
-      <td align="center" bgcolor="#d4af37" style="border-radius:999px;background:#d4af37;">
-        <a href="${url}" style="display:inline-block;border-radius:999px;background:#d4af37;color:#050505;font-size:15px;font-weight:800;line-height:1.2;text-decoration:none;padding:14px 24px;">${escapeHtml(label)}</a>
+      <td align="center" bgcolor="#d8b83d" style="border-radius:999px;background:#d8b83d;">
+        <a href="${url}" style="display:inline-block;border-radius:999px;background:#d8b83d;color:#050505;font-size:15px;font-weight:800;line-height:1.2;text-decoration:none;padding:14px 28px;">${escapeHtml(label)}</a>
       </td>
     </tr>
   </table>`;
@@ -64,42 +65,54 @@ function getButtonHtml(url: string, label: string) {
 
 function getEmailShell(title: string, body: string) {
   const logoUrl = escapeHtml(getPublicAssetUrl("/brand/elite-gold-logo.png"));
+  const safeTitle = escapeHtml(title);
 
   return `<!doctype html>
-<html lang="en">
+<html lang="en" style="margin:0;padding:0;background-color:#000000;">
   <head>
     <meta charset="utf-8">
-    <meta name="color-scheme" content="dark">
+    <meta name="color-scheme" content="dark only">
     <meta name="supported-color-schemes" content="dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       :root { color-scheme: dark; supported-color-schemes: dark; }
-      body { background-color: #050505 !important; }
-      .elite-card, .elite-card td { background-color: #090909 !important; }
-      .elite-bg { background-color: #050505 !important; }
+      html, body { margin: 0 !important; padding: 0 !important; min-width: 100% !important; width: 100% !important; background-color: #000000 !important; }
+      body, table, td, p, a { font-family: Arial, Helvetica, sans-serif; }
+      .elite-bg, .elite-bg td { background-color: #000000 !important; }
+      .elite-card, .elite-card td { background-color: #070707 !important; }
       a { color: #050505; }
+      @media (prefers-color-scheme: light) {
+        html, body, .elite-bg, .elite-bg td { background-color: #000000 !important; }
+        .elite-card, .elite-card td { background-color: #070707 !important; }
+      }
+      @media screen and (max-width: 600px) {
+        .elite-email-wrap { padding: 28px 14px !important; }
+        .elite-card-header { padding: 28px 22px 20px !important; }
+        .elite-card-body { padding: 26px 22px !important; }
+        .elite-title { font-size: 25px !important; }
+      }
     </style>
   </head>
-  <body bgcolor="#050505" style="margin:0;background:#050505 !important;color:#f8fafc;font-family:Arial,Helvetica,sans-serif;">
-    <table class="elite-bg" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#050505" style="background:#050505 !important;padding:32px 16px;">
+  <body bgcolor="#000000" style="margin:0;padding:0;background-color:#000000 !important;color:#f8fafc;font-family:Arial,Helvetica,sans-serif;">
+    <table class="elite-bg" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#000000" style="min-width:100%;width:100%;background-color:#000000 !important;">
       <tr>
-        <td class="elite-bg" align="center" bgcolor="#050505" style="background:#050505 !important;">
-          <table class="elite-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#090909" style="max-width:560px;border:1px solid #4a3a0c;border-radius:18px;background:#090909 !important;overflow:hidden;">
+        <td class="elite-bg elite-email-wrap" align="center" bgcolor="#000000" style="background-color:#000000 !important;padding:44px 16px;">
+          <table class="elite-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#070707" style="border-collapse:separate;width:100%;max-width:600px;border:1px solid #4a3a0c;border-radius:22px;background-color:#070707 !important;overflow:hidden;">
             <tr>
-              <td align="center" bgcolor="#090909" style="padding:30px 28px 20px;border-bottom:1px solid #1f1f1f;background:#090909 !important;text-align:center;">
-                <img alt="Elite Gold" src="${logoUrl}" width="72" style="display:block;width:72px;max-width:72px;height:auto;margin:0 auto 16px;">
-                <p style="margin:0 0 8px;color:#d4af37;font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;">Elite Gold Community</p>
-                <h1 style="margin:0;color:#ffffff;font-size:26px;line-height:1.25;">${escapeHtml(title)}</h1>
+              <td class="elite-card-header" align="center" bgcolor="#070707" style="padding:34px 28px 24px;border-bottom:1px solid #1f1f1f;background-color:#070707 !important;text-align:center;">
+                <img alt="Elite Gold" src="${logoUrl}" width="96" style="display:block;width:96px;max-width:96px;height:auto;margin:0 auto 18px;border:0;outline:none;text-decoration:none;">
+                <p style="margin:0 0 10px;color:#d4af37;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;">Elite Gold Community</p>
+                <h1 class="elite-title" style="margin:0;color:#ffffff;font-size:28px;line-height:1.25;font-weight:800;">${safeTitle}</h1>
               </td>
             </tr>
             <tr>
-              <td bgcolor="#090909" style="padding:28px;color:#d7d7df;font-size:15px;line-height:1.7;background:#090909 !important;">
+              <td class="elite-card-body" bgcolor="#070707" style="padding:32px 32px 34px;color:#d7d7df;font-size:15px;line-height:1.7;background-color:#070707 !important;">
                 ${body}
               </td>
             </tr>
             <tr>
-              <td bgcolor="#090909" style="padding:18px 28px;border-top:1px solid #1f1f1f;color:#8f8f99;font-size:12px;line-height:1.6;background:#090909 !important;text-align:center;">
-                This is a transactional email from Elite Gold Community.
+              <td bgcolor="#070707" style="padding:20px 28px;border-top:1px solid #1f1f1f;color:#8f8f99;font-size:12px;line-height:1.6;background-color:#070707 !important;text-align:center;">
+                ${transactionalFooter}
               </td>
             </tr>
           </table>
@@ -108,6 +121,37 @@ function getEmailShell(title: string, body: string) {
     </table>
   </body>
 </html>`;
+}
+
+export function buildGoogleSignupWelcomeEmail({
+  dashboardUrl,
+  memberAccessCode,
+  name,
+}: {
+  dashboardUrl: string;
+  memberAccessCode: string;
+  name: string;
+}) {
+  const safeName = escapeHtml(name || "Elite Gold Member");
+  const safeAccessCode = escapeHtml(memberAccessCode || "Pending");
+  const safeDashboardUrl = escapeHtml(dashboardUrl);
+  const html = getEmailShell(
+    "Welcome to Elite Gold",
+    `<p style="margin:0 0 16px;">Hi ${safeName},</p>
+     <p style="margin:0 0 16px;">Your Elite Gold member profile has been created successfully.</p>
+     <p style="margin:0 0 24px;">Your access code: <strong style="color:#f6e3a3;">${safeAccessCode}</strong></p>
+     ${getButtonHtml(safeDashboardUrl, "Verify Email")}`,
+  );
+  const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold member profile has been created successfully.\nYour access code: ${memberAccessCode || "Pending"}\n\nVerify Email: ${dashboardUrl}`;
+
+  return {
+    headers: {
+      "X-Entity-Ref-ID": `elite-google-welcome-${safeAccessCode}`,
+    },
+    html,
+    subject: "Welcome to Elite Gold",
+    text,
+  };
 }
 
 export async function sendTransactionalEmail({
@@ -173,25 +217,17 @@ export async function sendGoogleSignupWelcomeEmail({
   name: string;
   to: string;
 }) {
-  const safeName = escapeHtml(name || "Elite Gold Member");
-  const safeAccessCode = escapeHtml(memberAccessCode || "Pending");
-  const safeDashboardUrl = escapeHtml(dashboardUrl);
-  const html = getEmailShell(
-    "Welcome to Elite Gold",
-    `<p style="margin:0 0 16px;">Hi ${safeName},</p>
-     <p style="margin:0 0 16px;">Your Elite Gold member profile has been created successfully.</p>
-     <p style="margin:0 0 20px;">Your access code: <strong style="color:#f6e3a3;">${safeAccessCode}</strong></p>
-     ${getButtonHtml(safeDashboardUrl, "Open Dashboard")}`,
-  );
-  const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold member profile has been created successfully.\nYour access code: ${memberAccessCode || "Pending"}\n\nOpen Dashboard: ${dashboardUrl}`;
+  const email = buildGoogleSignupWelcomeEmail({
+    dashboardUrl,
+    memberAccessCode,
+    name,
+  });
 
   return sendTransactionalEmail({
-    headers: {
-      "X-Entity-Ref-ID": `elite-google-welcome-${safeAccessCode}`,
-    },
-    html,
-    subject: "Welcome to Elite Gold",
-    text,
+    headers: email.headers,
+    html: email.html,
+    subject: email.subject,
+    text: email.text,
     to,
   });
 }
