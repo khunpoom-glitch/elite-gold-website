@@ -5,6 +5,7 @@ import { getSafeRedirectPath } from "@/lib/auth/validation";
 import {
   getGoogleSignupProfileFromUser,
   getMemberProfileByUserId,
+  isActiveMemberStatus,
 } from "@/lib/member/profile";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -59,7 +60,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
     if (user && supabase) {
       const profile = await getMemberProfileByUserId(supabase, user.id);
 
-      if (profile) {
+      if (profile && isActiveMemberStatus(profile.status)) {
         redirect(nextPath);
       }
 

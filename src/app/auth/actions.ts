@@ -44,7 +44,7 @@ function successState(message: string, redirectTo?: string): AuthActionState {
 }
 
 const signupSuccessMessage =
-  "Signup successful. Please check your email and click Verify Email to activate member features.";
+  "Sign up completed. Please check your email and click Verify Email to activate your account.";
 
 function getStringField(formData: FormData, name: string) {
   const value = formData.get(name);
