@@ -4,6 +4,7 @@ export const AUTH_MODAL_SKIP_SCROLL_EVENT_NAME = "elite-gold-auth-modal-skip-scr
 export const AUTH_MODAL_ROUTES = {
   login: "/login",
   signup: "/signup",
+  forgotPassword: "/forgot-password",
 } as const;
 
 export type AuthModalMode = keyof typeof AUTH_MODAL_ROUTES;

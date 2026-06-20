@@ -4,31 +4,19 @@ Public website foundation for Elite Gold Community, a trading education and comm
 
 Production:
 
-https://elite-gold-website.vercel.app
+```bash
+https://elitegoldcommunity.com
+```
 
 ## Phase
 
-This repository is currently in **Phase 1 of 6**.
+This repository is in Phase 1 of 6: the public website foundation.
 
-Phase 1 covers the public website foundation:
-
-- Brand-forward one-page public website.
-- Public sections for About Community, Trading Education, Membership, and FAQ.
-- Login and Sign Up entry points with modal UI.
-- Referral-code-ready Sign Up URL handling.
-- Footer model for Platform, Member Portal, and Legal links.
-- Phase 1 legal routes for Privacy Policy, Terms of Service, and Risk Disclosure.
-- SEO foundation with metadata, sitemap, robots, and a versioned Elite Gold social preview banner.
-- Supabase environment wiring for future auth/data work.
-- Vercel and GitHub Actions deployment.
+Phase 1 includes the brand-forward public site, one-page public sections, Login/Sign Up modal entry points, referral-code-ready signup URLs, legal pages, SEO/social preview routes, Supabase environment wiring for later auth/data work, and Vercel/GitHub Actions deployment.
 
 Phase 1 does not include the final authenticated member dashboard, payment flow, live Trading Journal backend, or full course platform.
 
-Current Phase 1 closure status:
-
-- Public website structure, section copy, legal-content pass, SEO/social preview setup, Supabase env wiring, and deployment workflow are in place.
-- Remaining business decisions: final membership package names, pricing, and feature lists.
-- Remaining infrastructure decision: custom domain and DNS setup after a domain is purchased.
+For current scope, routes, product language, and deployment notes, see `CONTEXT.md`.
 
 ## Stack
 
@@ -41,34 +29,6 @@ Current Phase 1 closure status:
 - Supabase JavaScript client
 - Vercel
 
-## Routes
-
-| Route | Behavior |
-| --- | --- |
-| `/` | Main public one-page website |
-| `/home` | Redirects to `/` |
-| `/about` | Section URL for About Community, redirects to `/` |
-| `/education` | Section URL for Trading Education, redirects to `/` |
-| `/membership` | Section URL for Membership, redirects to `/` |
-| `/faq` | Section URL for FAQ, redirects to `/` |
-| `/login` | Opens the home page with Login modal active |
-| `/signup` | Opens the home page with Sign Up modal active |
-| `/privacy` | Phase 1 Privacy Policy page |
-| `/terms` | Phase 1 Terms of Service page |
-| `/risk-disclosure` | Phase 1 Risk Disclosure page |
-| `/sitemap.xml` | Generated sitemap |
-| `/robots.txt` | Generated robots file |
-| `/opengraph-image` | Versioned Elite Gold Open Graph banner |
-| `/twitter-image` | Versioned Elite Gold Twitter banner |
-
-`/signup` supports referral query parameters such as:
-
-```bash
-/signup?ref=EG000
-```
-
-There is no active public Contact page in the current scope.
-
 ## Environment
 
 Create `.env.local` from `.env.example`.
@@ -77,14 +37,38 @@ Create `.env.local` from `.env.example`.
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SECRET_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+
+# Optional legacy fallback.
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=
+
+# Local-only automation values. Do not expose with NEXT_PUBLIC_ prefixes.
+SUPABASE_ACCESS_TOKEN=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# Server-only transactional email values. Never expose with NEXT_PUBLIC_ prefixes.
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=
+RESEND_FROM_NAME=Elite Gold
+RESEND_REPLY_TO=
+
+# Optional SMTP overrides for Supabase Auth custom SMTP.
+RESEND_SMTP_HOST=smtp.resend.com
+RESEND_SMTP_PORT=587
 ```
 
-Use `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `SUPABASE_SECRET_KEY` for the current Supabase key model. The anon and service role names remain as fallback compatibility fields.
-
 Do not commit secrets.
+
+### Email Delivery
+
+- App-triggered transactional emails use the Resend HTTP API through server-only `RESEND_*` env vars.
+- Supabase Auth emails such as signup confirmation, password recovery, and email-change confirmation should be routed through Resend SMTP.
+- The SMTP setup script also enables Supabase Auth password-changed and email-changed notifications with Elite Gold subjects/templates.
+- After setting `SUPABASE_ACCESS_TOKEN`, `NEXT_PUBLIC_SUPABASE_URL`, `RESEND_API_KEY`, and `RESEND_FROM_EMAIL`, run:
+
+```bash
+npm run supabase:resend-smtp
+```
 
 ## Development
 
@@ -108,15 +92,8 @@ http://localhost:3000
 
 ## Verification
 
-Run lint:
-
 ```bash
 npm run lint
-```
-
-Run production build:
-
-```bash
 npm run build
 ```
 
@@ -127,13 +104,3 @@ Deployment is automated through GitHub Actions and Vercel.
 - Push to `main` deploys production.
 - Push to any other branch deploys a preview.
 - Required GitHub secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
-
-Current production URL:
-
-```bash
-https://elite-gold-website.vercel.app
-```
-
-## Documentation
-
-See `CONTEXT.md` for project context, Phase 1 status, product language, design direction, and remaining Phase 1 work.

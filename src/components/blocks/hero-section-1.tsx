@@ -347,7 +347,7 @@ const HeroHeader = () => {
                                 <Button
                                     asChild
                                     size="sm"
-                                    className={cn('h-9 px-3 text-sm font-medium', isScrolled ? 'lg:inline-flex' : 'hidden')}>
+                                    className={cn('elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled ? 'lg:inline-flex' : 'hidden')}>
                                     <Link
                                         href={AUTH_MODAL_ROUTES.signup}
                                         onClick={(event) => navigateToAuthModal(event, 'signup', () => setMenuState(false))}>

@@ -9,9 +9,12 @@ import {
   type AuthModalEventDetail,
 } from "@/config/auth-modal";
 import { HOME_PATH } from "@/config/home-sections";
+import type { GoogleSignupProfile } from "@/lib/member/profile";
 
 type AuthRouteModalProps = {
+  initialGoogleSignupProfile?: GoogleSignupProfile;
   initialMode?: AuthMode | null;
+  initialNotice?: string;
   referralCode?: string;
 };
 
@@ -22,6 +25,10 @@ function getModeFromPathname(pathname: string): AuthMode | null {
 
   if (pathname === AUTH_MODAL_ROUTES.signup) {
     return "signup";
+  }
+
+  if (pathname === AUTH_MODAL_ROUTES.forgotPassword) {
+    return "forgotPassword";
   }
 
   return null;
@@ -77,7 +84,12 @@ function getInitialReferralCode(referralCode?: string) {
   return getReferralCodeFromSearch(window.location.search);
 }
 
-export function AuthRouteModal({ initialMode = null, referralCode }: AuthRouteModalProps) {
+export function AuthRouteModal({
+  initialGoogleSignupProfile,
+  initialMode = null,
+  initialNotice,
+  referralCode,
+}: AuthRouteModalProps) {
   const [mode, setMode] = useState<AuthMode | null>(() => getInitialMode(initialMode));
   const [activeReferralCode, setActiveReferralCode] = useState<string | undefined>(() =>
     getInitialReferralCode(referralCode),
@@ -125,7 +137,9 @@ export function AuthRouteModal({ initialMode = null, referralCode }: AuthRouteMo
 
   return (
     <AuthModal
+      googleSignupProfile={initialGoogleSignupProfile}
       mode={mode}
+      notice={initialNotice}
       onClose={closeModal}
       onModeChange={changeMode}
       referralCode={activeReferralCode}

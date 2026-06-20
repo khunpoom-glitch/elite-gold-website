@@ -1,69 +1,66 @@
 "use client";
 
-import { useState, type FormEvent, type MouseEvent } from "react";
+import { useActionState, useEffect, useState, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import { ArrowRight, Eye, EyeClosed, Lock, Mail, X } from "lucide-react";
+import { loginWithPasswordAction } from "@/app/auth/actions";
+import { GoogleLogo } from "@/components/ui/google-logo";
+import { initialAuthActionState } from "@/lib/auth/action-state";
 import { cn } from "@/lib/utils";
 
 type SignInCardProps = {
   className?: string;
   onClose?: () => void;
+  onForgotPasswordClick?: () => void;
   onSignupClick?: () => void;
   titleId?: string;
 };
 
-const requiredFields = [
-  { name: "email", label: "Email" },
-  { name: "password", label: "Password" },
-];
+const forgotPasswordLinkClassName =
+  "text-xs font-normal text-[#F6E3A3] transition hover:text-white";
+const forgotPasswordLinkStyle = {
+  fontSize: "0.75rem",
+  fontWeight: 400,
+  lineHeight: "1rem",
+};
 
-function getMissingFields(form: HTMLFormElement) {
-  const formData = new FormData(form);
+function getInitialNextPath() {
+  if (typeof window === "undefined") {
+    return "/dashboard";
+  }
 
-  return requiredFields
-    .filter(({ name }) => {
-      const value = formData.get(name);
-      return typeof value !== "string" || !value.trim();
-    })
-    .map(({ label }) => label);
+  const searchParams = new URLSearchParams(window.location.search);
+
+  return searchParams.get("next") ?? "/dashboard";
 }
 
-function GoogleLogo() {
-  return (
-    <svg aria-hidden="true" className="size-3.5" focusable="false" viewBox="0 0 24 24">
-      <path
-        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-        fill="#4285f4"
-      />
-      <path
-        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C4 20.53 7.7 23 12 23z"
-        fill="#34a853"
-      />
-      <path
-        d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z"
-        fill="#fbbc05"
-      />
-      <path
-        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 4 3.47 2.18 7.06L5.84 9.9C6.71 7.3 9.14 5.38 12 5.38z"
-        fill="#ea4335"
-      />
-    </svg>
+export function Component({
+  className,
+  onClose,
+  onForgotPasswordClick,
+  onSignupClick,
+  titleId,
+}: SignInCardProps) {
+  const [state, formAction, isPending] = useActionState(
+    loginWithPasswordAction,
+    initialAuthActionState,
   );
-}
-
-export function Component({ className, onClose, onSignupClick, titleId }: SignInCardProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [focusedInput, setFocusedInput] = useState<"email" | "password" | null>(null);
-  const [message, setMessage] = useState("");
-  const [formAlert, setFormAlert] = useState("");
+  const [nextPath] = useState(getInitialNextPath);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const rotateX = useTransform(mouseY, [-260, 260], [8, -8]);
   const rotateY = useTransform(mouseX, [-260, 260], [-8, 8]);
+
+  useEffect(() => {
+    if (state.status === "success" && state.redirectTo) {
+      window.location.assign(state.redirectTo);
+    }
+  }, [state]);
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -76,23 +73,13 @@ export function Component({ className, onClose, onSignupClick, titleId }: SignIn
     mouseY.set(0);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function handleGoogleLogin() {
+    const searchParams = new URLSearchParams({
+      intent: "login",
+      next: nextPath,
+    });
 
-    const missingFields = getMissingFields(event.currentTarget);
-
-    if (missingFields.length > 0) {
-      setMessage("");
-      setFormAlert(`กรุณากรอกข้อมูลให้ครบ: ${missingFields.join(", ")}`);
-      return;
-    }
-
-    setFormAlert("");
-    setIsLoading(true);
-    window.setTimeout(() => {
-      setIsLoading(false);
-      setMessage("ระบบ Login กำลังเตรียมเชื่อมต่อกับบัญชีสมาชิก");
-    }, 900);
+    window.location.assign(`/auth/google?${searchParams.toString()}`);
   }
 
   return (
@@ -142,7 +129,8 @@ export function Component({ className, onClose, onSignupClick, titleId }: SignIn
               </p>
             </div>
 
-            <form className="grid gap-3" noValidate onSubmit={handleSubmit}>
+            <form action={formAction} className="grid gap-3" noValidate>
+              <input name="next" type="hidden" value={nextPath} />
               <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-white/80">
                 Email
                 <span className="relative">
@@ -208,26 +196,41 @@ export function Component({ className, onClose, onSignupClick, titleId }: SignIn
                   />
                   Remember me
                 </label>
-                <Link className="text-xs font-semibold text-[#F6E3A3] transition hover:text-white" href="/login">
-                  Forgot password?
-                </Link>
+                {onForgotPasswordClick ? (
+                  <button
+                    className={forgotPasswordLinkClassName}
+                    onClick={onForgotPasswordClick}
+                    style={forgotPasswordLinkStyle}
+                    type="button"
+                  >
+                    Forgot password?
+                  </button>
+                ) : (
+                  <Link
+                    className={forgotPasswordLinkClassName}
+                    href="/forgot-password"
+                    style={forgotPasswordLinkStyle}
+                  >
+                    Forgot password?
+                  </Link>
+                )}
               </div>
 
-              {formAlert ? (
+              {state.status === "error" ? (
                 <div className="rounded-lg border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]" role="alert">
-                  {formAlert}
+                  {state.message}
                 </div>
               ) : null}
 
               <motion.button
                 className="group/button relative mt-2 h-11 overflow-hidden rounded-lg bg-white font-semibold text-black transition disabled:cursor-not-allowed disabled:opacity-70"
-                disabled={isLoading}
+                disabled={isPending}
                 type="submit"
                 whileHover={{ scale: 1.018 }}
                 whileTap={{ scale: 0.985 }}
               >
                 <AnimatePresence mode="wait">
-                  {isLoading ? (
+                  {isPending ? (
                     <motion.span
                       key="loading"
                       className="relative flex h-full items-center justify-center"
@@ -260,6 +263,7 @@ export function Component({ className, onClose, onSignupClick, titleId }: SignIn
 
               <motion.button
                 className="flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white"
+                onClick={handleGoogleLogin}
                 style={{ fontSize: "0.78rem", lineHeight: 1 }}
                 type="button"
                 whileHover={{ scale: 1.018 }}
@@ -286,9 +290,9 @@ export function Component({ className, onClose, onSignupClick, titleId }: SignIn
                 )}
               </p>
 
-              {message ? (
+              {state.status === "success" && !state.redirectTo ? (
                 <p className="rounded-lg border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]">
-                  {message}
+                  {state.message}
                 </p>
               ) : null}
             </form>

@@ -1,21 +1,31 @@
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServerKey =
-  process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { isSupabaseConfigured, supabasePublishableKey, supabaseUrl } from "./config";
 
 export const isSupabaseServerConfigured =
-  Boolean(supabaseUrl) && Boolean(supabaseServerKey);
+  isSupabaseConfigured;
 
-export function createSupabaseServerClient() {
-  if (!supabaseUrl || !supabaseServerKey) {
+export async function createSupabaseServerClient() {
+  if (!supabaseUrl || !supabasePublishableKey) {
     return null;
   }
 
-  return createClient(supabaseUrl, supabaseServerKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
+  const cookieStore = await cookies();
+
+  return createServerClient(supabaseUrl, supabasePublishableKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
+        } catch {
+          // Server Components cannot write cookies; proxy refresh keeps sessions current.
+        }
+      },
     },
   });
 }

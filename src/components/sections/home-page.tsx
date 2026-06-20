@@ -7,6 +7,7 @@ import { HomeContentSections } from "@/components/sections/home-content-sections
 import { HomeScrollController } from "@/components/sections/home-scroll-controller";
 import { EliteGoldNavbarLogo } from "@/components/shared/elite-gold-navbar-logo";
 import { TOP_SECTION_ID, type HomeSectionId } from "@/config/home-sections";
+import type { GoogleSignupProfile } from "@/lib/member/profile";
 
 const prompt = Prompt({
   display: "swap",
@@ -17,10 +18,14 @@ const prompt = Prompt({
 
 export function HomePage({
   initialAuthMode = null,
+  initialAuthNotice,
+  initialGoogleSignupProfile,
   initialReferralCode,
   initialSection = TOP_SECTION_ID,
 }: {
   initialAuthMode?: AuthMode | null;
+  initialAuthNotice?: string;
+  initialGoogleSignupProfile?: GoogleSignupProfile;
   initialReferralCode?: string;
   initialSection?: HomeSectionId;
 }) {
@@ -30,7 +35,12 @@ export function HomePage({
     >
       <HomeScrollController initialSection={initialSection} />
       <HeroSection />
-      <AuthRouteModal initialMode={initialAuthMode} referralCode={initialReferralCode} />
+      <AuthRouteModal
+        initialGoogleSignupProfile={initialGoogleSignupProfile}
+        initialMode={initialAuthMode}
+        initialNotice={initialAuthNotice}
+        referralCode={initialReferralCode}
+      />
       <HomeContentSections />
       <PublicFooter logo={<EliteGoldNavbarLogo />} />
     </div>
