@@ -38,6 +38,12 @@ function successState(message: string, redirectTo?: string): AuthActionState {
   };
 }
 
+const signupSuccessMessage =
+  "Signup successful. Please check your email and click Verify Email to activate your account.";
+
+const googleSignupSuccessMessage =
+  "Signup successful. Your Google account is connected and your member profile is ready.";
+
 function getStringField(formData: FormData, name: string) {
   const value = formData.get(name);
 
@@ -261,7 +267,7 @@ export async function signupWithPasswordAction(
     return accessCode.state;
   }
 
-  const { error, data } = await client.supabase.auth.signUp({
+  const { error } = await client.supabase.auth.signUp({
     email: profile.email,
     password,
     options: {
@@ -290,11 +296,7 @@ export async function signupWithPasswordAction(
 
   revalidatePath("/", "layout");
 
-  if (data.session) {
-    return successState("สมัครสมาชิกสำเร็จ กำลังพาไปยัง Member Dashboard", nextPath);
-  }
-
-  return successState("สมัครสมาชิกสำเร็จ กรุณาตรวจสอบอีเมลเพื่อยืนยันบัญชี");
+  return successState(signupSuccessMessage);
 }
 
 export async function completeGoogleSignupAction(
@@ -383,7 +385,7 @@ export async function completeGoogleSignupAction(
     to: userEmail,
   });
 
-  return successState("บันทึกข้อมูลสมัครสำเร็จ กำลังพาไปยัง Member Dashboard", "/dashboard");
+  return successState(googleSignupSuccessMessage);
 }
 
 export async function requestPasswordResetAction(

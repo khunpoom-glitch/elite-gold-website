@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-mo
 import {
   AlertTriangle,
   ArrowRight,
+  CheckCircle2,
   ChevronDown,
   Eye,
   EyeClosed,
@@ -611,6 +612,7 @@ export function Component({
   const [isGoogleRedirecting, setIsGoogleRedirecting] = useState(false);
   const [isGoogleProfileSyncing, setIsGoogleProfileSyncing] = useState(isGoogleSignup);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
+  const [dismissedSuccessMessage, setDismissedSuccessMessage] = useState("");
   const autoAccessCode = useMemo(() => getInitialAccessCode(accessCode), [accessCode]);
   const [selectedNationality, setSelectedNationality] = useState<string>(defaultCountryCode);
   const [selectedPhoneCountry, setSelectedPhoneCountry] = useState<string>(defaultCountryCode);
@@ -628,6 +630,12 @@ export function Component({
       : null;
   const isValidationPopupVisible = Boolean(
     validationPopupKey && dismissedValidationErrorKey !== validationPopupKey,
+  );
+  const isSignupSuccessPopupVisible = Boolean(
+    state.status === "success" &&
+      !state.redirectTo &&
+      state.message &&
+      dismissedSuccessMessage !== state.message,
   );
   const validationPopupTitle = state.fieldErrors?.signupAccessCode
     ? "ตรวจสอบ Access Code"
@@ -770,6 +778,38 @@ export function Component({
               ) : null}
             </AnimatePresence>
 
+            <AnimatePresence>
+              {isSignupSuccessPopupVisible && state.status === "success" ? (
+                <motion.div
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  aria-modal="false"
+                  className="fixed inset-x-4 top-4 z-[100] mx-auto max-w-sm rounded-xl border border-[#D4AF37]/35 bg-[#070707]/95 p-4 text-white shadow-[0_24px_70px_rgba(0,0,0,0.45),0_0_32px_rgba(212,175,55,0.18)] backdrop-blur-xl"
+                  exit={{ opacity: 0, y: -12, scale: 0.98 }}
+                  initial={{ opacity: 0, y: -12, scale: 0.98 }}
+                  role="alertdialog"
+                  transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/12 text-[#F6E3A3]">
+                      <CheckCircle2 aria-hidden="true" className="size-4" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-[#F6E3A3]">Signup Successful</p>
+                      <p className="mt-1 text-xs leading-5 text-white/70">{state.message}</p>
+                    </div>
+                    <button
+                      aria-label="Close signup success notice"
+                      className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/46 transition hover:bg-white/8 hover:text-white"
+                      onClick={() => setDismissedSuccessMessage(state.message)}
+                      type="button"
+                    >
+                      <X aria-hidden="true" className="size-4" />
+                    </button>
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+
             <div className="mb-5 text-center">
               <span className="elite-login-card-logo relative mx-auto grid place-items-center">
                 <Image
@@ -888,7 +928,10 @@ export function Component({
               action={formAction}
               className="grid gap-3"
               noValidate
-              onSubmit={() => setDismissedValidationErrorKey(null)}
+              onSubmit={() => {
+                setDismissedValidationErrorKey(null);
+                setDismissedSuccessMessage("");
+              }}
             >
               <input name="next" type="hidden" value={nextPath} />
               <input name="signupProvider" type="hidden" value={isGoogleSignup ? "google" : "email"} />
@@ -1174,11 +1217,6 @@ export function Component({
                 )}
               </p>
 
-              {state.status === "success" && !state.redirectTo ? (
-                <p className="rounded-lg border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]">
-                  {state.message}
-                </p>
-              ) : null}
             </form>
           </div>
         </div>
