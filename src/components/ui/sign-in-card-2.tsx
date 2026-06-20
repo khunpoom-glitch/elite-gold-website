@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
-import { ArrowRight, Eye, EyeClosed, Lock, Mail, X } from "lucide-react";
+import { ArrowRight, Check, Eye, EyeClosed, Lock, Mail, X } from "lucide-react";
 import { loginWithPasswordAction } from "@/app/auth/actions";
 import { GoogleLogo } from "@/components/ui/google-logo";
 import { initialAuthActionState } from "@/lib/auth/action-state";
@@ -187,13 +187,20 @@ export function Component({
 
               <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
                 <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-white/68 transition hover:text-white">
-                  <input
-                    checked={rememberMe}
-                    className="size-4 appearance-none rounded border border-[#D4AF37]/45 bg-white/[0.04] transition checked:border-[#F6E3A3] checked:bg-[#D4AF37]"
-                    name="remember"
-                    onChange={() => setRememberMe((current) => !current)}
-                    type="checkbox"
-                  />
+                  <span className="relative grid size-4 shrink-0 place-items-center">
+                    <input
+                      checked={rememberMe}
+                      className="peer size-4 appearance-none rounded border border-[#D4AF37]/45 bg-white/[0.04] transition checked:border-[#F6E3A3] checked:bg-[#D4AF37] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/60"
+                      name="remember"
+                      onChange={() => setRememberMe((current) => !current)}
+                      type="checkbox"
+                    />
+                    <Check
+                      aria-hidden="true"
+                      className="pointer-events-none absolute size-3 text-black opacity-0 transition-opacity duration-150 peer-checked:opacity-100"
+                      strokeWidth={3}
+                    />
+                  </span>
                   Remember me
                 </label>
                 {onForgotPasswordClick ? (
