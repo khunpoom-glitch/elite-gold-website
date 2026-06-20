@@ -1065,7 +1065,7 @@ export function Component({
                       initial={{ opacity: 0 }}
                       key="text"
                     >
-                      {isGoogleSignup ? "Complete Sign Up" : "Sign Up"}
+                      Sign Up
                       <ArrowRight aria-hidden="true" className="size-4 transition group-hover/button:translate-x-1" />
                     </motion.span>
                   )}
