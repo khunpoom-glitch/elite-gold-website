@@ -363,7 +363,6 @@ const iconClassName =
   "pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#D4AF37]/70 transition-colors";
 const chevronClassName =
   "pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-white/36";
-const helperTextClassName = "text-[0.68rem] normal-case tracking-normal text-[#F6E3A3]/82";
 
 type SearchableCountrySelectProps<T extends CountryProfile> = {
   ariaLabel?: string;
@@ -805,29 +804,30 @@ export function Component({
               {isValidationPopupVisible && state.status === "error" && state.fieldErrors ? (
                 <motion.div
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  aria-modal="false"
-                  className="fixed inset-x-4 top-4 z-[100] mx-auto max-w-sm rounded-xl border border-[#D4AF37]/35 bg-[#070707]/95 p-4 text-white shadow-[0_24px_70px_rgba(0,0,0,0.45),0_0_32px_rgba(212,175,55,0.18)] backdrop-blur-xl"
-                  exit={{ opacity: 0, y: -12, scale: 0.98 }}
-                  initial={{ opacity: 0, y: -12, scale: 0.98 }}
-                  role="alertdialog"
+                  className="pointer-events-none fixed inset-x-0 top-4 z-[100] flex justify-center px-4 sm:top-5"
+                  exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                  initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                  role="alert"
                   transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="flex items-start gap-3">
-                    <span className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/12 text-[#F6E3A3]">
-                      <AlertTriangle aria-hidden="true" className="size-4" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[#F6E3A3]">{validationPopupTitle}</p>
-                      <p className="mt-1 text-xs leading-5 text-white/70">{state.message}</p>
+                  <div className="pointer-events-auto w-full max-w-[22rem] rounded-2xl border border-[#D4AF37]/35 bg-[#070707]/95 px-3.5 py-3 text-white shadow-[0_18px_54px_rgba(0,0,0,0.48),0_0_28px_rgba(212,175,55,0.16)] backdrop-blur-xl">
+                    <div className="flex items-start gap-2.5">
+                      <span className="mt-0.5 inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/12 text-[#F6E3A3]">
+                        <AlertTriangle aria-hidden="true" className="size-3.5" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[0.82rem] font-semibold leading-5 text-[#F6E3A3]">{validationPopupTitle}</p>
+                        <p className="mt-0.5 text-[0.72rem] leading-5 text-white/68">{state.message}</p>
+                      </div>
+                      <button
+                        aria-label="Close validation notice"
+                        className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/46 transition hover:bg-white/8 hover:text-white"
+                        onClick={() => setDismissedValidationErrorKey(validationPopupKey)}
+                        type="button"
+                      >
+                        <X aria-hidden="true" className="size-3.5" />
+                      </button>
                     </div>
-                    <button
-                      aria-label="Close validation notice"
-                      className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/46 transition hover:bg-white/8 hover:text-white"
-                      onClick={() => setDismissedValidationErrorKey(validationPopupKey)}
-                      type="button"
-                    >
-                      <X aria-hidden="true" className="size-4" />
-                    </button>
                   </div>
                 </motion.div>
               ) : null}
@@ -1005,9 +1005,6 @@ export function Component({
                     options={countryProfiles}
                     value={selectedNationality}
                   />
-                  {getFieldError("nationality") ? (
-                    <span className={helperTextClassName}>{getFieldError("nationality")}</span>
-                  ) : null}
                 </label>
 
                 <label className={labelClassName}>
@@ -1024,9 +1021,6 @@ export function Component({
                       required
                     />
                   </span>
-                  {getFieldError("firstName") ? (
-                    <span className={helperTextClassName}>{getFieldError("firstName")}</span>
-                  ) : null}
                 </label>
 
                 <label className={labelClassName}>
@@ -1043,9 +1037,6 @@ export function Component({
                       required
                     />
                   </span>
-                  {getFieldError("lastName") ? (
-                    <span className={helperTextClassName}>{getFieldError("lastName")}</span>
-                  ) : null}
                 </label>
 
                 <label className={labelClassName}>
@@ -1060,9 +1051,6 @@ export function Component({
                       required
                     />
                   </span>
-                  {getFieldError("nickname") ? (
-                    <span className={helperTextClassName}>{getFieldError("nickname")}</span>
-                  ) : null}
                 </label>
 
                 <label className={labelClassName}>
@@ -1098,11 +1086,6 @@ export function Component({
                       />
                     </span>
                   </span>
-                  {getFieldError("phoneCountry") || getFieldError("phone") ? (
-                    <span className={helperTextClassName}>
-                      {getFieldError("phoneCountry") ?? getFieldError("phone")}
-                    </span>
-                  ) : null}
                 </label>
 
                 <label className={cn(labelClassName, "sm:col-span-2")}>
@@ -1128,9 +1111,6 @@ export function Component({
                       type="email"
                     />
                   </span>
-                  {getFieldError("email") ? (
-                    <span className={helperTextClassName}>{getFieldError("email")}</span>
-                  ) : null}
                 </label>
 
                 {!isGoogleSignup ? (
@@ -1157,9 +1137,6 @@ export function Component({
                           {showPassword ? <Eye aria-hidden="true" className="size-4" /> : <EyeClosed aria-hidden="true" className="size-4" />}
                         </button>
                       </span>
-                      {getFieldError("password") ? (
-                        <span className={helperTextClassName}>{getFieldError("password")}</span>
-                      ) : null}
                     </label>
 
                     <label className={labelClassName}>
@@ -1184,9 +1161,6 @@ export function Component({
                           {showConfirmPassword ? <Eye aria-hidden="true" className="size-4" /> : <EyeClosed aria-hidden="true" className="size-4" />}
                         </button>
                       </span>
-                      {getFieldError("confirmPassword") ? (
-                        <span className={helperTextClassName}>{getFieldError("confirmPassword")}</span>
-                      ) : null}
                     </label>
                   </>
                 ) : null}
@@ -1205,17 +1179,8 @@ export function Component({
                       value={autoAccessCode}
                     />
                   </span>
-                  {getFieldError("signupAccessCode") ? (
-                    <span className={helperTextClassName}>{getFieldError("signupAccessCode")}</span>
-                  ) : null}
                 </label>
               </div>
-
-              {state.status === "error" ? (
-                <div className="rounded-lg border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]" role="alert">
-                  {state.message}
-                </div>
-              ) : null}
 
               <motion.button
                 className="group/button relative mt-2 h-11 overflow-hidden rounded-lg bg-white font-semibold text-black transition disabled:cursor-not-allowed disabled:opacity-70"
