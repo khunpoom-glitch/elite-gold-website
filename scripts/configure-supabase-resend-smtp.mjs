@@ -110,7 +110,7 @@ function getCodeBlockHtml(token) {
 }
 
 function getAuthEmailShell(title, body) {
-  const logoUrl = escapeHtml(getPublicAssetUrl("/brand/elite-gold-logo.png"));
+  const logoUrl = escapeHtml(getPublicAssetUrl("/brand/elite-gold-email-logo.png"));
   const safeTitle = escapeHtml(title);
 
   return `<!doctype html>
@@ -136,6 +136,7 @@ function getAuthEmailShell(title, body) {
         .elite-email-wrap { padding: 24px 12px !important; }
         .elite-card-header { padding: 30px 22px 22px !important; }
         .elite-card-body { padding: 28px 22px 30px !important; }
+        .elite-logo { width: 48px !important; max-width: 48px !important; height: 62px !important; max-height: 62px !important; }
         .elite-title { font-size: 25px !important; line-height: 1.25 !important; }
         .elite-button { box-sizing: border-box !important; min-width: 200px !important; padding: 16px 28px !important; }
       }
@@ -148,7 +149,7 @@ function getAuthEmailShell(title, body) {
           <table class="elite-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#080808" style="border-collapse:separate;width:100%;max-width:600px;border:1px solid rgba(212,175,55,0.35);border-radius:24px;background-color:#080808 !important;box-shadow:0 24px 70px rgba(212,175,55,0.10),0 30px 90px rgba(0,0,0,0.55);overflow:hidden;">
             <tr>
               <td class="elite-card-header" align="center" bgcolor="#080808" style="padding:34px 30px 24px;border-bottom:1px solid rgba(255,255,255,0.08);background-color:#080808 !important;text-align:center;">
-                <img alt="Elite Gold" src="${logoUrl}" width="96" style="display:block;width:96px;max-width:96px;height:auto;margin:0 auto 18px;border:0;outline:none;text-decoration:none;">
+                <img class="elite-logo" alt="Elite Gold" src="${logoUrl}" width="48" height="62" style="display:block;width:48px;max-width:48px;height:62px;max-height:62px;margin:0 auto 18px;border:0;outline:none;text-decoration:none;">
                 <p style="margin:0 0 12px;color:#D4AF37;font-size:12px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;">Elite Gold Community</p>
                 <h1 class="elite-title" style="margin:0;color:#FFFFFF;font-size:28px;line-height:1.25;font-weight:800;">${safeTitle}</h1>
               </td>

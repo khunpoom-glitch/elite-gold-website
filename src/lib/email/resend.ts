@@ -80,7 +80,7 @@ function getButtonHtml(url: string, label: string) {
 }
 
 function getEmailShell(title: string, body: string) {
-  const logoUrl = escapeHtml(getPublicAssetUrl("/brand/elite-gold-logo.png"));
+  const logoUrl = escapeHtml(getPublicAssetUrl("/brand/elite-gold-email-logo.png"));
   const safeTitle = escapeHtml(title);
 
   return `<!doctype html>
@@ -106,7 +106,7 @@ function getEmailShell(title: string, body: string) {
         .elite-email-wrap { padding: 20px 12px !important; }
         .elite-card-header { padding: 24px 20px 18px !important; }
         .elite-card-body { padding: 22px 20px 24px !important; }
-        .elite-logo { width: 38px !important; max-width: 38px !important; }
+        .elite-logo { width: 38px !important; max-width: 38px !important; height: 49px !important; max-height: 49px !important; }
         .elite-title { font-size: 20px !important; line-height: 1.28 !important; }
         .elite-button { box-sizing: border-box !important; min-width: 168px !important; padding: 13px 24px !important; }
         .elite-member-box { width: 100% !important; }
@@ -120,7 +120,7 @@ function getEmailShell(title: string, body: string) {
           <table class="elite-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#080808" style="border-collapse:separate;width:100%;max-width:460px;border:1px solid rgba(212,175,55,0.30);border-radius:22px;background-color:#080808 !important;box-shadow:0 14px 42px rgba(212,175,55,0.08),0 22px 64px rgba(0,0,0,0.52);overflow:hidden;">
             <tr>
               <td class="elite-card-header" align="center" bgcolor="#080808" style="padding:24px 24px 18px;border-bottom:1px solid rgba(255,255,255,0.08);background-color:#080808 !important;text-align:center;">
-                <img class="elite-logo" alt="Elite Gold" src="${logoUrl}" width="40" style="display:block;width:40px;max-width:40px;height:auto;margin:0 auto 13px;border:0;outline:none;text-decoration:none;">
+                <img class="elite-logo" alt="Elite Gold" src="${logoUrl}" width="40" height="52" style="display:block;width:40px;max-width:40px;height:52px;max-height:52px;margin:0 auto 13px;border:0;outline:none;text-decoration:none;">
                 <h1 class="elite-title" style="margin:0;color:#FFFFFF;font-size:22px;line-height:1.28;font-weight:800;">${safeTitle}</h1>
               </td>
             </tr>
