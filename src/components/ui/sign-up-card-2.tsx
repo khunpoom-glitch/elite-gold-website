@@ -612,7 +612,6 @@ export function Component({
   const [isGoogleRedirecting, setIsGoogleRedirecting] = useState(false);
   const [isGoogleProfileSyncing, setIsGoogleProfileSyncing] = useState(isGoogleSignup);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
-  const [dismissedSuccessMessage, setDismissedSuccessMessage] = useState("");
   const autoAccessCode = useMemo(() => getInitialAccessCode(accessCode), [accessCode]);
   const [selectedNationality, setSelectedNationality] = useState<string>(defaultCountryCode);
   const [selectedPhoneCountry, setSelectedPhoneCountry] = useState<string>(defaultCountryCode);
@@ -631,11 +630,10 @@ export function Component({
   const isValidationPopupVisible = Boolean(
     validationPopupKey && dismissedValidationErrorKey !== validationPopupKey,
   );
-  const isSignupSuccessPopupVisible = Boolean(
+  const isSignupComplete = Boolean(
     state.status === "success" &&
       !state.redirectTo &&
-      state.message &&
-      dismissedSuccessMessage !== state.message,
+      state.message,
   );
   const validationPopupTitle = state.fieldErrors?.signupAccessCode
     ? "ตรวจสอบ Access Code"
@@ -778,38 +776,45 @@ export function Component({
               ) : null}
             </AnimatePresence>
 
-            <AnimatePresence>
-              {isSignupSuccessPopupVisible && state.status === "success" ? (
-                <motion.div
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  aria-modal="false"
-                  className="fixed inset-x-4 top-4 z-[100] mx-auto max-w-sm rounded-xl border border-[#D4AF37]/35 bg-[#070707]/95 p-4 text-white shadow-[0_24px_70px_rgba(0,0,0,0.45),0_0_32px_rgba(212,175,55,0.18)] backdrop-blur-xl"
-                  exit={{ opacity: 0, y: -12, scale: 0.98 }}
-                  initial={{ opacity: 0, y: -12, scale: 0.98 }}
-                  role="alertdialog"
-                  transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/12 text-[#F6E3A3]">
-                      <CheckCircle2 aria-hidden="true" className="size-4" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[#F6E3A3]">Signup Successful</p>
-                      <p className="mt-1 text-xs leading-5 text-white/70">{state.message}</p>
-                    </div>
+            {isSignupComplete && state.status === "success" ? (
+              <motion.div
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                className="grid min-h-[26rem] place-items-center px-2 py-12 text-center sm:min-h-[30rem] sm:px-6"
+                initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                role="status"
+                transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="mx-auto w-full max-w-[25rem]">
+                  <span className="mx-auto inline-flex size-16 items-center justify-center rounded-full border border-[#D4AF37]/45 bg-[#D4AF37]/12 text-[#F6E3A3] shadow-[0_0_34px_rgba(212,175,55,0.18)]">
+                    <CheckCircle2 aria-hidden="true" className="size-8" />
+                  </span>
+                  <h2 className="elite-display-type mt-6 text-2xl font-extrabold tracking-normal text-[#F6E3A3]" id={titleId}>
+                    Signup Successful
+                  </h2>
+                  <p className="mt-4 text-sm leading-7 text-white/72">{state.message}</p>
+                  <div className="mt-6 rounded-xl border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-4 py-3 text-xs leading-6 text-white/64">
+                    Your registration form is saved. Open your inbox and press <span className="font-semibold text-[#F6E3A3]">Verify Email</span> before using member features.
+                  </div>
+                  {onClose ? (
                     <button
-                      aria-label="Close signup success notice"
-                      className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/46 transition hover:bg-white/8 hover:text-white"
-                      onClick={() => setDismissedSuccessMessage(state.message)}
+                      className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
+                      onClick={onClose}
                       type="button"
                     >
-                      <X aria-hidden="true" className="size-4" />
+                      Close
                     </button>
-                  </div>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
-
+                  ) : (
+                    <Link
+                      className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
+                      href="/"
+                    >
+                      Back to Home
+                    </Link>
+                  )}
+                </div>
+              </motion.div>
+            ) : (
+              <>
             <div className="mb-5 text-center">
               <span className="elite-login-card-logo relative mx-auto grid place-items-center">
                 <Image
@@ -930,7 +935,6 @@ export function Component({
               noValidate
               onSubmit={() => {
                 setDismissedValidationErrorKey(null);
-                setDismissedSuccessMessage("");
               }}
             >
               <input name="next" type="hidden" value={nextPath} />
@@ -1218,6 +1222,8 @@ export function Component({
               </p>
 
             </form>
+              </>
+            )}
           </div>
         </div>
       </motion.div>
