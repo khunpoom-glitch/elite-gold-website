@@ -370,6 +370,31 @@ export async function resendEmailVerificationAction(
   return successState("Verification email sent. Please check your inbox and click Verify Email.");
 }
 
+export async function getSignupVerificationStatusAction() {
+  const client = await getConfiguredSupabaseClient();
+
+  if (!client.ok) {
+    return { status: "unavailable" as const };
+  }
+
+  const {
+    data: { user },
+    error: userError,
+  } = await client.supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { status: "unauthenticated" as const };
+  }
+
+  const profile = await getMemberProfileByUserId(client.supabase, user.id);
+
+  if (!profile) {
+    return { status: "missing_profile" as const };
+  }
+
+  return { status: profile.status };
+}
+
 export async function completeGoogleSignupAction(
   _previousState: AuthActionState,
   formData: FormData,

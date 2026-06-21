@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Eye,
   EyeClosed,
+  LoaderCircle,
   Lock,
   Mail,
   Phone,
@@ -18,7 +19,11 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { completeGoogleSignupAction, signupWithPasswordAction } from "@/app/auth/actions";
+import {
+  completeGoogleSignupAction,
+  getSignupVerificationStatusAction,
+  signupWithPasswordAction,
+} from "@/app/auth/actions";
 import { GoogleLogo } from "@/components/ui/google-logo";
 import { initialAuthActionState } from "@/lib/auth/action-state";
 import type { GoogleSignupProfile } from "@/lib/member/profile";
@@ -611,6 +616,7 @@ export function Component({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isGoogleRedirecting, setIsGoogleRedirecting] = useState(false);
   const [isGoogleProfileSyncing, setIsGoogleProfileSyncing] = useState(isGoogleSignup);
+  const [isRedirectingAfterVerification, setIsRedirectingAfterVerification] = useState(false);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
   const autoAccessCode = useMemo(() => getInitialAccessCode(accessCode), [accessCode]);
   const [selectedNationality, setSelectedNationality] = useState<string>(defaultCountryCode);
@@ -660,6 +666,41 @@ export function Component({
 
     return () => window.clearTimeout(timeoutId);
   }, [googleSignupProfile?.email, isGoogleSignup]);
+
+  useEffect(() => {
+    if (!isSignupComplete || isRedirectingAfterVerification) {
+      return;
+    }
+
+    let isCancelled = false;
+    let redirectTimeoutId: number | undefined;
+
+    async function checkVerificationStatus() {
+      const verification = await getSignupVerificationStatusAction().catch(() => null);
+
+      if (isCancelled || verification?.status !== "active") {
+        return;
+      }
+
+      setIsRedirectingAfterVerification(true);
+      redirectTimeoutId = window.setTimeout(() => {
+        window.location.assign("/dashboard?verified=email");
+      }, 900);
+    }
+
+    const initialTimeoutId = window.setTimeout(checkVerificationStatus, 1200);
+    const intervalId = window.setInterval(checkVerificationStatus, 2500);
+
+    return () => {
+      isCancelled = true;
+      window.clearTimeout(initialTimeoutId);
+      window.clearInterval(intervalId);
+
+      if (redirectTimeoutId) {
+        window.clearTimeout(redirectTimeoutId);
+      }
+    };
+  }, [isRedirectingAfterVerification, isSignupComplete]);
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -792,24 +833,46 @@ export function Component({
                     Signup Successful
                   </h2>
                   <p className="mt-4 text-sm leading-7 text-white/72">{state.message}</p>
-                  <div className="mt-6 rounded-xl border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-4 py-3 text-xs leading-6 text-white/64">
-                    Your registration form is saved. Open your inbox and press <span className="font-semibold text-[#F6E3A3]">Verify Email</span> before using member features.
-                  </div>
-                  {onClose ? (
-                    <button
-                      className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
-                      onClick={onClose}
-                      type="button"
+                  {isRedirectingAfterVerification ? (
+                    <motion.div
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-7 flex flex-col items-center gap-3"
+                      initial={{ opacity: 0, y: 6 }}
                     >
-                      Close
-                    </button>
+                      <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-4 py-2 text-xs font-semibold text-[#F6E3A3] shadow-[0_0_28px_rgba(212,175,55,0.12)]">
+                        <LoaderCircle aria-hidden="true" className="size-3.5 animate-spin" />
+                        Email verified. Opening dashboard...
+                      </span>
+                      <span className="h-px w-28 overflow-hidden rounded-full bg-white/10">
+                        <motion.span
+                          animate={{ x: ["-80%", "180%"] }}
+                          className="block h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#F6E3A3]/80 to-transparent"
+                          transition={{ duration: 1.05, ease: "easeInOut", repeat: Infinity }}
+                        />
+                      </span>
+                    </motion.div>
                   ) : (
-                    <Link
-                      className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
-                      href="/"
-                    >
-                      Back to Home
-                    </Link>
+                    <>
+                      <div className="mt-6 rounded-xl border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-4 py-3 text-xs leading-6 text-white/64">
+                        Your registration form is saved. Open your inbox and press <span className="font-semibold text-[#F6E3A3]">Verify Email</span> before using member features.
+                      </div>
+                      {onClose ? (
+                        <button
+                          className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
+                          onClick={onClose}
+                          type="button"
+                        >
+                          Close
+                        </button>
+                      ) : (
+                        <Link
+                          className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
+                          href="/"
+                        >
+                          Back to Home
+                        </Link>
+                      )}
+                    </>
                   )}
                 </div>
               </motion.div>
