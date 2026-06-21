@@ -732,7 +732,7 @@ export function Component({
               : "overflow-hidden",
           )}
         >
-          {onClose ? (
+          {onClose && !isSignupComplete ? (
             <button
               aria-label="Close"
               className="absolute right-3 top-3 z-20 inline-flex size-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/42 transition-colors duration-200 hover:border-white/18 hover:bg-white/[0.07] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35"
