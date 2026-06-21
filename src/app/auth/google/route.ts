@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { oauthStateCookieName, serializeOAuthState } from "@/lib/auth/oauth-state";
 import { normalizeLocalOrigin } from "@/lib/auth/origin";
 import { getSafeRedirectPath, normalizeAccessCode } from "@/lib/auth/validation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -40,5 +41,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", origin));
   }
 
-  return NextResponse.redirect(data.url);
+  const response = NextResponse.redirect(data.url);
+
+  response.cookies.set(
+    oauthStateCookieName,
+    serializeOAuthState({ accessCode, intent, nextPath }),
+    {
+      httpOnly: true,
+      maxAge: 10 * 60,
+      path: "/",
+      sameSite: "lax",
+      secure: origin.startsWith("https://"),
+    },
+  );
+
+  return response;
 }
