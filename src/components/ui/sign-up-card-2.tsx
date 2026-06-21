@@ -615,7 +615,6 @@ export function Component({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isGoogleRedirecting, setIsGoogleRedirecting] = useState(false);
-  const [isGoogleProfileSyncing, setIsGoogleProfileSyncing] = useState(isGoogleSignup);
   const [isRedirectingAfterVerification, setIsRedirectingAfterVerification] = useState(false);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
   const autoAccessCode = useMemo(() => getInitialAccessCode(accessCode), [accessCode]);
@@ -644,28 +643,12 @@ export function Component({
   const validationPopupTitle = state.fieldErrors?.signupAccessCode
     ? "ตรวจสอบ Access Code"
     : "กรุณากรอกข้อมูลให้ครบ";
-  const googleSyncedInputClassName =
-    isGoogleSignup && isGoogleProfileSyncing
-      ? "animate-pulse shadow-[0_0_0_1px_rgba(212,175,55,0.18)]"
-      : null;
 
   useEffect(() => {
     if (state.status === "success" && state.redirectTo) {
       window.location.assign(state.redirectTo);
     }
   }, [state]);
-
-  useEffect(() => {
-    if (!isGoogleSignup) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setIsGoogleProfileSyncing(false);
-    }, 950);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [googleSignupProfile?.email, isGoogleSignup]);
 
   useEffect(() => {
     if (!isSignupComplete || isRedirectingAfterVerification) {
@@ -779,15 +762,15 @@ export function Component({
 
   return (
     <motion.div
-      animate={{ scale: 1, y: 0 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
       className={cn(
         "relative w-full",
         isSignupComplete ? "max-w-[24rem]" : "max-w-[35rem]",
         className,
       )}
-      initial={{ scale: 0.96, y: 18 }}
+      initial={isGoogleSignup ? { opacity: 0, y: 8 } : { opacity: 0, scale: 0.98, y: 12 }}
       style={{ perspective: 1400 }}
-      transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: isGoogleSignup ? 0.22 : 0.34, ease: [0.22, 1, 0.36, 1] }}
     >
       <motion.div
         className="group relative"
@@ -936,46 +919,14 @@ export function Component({
             ) : null}
 
             {isGoogleSignup ? (
-              <div className="mb-3 overflow-hidden rounded-lg border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-3 py-2 text-xs leading-5 text-white/72" role="status" aria-live="polite">
-                <div className="flex items-center justify-between gap-3">
+              <div className="mb-3 overflow-hidden rounded-lg border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-3 py-2 text-xs leading-5 text-white/72" role="status">
+                <div className="flex items-center gap-3">
                   <span className="inline-flex items-center gap-2 font-semibold text-[#F6E3A3]">
                     <GoogleLogo />
                     Google account connected
                   </span>
-                  <AnimatePresence mode="wait">
-                    {isGoogleProfileSyncing ? (
-                      <motion.span
-                        animate={{ opacity: 1, x: 0 }}
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#D4AF37]/25 bg-black/30 px-2 py-0.5 text-[0.66rem] font-semibold uppercase tracking-normal text-[#F6E3A3]"
-                        exit={{ opacity: 0, x: 6 }}
-                        initial={{ opacity: 0, x: 6 }}
-                        key="syncing"
-                      >
-                        <span className="size-2.5 rounded-full border-2 border-[#F6E3A3]/75 border-t-transparent animate-spin" />
-                        Syncing
-                      </motion.span>
-                    ) : null}
-                  </AnimatePresence>
                 </div>
                 <span className="mt-1 block break-words">{googleSignupProfile?.email}</span>
-                <AnimatePresence>
-                  {isGoogleProfileSyncing ? (
-                    <motion.div
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mt-2 grid gap-1.5"
-                      exit={{ opacity: 0, y: -4 }}
-                      initial={{ opacity: 0, y: -4 }}
-                    >
-                      <span className="h-1.5 w-2/3 overflow-hidden rounded-full bg-white/10">
-                        <motion.span
-                          animate={{ x: ["-45%", "145%"] }}
-                          className="block h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#F6E3A3]/70 to-transparent"
-                          transition={{ duration: 1.05, ease: "easeInOut", repeat: Infinity }}
-                        />
-                      </span>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
               </div>
             ) : (
               <>
@@ -1065,7 +1016,7 @@ export function Component({
                     <input
                       aria-invalid={Boolean(getFieldError("firstName"))}
                       autoComplete="given-name"
-                      className={getInputClassName("firstName", cn("pl-10 pr-3", googleSyncedInputClassName))}
+                      className={getInputClassName("firstName", "pl-10 pr-3")}
                       defaultValue={googleSignupProfile?.firstName}
                       name="firstName"
                       placeholder={nationalityProfile.firstNamePlaceholder}
@@ -1084,7 +1035,7 @@ export function Component({
                     <input
                       aria-invalid={Boolean(getFieldError("lastName"))}
                       autoComplete="family-name"
-                      className={getInputClassName("lastName", cn("pl-10 pr-3", googleSyncedInputClassName))}
+                      className={getInputClassName("lastName", "pl-10 pr-3")}
                       defaultValue={googleSignupProfile?.lastName}
                       name="lastName"
                       placeholder={nationalityProfile.lastNamePlaceholder}
@@ -1166,7 +1117,6 @@ export function Component({
                         cn(
                           "pl-10 pr-3",
                           isGoogleSignup ? "text-[#F6E3A3]/90" : null,
-                          googleSyncedInputClassName,
                         ),
                       )}
                       defaultValue={googleSignupProfile?.email}
