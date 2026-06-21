@@ -765,7 +765,7 @@ export function Component({
     <motion.div
       animate={{ opacity: 1, scale: 1, y: 0 }}
       className={cn(
-        "relative w-full",
+        "relative mx-auto w-full",
         isSignupComplete ? "max-w-[24rem]" : "max-w-[35rem]",
         className,
       )}
