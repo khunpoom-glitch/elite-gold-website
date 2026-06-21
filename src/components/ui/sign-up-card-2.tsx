@@ -569,6 +569,7 @@ function getInitialAccessCode(accessCode: string) {
 
   const searchParams = new URLSearchParams(window.location.search);
   const referralFromLink =
+    searchParams.get("accessCode") ??
     searchParams.get("ref") ??
     searchParams.get("refCode") ??
     searchParams.get("referral") ??
@@ -752,7 +753,7 @@ export function Component({
     });
 
     if (autoAccessCode) {
-      searchParams.set("ref", autoAccessCode);
+      searchParams.set("accessCode", autoAccessCode);
     }
 
     window.setTimeout(() => {

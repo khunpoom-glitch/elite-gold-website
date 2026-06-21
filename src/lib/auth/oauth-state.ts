@@ -21,7 +21,7 @@ export function serializeOAuthState({
   });
 
   if (accessCode) {
-    state.set("ref", accessCode);
+    state.set("accessCode", accessCode);
   }
 
   return state.toString();
@@ -32,7 +32,7 @@ export function parseOAuthState(value?: string): OAuthState {
   const intent = state.get("intent") === "signup" ? "signup" : "login";
 
   return {
-    accessCode: normalizeAccessCode(state.get("ref")),
+    accessCode: normalizeAccessCode(state.get("accessCode") ?? state.get("ref")),
     intent,
     nextPath: getSafeRedirectPath(state.get("next")),
   };

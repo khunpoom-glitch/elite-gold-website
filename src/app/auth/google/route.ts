@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
   const nextPath = getSafeRedirectPath(requestUrl.searchParams.get("next"));
   const intent = requestUrl.searchParams.get("intent") === "signup" ? "signup" : "login";
   const accessCode = normalizeAccessCode(
-    requestUrl.searchParams.get("ref") ??
+    requestUrl.searchParams.get("accessCode") ??
+      requestUrl.searchParams.get("ref") ??
       requestUrl.searchParams.get("refCode") ??
       requestUrl.searchParams.get("referral") ??
       requestUrl.searchParams.get("referralCode"),

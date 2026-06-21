@@ -39,6 +39,7 @@ function getAccessCodeFromSearch(search: string) {
   const searchParams = new URLSearchParams(search);
 
   return (
+    searchParams.get("accessCode") ??
     searchParams.get("ref") ??
     searchParams.get("refCode") ??
     searchParams.get("referral") ??

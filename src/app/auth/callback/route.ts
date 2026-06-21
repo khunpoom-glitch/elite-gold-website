@@ -17,7 +17,7 @@ function getGoogleSignupUrl(
   signupUrl.searchParams.set("next", nextPath);
 
   if (accessCode) {
-    signupUrl.searchParams.set("ref", accessCode);
+    signupUrl.searchParams.set("accessCode", accessCode);
   }
 
   if (reason) {
@@ -48,7 +48,11 @@ export async function GET(request: NextRequest) {
     requestUrl.searchParams.get("intent") === "signup" || oauthState.intent === "signup"
       ? "signup"
       : "login";
-  const accessCode = normalizeAccessCode(requestUrl.searchParams.get("ref") ?? oauthState.accessCode);
+  const accessCode = normalizeAccessCode(
+    requestUrl.searchParams.get("accessCode") ??
+      requestUrl.searchParams.get("ref") ??
+      oauthState.accessCode,
+  );
 
   if (!code) {
     return redirectAndClearOAuthState(new URL("/login", origin));

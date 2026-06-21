@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 
 type SignupPageProps = {
   searchParams: Promise<{
+    accessCode?: string | string[];
     ref?: string | string[];
     refCode?: string | string[];
     referral?: string | string[];
@@ -43,6 +44,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
   const nextPath = getSafeRedirectPath(getFirstSearchParam(params.next));
   const notice = getFirstSearchParam(params.notice);
   const accessCode =
+    getFirstSearchParam(params.accessCode) ??
     getFirstSearchParam(params.ref) ??
     getFirstSearchParam(params.refCode) ??
     getFirstSearchParam(params.referral) ??

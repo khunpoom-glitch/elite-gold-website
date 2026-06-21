@@ -24,7 +24,7 @@ export function getAuthModalRouteHref(mode: AuthModalMode, accessCode?: string) 
   }
 
   const searchParams = new URLSearchParams({
-    ref: normalizedAccessCode.toUpperCase(),
+    accessCode: normalizedAccessCode.toUpperCase(),
   });
 
   return `${route}?${searchParams.toString()}`;

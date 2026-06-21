@@ -54,7 +54,7 @@ function getStatusTone(status: string) {
 
 function getAccessSignupLink(accessCode: string) {
   const signupUrl = new URL("/signup", siteConfig.url);
-  signupUrl.searchParams.set("ref", accessCode);
+  signupUrl.searchParams.set("accessCode", accessCode);
 
   return signupUrl.toString();
 }

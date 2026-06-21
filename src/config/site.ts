@@ -82,7 +82,7 @@ export const faqItems: FaqItem[] = [
   {
     question: "มีระบบ Access Code สำหรับสมัครสมาชิกไหม?",
     answer:
-      "หน้า Sign Up รองรับ Access Code เช่น /signup?ref=EG000 สำหรับการสมัครผ่านลิงก์ที่ได้รับ",
+      "หน้า Sign Up รองรับ Access Code เช่น /signup?accessCode=EG000 สำหรับการสมัครผ่านลิงก์ที่ได้รับ",
   },
   {
     question: "Elite Gold Community เหมาะกับใคร?",
