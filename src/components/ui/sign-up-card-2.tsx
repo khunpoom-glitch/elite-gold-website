@@ -1117,7 +1117,7 @@ export function Component({
                         "email",
                         cn(
                           "pl-10 pr-3",
-                          isGoogleSignup ? "text-[#F6E3A3]/90" : null,
+                          isGoogleSignup ? "text-white" : null,
                         ),
                       )}
                       defaultValue={googleSignupProfile?.email}
@@ -1197,7 +1197,7 @@ export function Component({
                     <ShieldCheck aria-hidden="true" className={iconClassName} />
                     <input
                       aria-readonly="true"
-                      className={getInputClassName("signupAccessCode", "pl-10 pr-3 text-[#F6E3A3]/90")}
+                      className={getInputClassName("signupAccessCode", "pl-10 pr-3 text-white")}
                       name="signupAccessCode"
                       placeholder={accessCodePlaceholder}
                       readOnly
