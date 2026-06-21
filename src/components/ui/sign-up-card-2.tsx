@@ -673,7 +673,27 @@ export function Component({
     }
 
     let isCancelled = false;
-    let redirectTimeoutId: number | undefined;
+    let hasScheduledRedirect = false;
+
+    function openDashboard() {
+      window.location.replace("/dashboard?verified=email");
+    }
+
+    function scheduleDashboardRedirect() {
+      if (hasScheduledRedirect) {
+        return;
+      }
+
+      hasScheduledRedirect = true;
+      setIsRedirectingAfterVerification(true);
+
+      if (typeof window.requestAnimationFrame === "function") {
+        window.requestAnimationFrame(openDashboard);
+        return;
+      }
+
+      window.setTimeout(openDashboard, 0);
+    }
 
     async function checkVerificationStatus() {
       const verification = await getSignupVerificationStatusAction().catch(() => null);
@@ -682,23 +702,30 @@ export function Component({
         return;
       }
 
-      setIsRedirectingAfterVerification(true);
-      redirectTimeoutId = window.setTimeout(() => {
-        window.location.assign("/dashboard?verified=email");
-      }, 520);
+      scheduleDashboardRedirect();
     }
 
-    const initialTimeoutId = window.setTimeout(checkVerificationStatus, 650);
-    const intervalId = window.setInterval(checkVerificationStatus, 1100);
+    function handleWindowFocus() {
+      void checkVerificationStatus();
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") {
+        void checkVerificationStatus();
+      }
+    }
+
+    void checkVerificationStatus();
+    const intervalId = window.setInterval(checkVerificationStatus, 450);
+
+    window.addEventListener("focus", handleWindowFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       isCancelled = true;
-      window.clearTimeout(initialTimeoutId);
       window.clearInterval(intervalId);
-
-      if (redirectTimeoutId) {
-        window.clearTimeout(redirectTimeoutId);
-      }
+      window.removeEventListener("focus", handleWindowFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [isRedirectingAfterVerification, isSignupComplete]);
 
@@ -755,7 +782,7 @@ export function Component({
       animate={{ scale: 1, y: 0 }}
       className={cn(
         "relative w-full",
-        isSignupComplete ? "max-w-[28rem]" : "max-w-[35rem]",
+        isSignupComplete ? "max-w-[24rem]" : "max-w-[35rem]",
         className,
       )}
       initial={{ scale: 0.96, y: 18 }}
@@ -772,7 +799,7 @@ export function Component({
         <div
           className={cn(
             "relative z-10 rounded-[1.55rem] border border-white/10 bg-[#030303] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
-            isSignupComplete ? "p-4 sm:p-5" : "p-5 sm:p-6",
+            isSignupComplete ? "p-4 sm:p-4" : "p-5 sm:p-6",
             onClose
               ? "max-h-[calc(100svh-3rem)] overflow-y-auto overflow-x-hidden overscroll-contain"
               : "overflow-hidden",
@@ -825,34 +852,34 @@ export function Component({
             {isSignupComplete && state.status === "success" ? (
               <motion.div
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                className="grid min-h-[19rem] place-items-center px-2 py-7 text-center sm:min-h-[20.5rem] sm:px-4 sm:py-8"
+                className="grid min-h-[17rem] place-items-center px-2 py-6 text-center sm:min-h-[18rem] sm:px-3 sm:py-7"
                 initial={{ opacity: 0, y: 12, scale: 0.98 }}
                 role="status"
                 transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="mx-auto w-full max-w-[20.5rem]">
-                  <span className="mx-auto inline-flex size-12 items-center justify-center rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/12 text-[#F6E3A3] shadow-[0_0_26px_rgba(212,175,55,0.16)]">
-                    <CheckCircle2 aria-hidden="true" className="size-6" />
+                <div className="mx-auto w-full max-w-[18.5rem]">
+                  <span className="mx-auto inline-flex size-10 items-center justify-center rounded-full border border-[#D4AF37]/38 bg-[#D4AF37]/10 text-[#F6E3A3] shadow-[0_0_22px_rgba(212,175,55,0.14)]">
+                    <CheckCircle2 aria-hidden="true" className="size-5" />
                   </span>
-                  <h2 className="elite-display-type mt-5 text-xl font-extrabold tracking-normal text-[#F6E3A3] sm:text-[1.35rem]" id={titleId}>
+                  <h2 className="elite-display-type mt-4 text-lg font-extrabold tracking-normal text-[#F6E3A3] sm:text-xl" id={titleId}>
                     Signup Successful
                   </h2>
-                  <p className="mt-3 text-xs leading-6 text-white/70 sm:text-[0.82rem]">{state.message}</p>
+                  <p className="mt-2.5 text-xs leading-5 text-white/68 sm:text-[0.8rem]">{state.message}</p>
                   {isRedirectingAfterVerification ? (
                     <motion.div
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-5 flex flex-col items-center gap-2.5"
+                      className="mt-4 flex flex-col items-center gap-2"
                       initial={{ opacity: 0, y: 6 }}
                     >
-                      <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-3 py-1.5 text-[0.72rem] font-semibold text-[#F6E3A3] shadow-[0_0_22px_rgba(212,175,55,0.12)] sm:text-xs">
+                      <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-3 py-1.5 text-[0.7rem] font-semibold text-[#F6E3A3] shadow-[0_0_18px_rgba(212,175,55,0.10)] sm:text-[0.72rem]">
                         <LoaderCircle aria-hidden="true" className="size-3 animate-spin" />
                         Email verified. Opening dashboard...
                       </span>
-                      <span className="h-px w-20 overflow-hidden rounded-full bg-white/10">
+                      <span className="h-px w-16 overflow-hidden rounded-full bg-white/10">
                         <motion.span
                           animate={{ x: ["-80%", "180%"] }}
                           className="block h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#F6E3A3]/80 to-transparent"
-                          transition={{ duration: 0.9, ease: "easeInOut", repeat: Infinity }}
+                          transition={{ duration: 0.72, ease: "easeInOut", repeat: Infinity }}
                         />
                       </span>
                     </motion.div>
