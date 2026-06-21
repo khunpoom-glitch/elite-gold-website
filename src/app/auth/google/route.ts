@@ -15,14 +15,6 @@ export async function GET(request: NextRequest) {
       requestUrl.searchParams.get("referral") ??
       requestUrl.searchParams.get("referralCode"),
   );
-  const callbackUrl = new URL("/auth/callback", origin);
-
-  callbackUrl.searchParams.set("next", nextPath);
-  callbackUrl.searchParams.set("intent", intent);
-
-  if (accessCode) {
-    callbackUrl.searchParams.set("ref", accessCode);
-  }
 
   const supabase = await createSupabaseServerClient();
 
@@ -33,7 +25,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: callbackUrl.toString(),
+      redirectTo: new URL("/auth/callback", origin).toString(),
     },
   });
 
