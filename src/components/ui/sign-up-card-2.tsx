@@ -640,9 +640,13 @@ export function Component({
       !state.redirectTo &&
       state.message,
   );
-  const validationPopupTitle = state.fieldErrors?.signupAccessCode
-    ? "ตรวจสอบ Access Code"
-    : "กรุณากรอกข้อมูลให้ครบ";
+  const hasAccessCodeError = Boolean(state.fieldErrors?.signupAccessCode);
+  const validationPopupTitle = hasAccessCodeError
+    ? "Access Code required"
+    : "Some required fields are missing";
+  const validationPopupMessage = hasAccessCodeError
+    ? "Please use a valid signup link before continuing."
+    : "Please complete the highlighted fields before continuing.";
 
   useEffect(() => {
     if (state.status === "success" && state.redirectTo) {
@@ -817,7 +821,7 @@ export function Component({
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className="text-[0.82rem] font-semibold leading-5 text-[#F6E3A3]">{validationPopupTitle}</p>
-                        <p className="mt-0.5 text-[0.72rem] leading-5 text-white/68">{state.message}</p>
+                        <p className="mt-0.5 text-[0.72rem] leading-5 text-white/68">{validationPopupMessage}</p>
                       </div>
                       <button
                         aria-label="Close validation notice"
