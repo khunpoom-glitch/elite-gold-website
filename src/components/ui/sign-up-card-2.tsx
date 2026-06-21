@@ -685,11 +685,11 @@ export function Component({
       setIsRedirectingAfterVerification(true);
       redirectTimeoutId = window.setTimeout(() => {
         window.location.assign("/dashboard?verified=email");
-      }, 900);
+      }, 520);
     }
 
-    const initialTimeoutId = window.setTimeout(checkVerificationStatus, 1200);
-    const intervalId = window.setInterval(checkVerificationStatus, 2500);
+    const initialTimeoutId = window.setTimeout(checkVerificationStatus, 650);
+    const intervalId = window.setInterval(checkVerificationStatus, 1100);
 
     return () => {
       isCancelled = true;
@@ -753,7 +753,11 @@ export function Component({
   return (
     <motion.div
       animate={{ scale: 1, y: 0 }}
-      className={cn("relative w-full max-w-[35rem]", className)}
+      className={cn(
+        "relative w-full",
+        isSignupComplete ? "max-w-[28rem]" : "max-w-[35rem]",
+        className,
+      )}
       initial={{ scale: 0.96, y: 18 }}
       style={{ perspective: 1400 }}
       transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
@@ -767,7 +771,8 @@ export function Component({
         <div aria-hidden="true" className="elite-login-card-border-light" />
         <div
           className={cn(
-            "relative z-10 rounded-[1.55rem] border border-white/10 bg-[#030303] p-5 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)] sm:p-6",
+            "relative z-10 rounded-[1.55rem] border border-white/10 bg-[#030303] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
+            isSignupComplete ? "p-4 sm:p-5" : "p-5 sm:p-6",
             onClose
               ? "max-h-[calc(100svh-3rem)] overflow-y-auto overflow-x-hidden overscroll-contain"
               : "overflow-hidden",
@@ -820,45 +825,45 @@ export function Component({
             {isSignupComplete && state.status === "success" ? (
               <motion.div
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                className="grid min-h-[26rem] place-items-center px-2 py-12 text-center sm:min-h-[30rem] sm:px-6"
+                className="grid min-h-[19rem] place-items-center px-2 py-7 text-center sm:min-h-[20.5rem] sm:px-4 sm:py-8"
                 initial={{ opacity: 0, y: 12, scale: 0.98 }}
                 role="status"
                 transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="mx-auto w-full max-w-[25rem]">
-                  <span className="mx-auto inline-flex size-16 items-center justify-center rounded-full border border-[#D4AF37]/45 bg-[#D4AF37]/12 text-[#F6E3A3] shadow-[0_0_34px_rgba(212,175,55,0.18)]">
-                    <CheckCircle2 aria-hidden="true" className="size-8" />
+                <div className="mx-auto w-full max-w-[20.5rem]">
+                  <span className="mx-auto inline-flex size-12 items-center justify-center rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/12 text-[#F6E3A3] shadow-[0_0_26px_rgba(212,175,55,0.16)]">
+                    <CheckCircle2 aria-hidden="true" className="size-6" />
                   </span>
-                  <h2 className="elite-display-type mt-6 text-2xl font-extrabold tracking-normal text-[#F6E3A3]" id={titleId}>
+                  <h2 className="elite-display-type mt-5 text-xl font-extrabold tracking-normal text-[#F6E3A3] sm:text-[1.35rem]" id={titleId}>
                     Signup Successful
                   </h2>
-                  <p className="mt-4 text-sm leading-7 text-white/72">{state.message}</p>
+                  <p className="mt-3 text-xs leading-6 text-white/70 sm:text-[0.82rem]">{state.message}</p>
                   {isRedirectingAfterVerification ? (
                     <motion.div
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-7 flex flex-col items-center gap-3"
+                      className="mt-5 flex flex-col items-center gap-2.5"
                       initial={{ opacity: 0, y: 6 }}
                     >
-                      <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-4 py-2 text-xs font-semibold text-[#F6E3A3] shadow-[0_0_28px_rgba(212,175,55,0.12)]">
-                        <LoaderCircle aria-hidden="true" className="size-3.5 animate-spin" />
+                      <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-3 py-1.5 text-[0.72rem] font-semibold text-[#F6E3A3] shadow-[0_0_22px_rgba(212,175,55,0.12)] sm:text-xs">
+                        <LoaderCircle aria-hidden="true" className="size-3 animate-spin" />
                         Email verified. Opening dashboard...
                       </span>
-                      <span className="h-px w-28 overflow-hidden rounded-full bg-white/10">
+                      <span className="h-px w-20 overflow-hidden rounded-full bg-white/10">
                         <motion.span
                           animate={{ x: ["-80%", "180%"] }}
                           className="block h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#F6E3A3]/80 to-transparent"
-                          transition={{ duration: 1.05, ease: "easeInOut", repeat: Infinity }}
+                          transition={{ duration: 0.9, ease: "easeInOut", repeat: Infinity }}
                         />
                       </span>
                     </motion.div>
                   ) : (
                     <>
-                      <div className="mt-6 rounded-xl border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-4 py-3 text-xs leading-6 text-white/64">
+                      <div className="mt-5 rounded-xl border border-[#D4AF37]/22 bg-[#D4AF37]/10 px-3 py-2.5 text-[0.72rem] leading-5 text-white/62 sm:text-xs">
                         Your registration form is saved. Open your inbox and press <span className="font-semibold text-[#F6E3A3]">Verify Email</span> before using member features.
                       </div>
                       {onClose ? (
                         <button
-                          className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
+                          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
                           onClick={onClose}
                           type="button"
                         >
@@ -866,7 +871,7 @@ export function Component({
                         </button>
                       ) : (
                         <Link
-                          className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
+                          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
                           href="/"
                         >
                           Back to Home

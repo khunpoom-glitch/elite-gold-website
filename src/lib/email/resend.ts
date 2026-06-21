@@ -72,8 +72,8 @@ function getWelcomeTitle(name: string) {
 function getButtonHtml(url: string, label: string) {
   return `<table role="presentation" cellspacing="0" cellpadding="0" align="center" style="border-collapse:separate;margin:0 auto;">
     <tr>
-      <td align="center" bgcolor="#D4AF37" style="border:1px solid #E6C85C;border-radius:999px;background:#D4AF37;box-shadow:0 10px 24px rgba(212,175,55,0.18);">
-        <a class="elite-button" href="${url}" style="display:inline-block;min-width:180px;border-radius:999px;background:#D4AF37;color:#050505;font-size:15px;font-weight:800;line-height:1.2;text-align:center;text-decoration:none;padding:15px 30px;">${escapeHtml(label)}</a>
+      <td align="center" bgcolor="#D4AF37" style="border:1px solid #E6C85C;border-radius:999px;background:#D4AF37;box-shadow:0 8px 20px rgba(212,175,55,0.16);">
+        <a class="elite-button" href="${url}" style="display:inline-block;min-width:168px;border-radius:999px;background:#D4AF37;color:#050505;font-size:14px;font-weight:800;line-height:1.2;text-align:center;text-decoration:none;padding:13px 28px;">${escapeHtml(label)}</a>
       </td>
     </tr>
   </table>`;
@@ -103,33 +103,35 @@ function getEmailShell(title: string, body: string) {
         .elite-card, .elite-card td { background-color: #080808 !important; }
       }
       @media screen and (max-width: 600px) {
-        .elite-email-wrap { padding: 24px 12px !important; }
-        .elite-card-header { padding: 30px 22px 22px !important; }
-        .elite-card-body { padding: 28px 22px 30px !important; }
-        .elite-title { font-size: 25px !important; line-height: 1.25 !important; }
-        .elite-button { box-sizing: border-box !important; min-width: 200px !important; padding: 16px 28px !important; }
+        .elite-email-wrap { padding: 22px 12px !important; }
+        .elite-card-header { padding: 26px 20px 20px !important; }
+        .elite-card-body { padding: 24px 20px 26px !important; }
+        .elite-logo { width: 66px !important; max-width: 66px !important; }
+        .elite-title { font-size: 22px !important; line-height: 1.28 !important; }
+        .elite-button { box-sizing: border-box !important; min-width: 184px !important; padding: 14px 26px !important; }
+        .elite-member-box { width: 100% !important; }
       }
     </style>
   </head>
   <body bgcolor="#050505" style="margin:0;padding:0;background-color:#050505 !important;color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;">
     <table class="elite-bg" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#050505" style="min-width:100%;width:100%;background-color:#050505 !important;">
       <tr>
-        <td class="elite-bg elite-email-wrap" align="center" bgcolor="#050505" style="background-color:#050505 !important;padding:46px 16px;">
-          <table class="elite-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#080808" style="border-collapse:separate;width:100%;max-width:600px;border:1px solid rgba(212,175,55,0.35);border-radius:24px;background-color:#080808 !important;box-shadow:0 24px 70px rgba(212,175,55,0.10),0 30px 90px rgba(0,0,0,0.55);overflow:hidden;">
+        <td class="elite-bg elite-email-wrap" align="center" bgcolor="#050505" style="background-color:#050505 !important;padding:34px 14px;">
+          <table class="elite-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#080808" style="border-collapse:separate;width:100%;max-width:520px;border:1px solid rgba(212,175,55,0.32);border-radius:22px;background-color:#080808 !important;box-shadow:0 18px 52px rgba(212,175,55,0.09),0 24px 72px rgba(0,0,0,0.52);overflow:hidden;">
             <tr>
-              <td class="elite-card-header" align="center" bgcolor="#080808" style="padding:34px 30px 24px;border-bottom:1px solid rgba(255,255,255,0.08);background-color:#080808 !important;text-align:center;">
-                <img alt="Elite Gold" src="${logoUrl}" width="96" style="display:block;width:96px;max-width:96px;height:auto;margin:0 auto 18px;border:0;outline:none;text-decoration:none;">
-                <p style="margin:0 0 12px;color:#D4AF37;font-size:12px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;">Elite Gold Community</p>
-                <h1 class="elite-title" style="margin:0;color:#FFFFFF;font-size:28px;line-height:1.25;font-weight:800;">${safeTitle}</h1>
+              <td class="elite-card-header" align="center" bgcolor="#080808" style="padding:28px 26px 22px;border-bottom:1px solid rgba(255,255,255,0.08);background-color:#080808 !important;text-align:center;">
+                <img class="elite-logo" alt="Elite Gold" src="${logoUrl}" width="72" style="display:block;width:72px;max-width:72px;height:auto;margin:0 auto 14px;border:0;outline:none;text-decoration:none;">
+                <p style="margin:0 0 10px;color:#D4AF37;font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;">Elite Gold Community</p>
+                <h1 class="elite-title" style="margin:0;color:#FFFFFF;font-size:24px;line-height:1.28;font-weight:800;">${safeTitle}</h1>
               </td>
             </tr>
             <tr>
-              <td class="elite-card-body" bgcolor="#080808" style="padding:32px 34px 36px;color:#CFCFCF;font-size:15px;line-height:1.75;background-color:#080808 !important;">
+              <td class="elite-card-body" bgcolor="#080808" style="padding:28px 32px 30px;color:#CFCFCF;font-size:14px;line-height:1.72;background-color:#080808 !important;">
                 ${body}
               </td>
             </tr>
             <tr>
-              <td bgcolor="#080808" style="padding:20px 30px;border-top:1px solid rgba(255,255,255,0.08);color:#8A8A8A;font-size:12px;line-height:1.65;background-color:#080808 !important;text-align:center;">
+              <td bgcolor="#080808" style="padding:17px 24px;border-top:1px solid rgba(255,255,255,0.08);color:#8A8A8A;font-size:11.5px;line-height:1.65;background-color:#080808 !important;text-align:center;">
                 ${automatedFooterHtml}
               </td>
             </tr>
@@ -155,19 +157,19 @@ export function buildEmailVerificationEmail({
   const safeVerificationUrl = escapeHtml(verificationUrl);
   const html = getEmailShell(
     getWelcomeTitle(name),
-    `<p style="margin:0 0 16px;">Hi ${safeName},</p>
-     <p style="margin:0 0 16px;color:#CFCFCF;">Your Elite Gold account has been successfully created.</p>
-     <p style="margin:0 0 24px;color:#CFCFCF;">Please verify your email address to activate your account and unlock member features.</p>
-     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 26px;border-collapse:collapse;">
+    `<p style="margin:0 0 14px;">Hi ${safeName},</p>
+     <p style="margin:0 0 14px;color:#CFCFCF;">Your Elite Gold account has been successfully created.</p>
+     <p style="margin:0 0 22px;color:#CFCFCF;">Please verify your email address to activate your account and unlock member features.</p>
+     <table class="elite-member-box" role="presentation" width="320" align="center" cellspacing="0" cellpadding="0" style="width:320px;max-width:100%;margin:0 auto 24px;border-collapse:separate;">
        <tr>
-         <td align="center" style="border:1px solid rgba(212,175,55,0.25);border-radius:16px;background:#0B0B0B;padding:16px 18px;color:#8A8A8A;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;">
+         <td align="center" style="border:1px solid rgba(212,175,55,0.25);border-radius:18px;background:#0B0B0B;padding:14px 16px;color:#8A8A8A;font-size:11px;letter-spacing:0.13em;text-transform:uppercase;">
            Member ID<br>
-           <strong style="display:inline-block;margin-top:6px;color:#E6C85C;font-size:22px;letter-spacing:0.08em;">${safeMemberId}</strong>
+           <strong style="display:inline-block;margin-top:5px;color:#E6C85C;font-size:20px;letter-spacing:0.08em;">${safeMemberId}</strong>
          </td>
        </tr>
      </table>
      ${getButtonHtml(safeVerificationUrl, "Verify Email")}
-     <p style="margin:22px 0 0;color:#8f8f99;font-size:12px;line-height:1.6;">If the button does not work, copy and paste this link into your browser:<br>${safeVerificationUrl}</p>`,
+     <p style="margin:20px 0 0;color:#8f8f99;font-size:11.5px;line-height:1.6;">If the button does not work, copy and paste this link into your browser:<br><a href="${safeVerificationUrl}" style="color:#8BA7FF;text-decoration:underline;word-break:break-all;">${safeVerificationUrl}</a></p>`,
   );
   const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold account has been successfully created.\nPlease verify your email address to activate your account and unlock member features.\n\nMember ID: ${getMemberIdFromAccessCode(memberAccessCode)}\n\nVerify Email: ${verificationUrl}`;
 
