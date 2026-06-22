@@ -57,6 +57,16 @@ type PhoneCountryProfile = CountryProfile & {
   dialCode: string;
 };
 
+type SignupFormValues = {
+  firstName: string;
+  lastName: string;
+  nickname: string;
+  phone: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 const countryDisplayNames = new Intl.DisplayNames(["en"], { type: "region" });
 const priorityCountryCodes = ["TH", "US", "GB", "SG", "MY", "JP"] as const;
 const internationalCountryCodes = [
@@ -595,6 +605,18 @@ function getReadableNotice(notice?: string) {
   return null;
 }
 
+function getInitialSignupFormValues(googleSignupProfile?: GoogleSignupProfile): SignupFormValues {
+  return {
+    firstName: googleSignupProfile?.firstName ?? "",
+    lastName: googleSignupProfile?.lastName ?? "",
+    nickname: "",
+    phone: "",
+    email: googleSignupProfile?.email ?? "",
+    password: "",
+    confirmPassword: "",
+  };
+}
+
 export function Component({
   className,
   googleSignupProfile,
@@ -617,6 +639,9 @@ export function Component({
   const [isGoogleRedirecting, setIsGoogleRedirecting] = useState(false);
   const [isRedirectingAfterVerification, setIsRedirectingAfterVerification] = useState(false);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState<SignupFormValues>(
+    () => getInitialSignupFormValues(googleSignupProfile),
+  );
   const autoAccessCode = useMemo(() => getInitialAccessCode(accessCode), [accessCode]);
   const [selectedNationality, setSelectedNationality] = useState<string>(defaultCountryCode);
   const [selectedPhoneCountry, setSelectedPhoneCountry] = useState<string>(defaultCountryCode);
@@ -745,6 +770,17 @@ export function Component({
       extraClassName,
       getFieldError(name) ? "border-[#F6E3A3]/70 ring-2 ring-[#D4AF37]/20" : null,
     );
+  }
+
+  function updateFormValue(name: keyof SignupFormValues, value: string) {
+    setFormValues((current) => (
+      current[name] === value
+        ? current
+        : {
+            ...current,
+            [name]: value,
+          }
+    ));
   }
 
   function handleGoogleSignup() {
@@ -1019,10 +1055,11 @@ export function Component({
                       aria-invalid={Boolean(getFieldError("firstName"))}
                       autoComplete="given-name"
                       className={getInputClassName("firstName", "pl-10 pr-3")}
-                      defaultValue={googleSignupProfile?.firstName}
                       name="firstName"
+                      onChange={(event) => updateFormValue("firstName", event.target.value)}
                       placeholder={nationalityProfile.firstNamePlaceholder}
                       required
+                      value={formValues.firstName}
                     />
                   </span>
                 </label>
@@ -1035,10 +1072,11 @@ export function Component({
                       aria-invalid={Boolean(getFieldError("lastName"))}
                       autoComplete="family-name"
                       className={getInputClassName("lastName", "pl-10 pr-3")}
-                      defaultValue={googleSignupProfile?.lastName}
                       name="lastName"
+                      onChange={(event) => updateFormValue("lastName", event.target.value)}
                       placeholder={nationalityProfile.lastNamePlaceholder}
                       required
+                      value={formValues.lastName}
                     />
                   </span>
                 </label>
@@ -1051,8 +1089,10 @@ export function Component({
                       aria-invalid={Boolean(getFieldError("nickname"))}
                       className={getInputClassName("nickname", "pl-10 pr-3")}
                       name="nickname"
+                      onChange={(event) => updateFormValue("nickname", event.target.value)}
                       placeholder={nationalityProfile.nicknamePlaceholder}
                       required
+                      value={formValues.nickname}
                     />
                   </span>
                 </label>
@@ -1084,9 +1124,11 @@ export function Component({
                         autoComplete="tel"
                         className={getInputClassName("phone", "pl-10 pr-3")}
                         name="phone"
+                        onChange={(event) => updateFormValue("phone", event.target.value)}
                         placeholder={phoneCountryProfile.phonePlaceholder}
                         required
                         type="tel"
+                        value={formValues.phone}
                       />
                     </span>
                   </span>
@@ -1107,12 +1149,13 @@ export function Component({
                           isGoogleSignup ? "text-white" : null,
                         ),
                       )}
-                      defaultValue={googleSignupProfile?.email}
                       name="email"
+                      onChange={(event) => updateFormValue("email", event.target.value)}
                       placeholder={nationalityProfile.emailPlaceholder}
                       readOnly={isGoogleSignup}
                       required
                       type="email"
+                      value={formValues.email}
                     />
                   </span>
                 </label>
@@ -1128,9 +1171,11 @@ export function Component({
                           autoComplete="new-password"
                           className={getInputClassName("password", "pl-10 pr-11")}
                           name="password"
+                          onChange={(event) => updateFormValue("password", event.target.value)}
                           placeholder="Password"
                           required
                           type={showPassword ? "text" : "password"}
+                          value={formValues.password}
                         />
                         <button
                           aria-label={showPassword ? "Hide password" : "Show password"}
@@ -1152,9 +1197,11 @@ export function Component({
                           autoComplete="new-password"
                           className={getInputClassName("confirmPassword", "pl-10 pr-11")}
                           name="confirmPassword"
+                          onChange={(event) => updateFormValue("confirmPassword", event.target.value)}
                           placeholder="Confirm password"
                           required
                           type={showConfirmPassword ? "text" : "password"}
+                          value={formValues.confirmPassword}
                         />
                         <button
                           aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
