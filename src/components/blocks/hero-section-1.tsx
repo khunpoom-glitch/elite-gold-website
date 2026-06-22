@@ -10,8 +10,8 @@ import {
     BookOpenCheck,
     CheckCircle2,
     ChevronDown,
-    Clipboard,
     LayoutDashboard,
+    Link2,
     LogOut,
     Menu,
     NotebookPen,
@@ -498,7 +498,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             onClick={handleCopyAccessLink}
                             role="menuitem"
                             type="button">
-                            <Clipboard aria-hidden="true" className={memberMenuIconClass} />
+                            <Link2 aria-hidden="true" className={memberMenuIconClass} />
                             <span className={memberMenuLabelClass}>{copyState === 'copied' ? 'Access link copied' : copyState === 'error' ? 'Copy not available' : 'Copy Access Link'}</span>
                         </button>
                         <Link
