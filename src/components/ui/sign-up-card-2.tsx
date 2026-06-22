@@ -942,7 +942,7 @@ export function Component({
                   role="alert"
                   transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="pointer-events-auto w-full max-w-[22rem] rounded-2xl border border-[#D4AF37]/35 bg-[#070707]/95 px-3.5 py-3 text-white shadow-[0_18px_54px_rgba(0,0,0,0.48),0_0_28px_rgba(212,175,55,0.16)] backdrop-blur-xl">
+                  <div className="pointer-events-auto relative w-full max-w-[22rem] rounded-2xl border border-[#D4AF37]/35 bg-[#070707]/95 px-3.5 py-3 pr-11 text-white shadow-[0_18px_54px_rgba(0,0,0,0.48),0_0_28px_rgba(212,175,55,0.16)] backdrop-blur-xl">
                     <div className="flex min-h-[3.5rem] items-center gap-2.5">
                       <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/12 text-[#F6E3A3]">
                         <AlertTriangle aria-hidden="true" className="size-3.5" />
@@ -951,15 +951,15 @@ export function Component({
                         <p className="text-[0.82rem] font-semibold leading-5 text-[#F6E3A3]">{validationPopupTitle}</p>
                         <p className="mt-0.5 text-[0.72rem] leading-5 text-white/68">{validationPopupMessage}</p>
                       </div>
-                      <button
-                        aria-label="Close validation notice"
-                        className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/46 transition hover:bg-white/8 hover:text-white"
-                        onClick={() => setDismissedValidationErrorKey(validationPopupKey)}
-                        type="button"
-                      >
-                        <X aria-hidden="true" className="size-3.5" />
-                      </button>
                     </div>
+                    <button
+                      aria-label="Close validation notice"
+                      className="absolute right-2.5 top-2.5 inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/46 transition hover:bg-white/8 hover:text-white"
+                      onClick={() => setDismissedValidationErrorKey(validationPopupKey)}
+                      type="button"
+                    >
+                      <X aria-hidden="true" className="size-3.5" />
+                    </button>
                   </div>
                 </motion.div>
               ) : null}

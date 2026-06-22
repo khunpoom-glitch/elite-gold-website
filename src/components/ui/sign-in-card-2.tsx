@@ -94,7 +94,7 @@ function LoginValidationPopup({
   return (
     <motion.div
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      className="absolute bottom-[calc(100%+0.7rem)] left-0 right-0 z-30 mx-auto w-[min(24rem,calc(100vw-2rem))] rounded-2xl border border-[#D4AF37]/32 bg-[#080808]/96 px-4 py-3 text-left shadow-[0_20px_58px_rgba(0,0,0,0.5)] ring-1 ring-white/[0.04] backdrop-blur-xl"
+      className="absolute bottom-[calc(100%+0.7rem)] left-0 right-0 z-30 mx-auto w-[min(24rem,calc(100vw-2rem))] rounded-2xl border border-[#D4AF37]/32 bg-[#080808]/96 px-4 py-3 pr-11 text-left shadow-[0_20px_58px_rgba(0,0,0,0.5)] ring-1 ring-white/[0.04] backdrop-blur-xl"
       exit={{ opacity: 0, y: 8, scale: 0.98 }}
       initial={{ opacity: 0, y: 8, scale: 0.98 }}
       role="alert"
@@ -108,15 +108,15 @@ function LoginValidationPopup({
           <span className="block text-sm font-semibold leading-5 text-[#F6E3A3]">{notice.title}</span>
           <span className="mt-0.5 block text-xs leading-5 text-white/64">{notice.message}</span>
         </span>
-        <button
-          aria-label="Close login notice"
-          className="-mr-1 grid size-7 shrink-0 place-items-center rounded-full text-white/42 transition hover:bg-white/[0.06] hover:text-white"
-          onClick={onClose}
-          type="button"
-        >
-          <X aria-hidden="true" className="size-4" />
-        </button>
       </div>
+      <button
+        aria-label="Close login notice"
+        className="absolute right-3 top-3 grid size-7 shrink-0 place-items-center rounded-full text-white/42 transition hover:bg-white/[0.06] hover:text-white"
+        onClick={onClose}
+        type="button"
+      >
+        <X aria-hidden="true" className="size-4" />
+      </button>
     </motion.div>
   );
 }
