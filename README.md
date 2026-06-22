@@ -10,11 +10,11 @@ https://elitegoldcommunity.com
 
 ## Phase
 
-This repository has completed Phase 2 of 6 and is ready to continue into Phase 3 dashboard expansion.
+This repository has completed Phase 2 of 6 and is now in Phase 3 dashboard expansion.
 
 Phase 1 delivered the brand-forward public site, one-page public sections, Login/Sign Up modal entry points, legal pages, SEO/social preview routes, and Vercel/GitHub Actions deployment.
 
-Phase 2 delivered custom-domain production setup, Supabase Auth, Google OAuth signup completion, member profile capture, transactional email wiring through Resend, dashboard/account shells, and production-enforced Access Code signup rules.
+Phase 2 delivered custom-domain production setup, Supabase Auth, Google OAuth signup completion with preserved OAuth state, member profile capture, app-managed email verification, transactional email wiring through Resend, dashboard/account shells, real login/signup testing, and production-enforced Access Code signup rules.
 
 Access Code behavior:
 
@@ -22,7 +22,7 @@ Access Code behavior:
 - After the first member exists, new signups must use an existing Access Code such as `/signup?ref=EG000`.
 - Successful new members receive the next sequential code: `EG001`, `EG002`, and onward.
 
-Phase 2 does not include payment flow, live Trading Journal backend, full course platform, affiliate payouts, or production member operations. Those belong to later phases.
+Phase 3 currently includes authenticated member navigation, dashboard/account shells, email-verification gating, and placeholder routes for Education, Journal, and Community. Next Phase 3 work should expand the member area while keeping full course delivery, live Trading Journal backend, payments, affiliate payouts, and admin operations in later phases.
 
 For current scope, routes, product language, and deployment notes, see `CONTEXT.md`.
 
@@ -70,7 +70,8 @@ Do not commit secrets.
 ### Email Delivery
 
 - App-triggered transactional emails use the Resend HTTP API through server-only `RESEND_*` env vars.
-- Supabase Auth emails such as signup confirmation, password recovery, and email-change confirmation should be routed through Resend SMTP.
+- App-managed email verification uses private Supabase verification tokens and the `/auth/verify-email` route.
+- Supabase Auth emails such as password recovery and email-change confirmation should be routed through Resend SMTP.
 - The SMTP setup script also enables Supabase Auth password-changed and email-changed notifications with Elite Gold subjects/templates.
 - After setting `SUPABASE_ACCESS_TOKEN`, `NEXT_PUBLIC_SUPABASE_URL`, `RESEND_API_KEY`, and `RESEND_FROM_EMAIL`, run:
 

@@ -1,9 +1,6 @@
 "use client";
 
-import { useState, type FocusEvent } from "react";
-import { motion } from "framer-motion";
 import {
-  ChevronsUpDown,
   FileClock,
   GraduationCap,
   LayoutDashboard,
@@ -32,34 +29,6 @@ type NavItem = {
   label: string;
   status?: string;
 };
-
-const sidebarVariants = {
-  open: {
-    width: "16rem",
-  },
-  closed: {
-    width: "4rem",
-  },
-};
-
-const textVariants = {
-  open: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.18 },
-  },
-  closed: {
-    opacity: 0,
-    x: -10,
-    transition: { duration: 0.12 },
-  },
-};
-
-const transitionProps = {
-  duration: 0.22,
-  ease: "easeOut",
-  type: "tween",
-} as const;
 
 const navigationItems: NavItem[] = [
   {
@@ -109,56 +78,51 @@ function getNavigationItems(isMemberActive: boolean) {
   );
 }
 
-function getInitial(email: string) {
-  return email.trim().charAt(0).toUpperCase() || "E";
+function getInitial(value: string) {
+  return value.trim().charAt(0).toUpperCase() || "E";
 }
 
-function SidebarNavItem({
-  isCollapsed,
-  item,
-  pathname,
-}: {
-  isCollapsed: boolean;
-  item: NavItem;
-  pathname: string;
-}) {
+function isActivePath(pathname: string, href?: string) {
+  if (!href) {
+    return false;
+  }
+
+  return href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+}
+
+function RailItem({ item, pathname }: { item: NavItem; pathname: string }) {
   const Icon = item.icon;
-  const isActive = item.href === "/dashboard" ? pathname === item.href : Boolean(item.href && pathname.startsWith(item.href));
-  const itemClassName = cn(
-    "group flex h-9 w-full items-center gap-3 rounded-md px-2 text-sm font-semibold transition",
+  const isActive = isActivePath(pathname, item.href);
+  const label = item.status ? `${item.label} (${item.status})` : item.label;
+  const className = cn(
+    "group relative grid size-11 place-items-center rounded-2xl border transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50",
     isActive
-      ? "border border-gold/30 bg-gold/12 text-champagne shadow-[inset_0_1px_0_rgba(246,227,163,0.12)]"
-      : "border border-transparent text-white/58 hover:border-white/10 hover:bg-white/[0.045] hover:text-white",
-    !item.href && "cursor-default opacity-80",
+      ? "member-shimmer-action border-[#E6C766]/28 text-[#F6E3A3]"
+      : "border-white/8 bg-white/[0.025] text-white/54 hover:border-white/14 hover:bg-white/[0.055] hover:text-white",
+    !item.href && "cursor-default opacity-50 hover:border-white/8 hover:bg-white/[0.025] hover:text-white/54",
   );
   const content = (
     <>
-      <Icon aria-hidden="true" className="size-4 shrink-0" />
-      <motion.span
-        animate={isCollapsed ? "closed" : "open"}
-        className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden whitespace-nowrap"
-        variants={textVariants}
-      >
-        <span className="truncate">{item.label}</span>
-        {item.status ? (
-          <span className="ml-auto rounded border border-gold/20 bg-gold/10 px-1.5 py-0.5 text-[0.62rem] font-bold uppercase text-soft-gold">
-            {item.status}
-          </span>
-        ) : null}
-      </motion.span>
+      <Icon aria-hidden="true" className="relative z-10 size-4" />
+      {isActive ? (
+        <span aria-hidden="true" className="absolute -right-1 top-1/2 h-5 w-px -translate-y-1/2 rounded-full bg-[#F6E3A3] shadow-[0_0_14px_rgba(230,199,102,0.56)]" />
+      ) : null}
+      <span className="pointer-events-none absolute left-[calc(100%+0.65rem)] top-1/2 z-50 hidden min-w-max -translate-y-1/2 rounded-xl border border-white/10 bg-[#080808]/96 px-3 py-2 text-xs font-semibold text-white/82 opacity-0 shadow-[0_18px_42px_rgba(0,0,0,0.45)] backdrop-blur-xl transition group-hover:block group-hover:opacity-100 group-focus-visible:block group-focus-visible:opacity-100">
+        {label}
+      </span>
     </>
   );
 
   if (item.href) {
     return (
-      <Link aria-current={isActive ? "page" : undefined} className={itemClassName} href={item.href}>
+      <Link aria-current={isActive ? "page" : undefined} aria-label={label} className={className} href={item.href} title={label}>
         {content}
       </Link>
     );
   }
 
   return (
-    <button aria-disabled="true" className={itemClassName} title={`${item.label} (${item.status})`} type="button">
+    <button aria-disabled="true" aria-label={label} className={className} title={label} type="button">
       {content}
     </button>
   );
@@ -166,25 +130,26 @@ function SidebarNavItem({
 
 function MobileNavItem({ item, pathname }: { item: NavItem; pathname: string }) {
   const Icon = item.icon;
-  const isActive = item.href ? pathname === item.href : false;
+  const isActive = isActivePath(pathname, item.href);
+  const label = item.status ? `${item.label} (${item.status})` : item.label;
   const className = cn(
     "grid h-12 place-items-center rounded-full border text-white/58 transition",
     isActive
-      ? "border-gold/30 bg-gold/12 text-champagne"
+      ? "member-shimmer-action border-[#E6C766]/28 text-[#F6E3A3]"
       : "border-transparent hover:border-white/10 hover:bg-white/[0.045] hover:text-white",
-    !item.href && "opacity-60",
+    !item.href && "opacity-50",
   );
 
   if (item.href) {
     return (
-      <Link aria-label={item.label} aria-current={isActive ? "page" : undefined} className={className} href={item.href}>
+      <Link aria-label={label} aria-current={isActive ? "page" : undefined} className={className} href={item.href}>
         <Icon aria-hidden="true" className="size-4" />
       </Link>
     );
   }
 
   return (
-    <button aria-disabled="true" aria-label={`${item.label} (${item.status})`} className={className} type="button">
+    <button aria-disabled="true" aria-label={label} className={className} type="button">
       <Icon aria-hidden="true" className="size-4" />
     </button>
   );
@@ -196,121 +161,70 @@ export function SessionNavBar({
   memberName,
   memberStatus,
 }: SessionNavBarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
   const memberInitial = getInitial(memberName || memberEmail);
   const visibleNavigationItems = getNavigationItems(isMemberActive);
 
-  function handleBlur(event: FocusEvent<HTMLElement>) {
-    const nextTarget = event.relatedTarget as Node | null;
-
-    if (!nextTarget || !event.currentTarget.contains(nextTarget)) {
-      setIsCollapsed(true);
-    }
-  }
-
   return (
     <>
-      <motion.aside
-        animate={isCollapsed ? "closed" : "open"}
+      <aside
         aria-label="Member navigation"
-        className="fixed inset-y-0 left-0 z-40 hidden overflow-hidden border-r border-white/10 bg-black/94 shadow-[22px_0_70px_rgba(0,0,0,0.38)] backdrop-blur-xl md:block"
-        initial="closed"
-        onBlur={handleBlur}
-        onFocus={() => setIsCollapsed(false)}
-        onMouseEnter={() => setIsCollapsed(false)}
-        onMouseLeave={() => setIsCollapsed(true)}
-        transition={transitionProps}
-        variants={sidebarVariants}
+        className="fixed inset-y-0 left-0 z-40 hidden w-20 border-r border-white/8 bg-black/92 shadow-[22px_0_70px_rgba(0,0,0,0.32)] backdrop-blur-xl md:flex"
       >
-        <div className="flex h-dvh flex-col px-2 py-3">
-          <div className="mb-5 flex h-11 items-center gap-3 rounded-md border border-white/10 bg-white/[0.035] px-2">
-            <span className="relative grid size-7 shrink-0 place-items-center overflow-hidden rounded-md border border-gold/25 bg-black">
-              <Image
-                alt=""
-                aria-hidden="true"
-                className="object-contain p-1"
-                fill
-                sizes="28px"
-                src="/brand/elite-gold-mark.png"
-              />
-            </span>
-            <motion.div
-              animate={isCollapsed ? "closed" : "open"}
-              className="min-w-0 overflow-hidden"
-              variants={textVariants}
-            >
-              <p className="elite-brand-type truncate text-xs text-white">Elite Gold</p>
-              <p className="truncate text-[0.68rem] font-semibold uppercase text-soft-gold">Member Area</p>
-            </motion.div>
-            <motion.span animate={isCollapsed ? "closed" : "open"} className="ml-auto" variants={textVariants}>
-              <ChevronsUpDown aria-hidden="true" className="size-4 text-white/34" />
-            </motion.span>
-          </div>
+        <div className="flex h-dvh w-full flex-col items-center px-3 py-4">
+          <Link
+            aria-label="Elite Gold dashboard"
+            className="relative grid size-12 place-items-center rounded-2xl border border-white/10 bg-white/[0.035] transition hover:border-[#E6C766]/24"
+            href="/dashboard"
+          >
+            <Image
+              alt=""
+              aria-hidden="true"
+              className="object-contain p-2"
+              fill
+              sizes="48px"
+              src="/brand/elite-gold-mark.png"
+            />
+          </Link>
 
-          <nav className="grid gap-1" aria-label="Dashboard sections">
+          <nav className="mt-6 grid gap-2" aria-label="Dashboard sections">
             {visibleNavigationItems.map((item) => (
-              <SidebarNavItem
-                isCollapsed={isCollapsed}
-                item={item}
-                key={item.label}
-                pathname={pathname}
-              />
+              <RailItem item={item} key={item.label} pathname={pathname} />
             ))}
           </nav>
 
           <div className="mt-auto grid gap-2">
             <button
               aria-disabled="true"
-              className="group flex h-9 w-full cursor-default items-center gap-3 rounded-md border border-transparent px-2 text-sm font-semibold text-white/48"
+              aria-label="Settings (Phase 5)"
+              className="grid size-11 place-items-center rounded-2xl border border-white/8 bg-white/[0.025] text-white/34"
               title="Settings (Phase 5)"
               type="button"
             >
-              <Settings aria-hidden="true" className="size-4 shrink-0" />
-              <motion.span
-                animate={isCollapsed ? "closed" : "open"}
-                className="overflow-hidden whitespace-nowrap"
-                variants={textVariants}
-              >
-                Settings
-              </motion.span>
+              <Settings aria-hidden="true" className="size-4" />
             </button>
 
-            <div className="rounded-md border border-white/10 bg-white/[0.035] p-2">
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="grid size-7 shrink-0 place-items-center rounded-md border border-gold/24 bg-gold/10 text-xs font-extrabold text-champagne">
-                  {memberInitial}
-                </span>
-                <motion.div
-                  animate={isCollapsed ? "closed" : "open"}
-                  className="min-w-0 flex-1 overflow-hidden"
-                  variants={textVariants}
-                >
-                  <p className="truncate text-xs font-semibold text-white">{memberName}</p>
-                  <p className="truncate text-[0.68rem] text-white/48">{memberEmail}</p>
-                  <p className="truncate text-[0.62rem] font-semibold uppercase text-soft-gold/80">{memberStatus}</p>
-                </motion.div>
-              </div>
+            <div
+              aria-label={`${memberName}, ${memberStatus}`}
+              className="grid size-11 place-items-center rounded-2xl border border-white/10 bg-white/[0.035] text-xs font-extrabold text-[#F6E3A3]"
+              title={`${memberName} - ${memberEmail} - ${memberStatus}`}
+            >
+              {memberInitial}
             </div>
 
             <form action={logoutAction}>
               <button
-                className="flex h-9 w-full items-center gap-3 rounded-md border border-white/10 bg-white/[0.035] px-2 text-sm font-semibold text-white/64 transition hover:border-gold/30 hover:bg-gold/10 hover:text-champagne focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-soft-gold/50"
+                aria-label="Logout"
+                className="grid size-11 place-items-center rounded-2xl border border-white/8 bg-white/[0.025] text-white/54 transition hover:border-[#E6C766]/24 hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50"
+                title="Logout"
                 type="submit"
               >
-                <LogOut aria-hidden="true" className="size-4 shrink-0" />
-                <motion.span
-                  animate={isCollapsed ? "closed" : "open"}
-                  className="overflow-hidden whitespace-nowrap"
-                  variants={textVariants}
-                >
-                  Logout
-                </motion.span>
+                <LogOut aria-hidden="true" className="size-4" />
               </button>
             </form>
           </div>
         </div>
-      </motion.aside>
+      </aside>
 
       <nav
         aria-label="Member navigation"

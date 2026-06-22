@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState, type FocusEvent, type KeyboardEvent, type MouseEvent } from "react";
+import { useActionState, useEffect, useMemo, useState, type CSSProperties, type FocusEvent, type KeyboardEvent, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
@@ -26,6 +26,7 @@ import {
 } from "@/app/auth/actions";
 import { AuthBotProtectionFields } from "@/components/auth/bot-protection-fields";
 import { GoogleLogo } from "@/components/ui/google-logo";
+import { ShinyButton } from "@/components/ui/shiny-button";
 import { initialAuthActionState } from "@/lib/auth/action-state";
 import type { GoogleSignupProfile } from "@/lib/member/profile";
 import { cn } from "@/lib/utils";
@@ -638,6 +639,9 @@ export function Component({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isGoogleRedirecting, setIsGoogleRedirecting] = useState(false);
+  const [isGoogleProfileHydrating, setIsGoogleProfileHydrating] = useState(
+    () => Boolean(googleSignupProfile?.email),
+  );
   const [isRedirectingAfterVerification, setIsRedirectingAfterVerification] = useState(false);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<SignupFormValues>(
@@ -673,6 +677,47 @@ export function Component({
   const validationPopupMessage = hasAccessCodeError
     ? "Please use a valid signup link before continuing."
     : "Please complete the highlighted fields before continuing.";
+
+  useEffect(() => {
+    if (!googleSignupProfile?.email) {
+      return;
+    }
+
+    const startTimer = window.setTimeout(() => {
+      setIsGoogleProfileHydrating(true);
+    }, 0);
+    const finishTimer = window.setTimeout(() => {
+      setIsGoogleProfileHydrating(false);
+    }, 900);
+
+    return () => {
+      window.clearTimeout(startTimer);
+      window.clearTimeout(finishTimer);
+    };
+  }, [googleSignupProfile?.email]);
+
+  useEffect(() => {
+    if (!googleSignupProfile?.email) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setFormValues((current) => ({
+        ...current,
+        email: googleSignupProfile.email,
+        firstName: googleSignupProfile.firstName || current.firstName,
+        lastName: googleSignupProfile.lastName || current.lastName,
+      }));
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [
+    googleSignupProfile?.email,
+    googleSignupProfile?.firstName,
+    googleSignupProfile?.lastName,
+  ]);
 
   useEffect(() => {
     if (state.status === "success" && state.redirectTo) {
@@ -961,15 +1006,39 @@ export function Component({
             ) : null}
 
             {isGoogleSignup ? (
-              <div className="mb-3 overflow-hidden rounded-lg border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-3 py-2 text-xs leading-5 text-white/72" role="status">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center gap-2 font-semibold text-[#F6E3A3]">
+              <motion.div
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-3 overflow-hidden rounded-xl border border-white/12 bg-[#0A0A0A]/94 px-3 py-2.5 text-xs leading-5 text-white/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_46px_rgba(0,0,0,0.34)]"
+                initial={{ opacity: 0, y: 6 }}
+                role="status"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="inline-flex min-w-0 items-center gap-2 font-semibold text-white/88">
                     <GoogleLogo />
-                    Google account connected
+                    <span className="truncate">
+                      {isGoogleProfileHydrating ? "Loading Google profile" : "Google account connected"}
+                    </span>
                   </span>
+                  {isGoogleProfileHydrating ? (
+                    <LoaderCircle aria-hidden="true" className="size-3.5 shrink-0 animate-spin text-[#F6E3A3]" />
+                  ) : (
+                    <CheckCircle2 aria-hidden="true" className="size-3.5 shrink-0 text-emerald-300" />
+                  )}
                 </div>
-                <span className="mt-1 block break-words">{googleSignupProfile?.email}</span>
-              </div>
+                <span className="mt-1 block break-words text-white/54">{googleSignupProfile?.email}</span>
+                <p className="mt-1.5 text-[0.7rem] leading-5 text-white/46">
+                  {isGoogleProfileHydrating
+                    ? "Securely filling your signup details from Google..."
+                    : "Review the member details below, then press Sign Up."}
+                </p>
+                <span aria-hidden="true" className="mt-2 block h-px overflow-hidden rounded-full bg-white/10">
+                  <motion.span
+                    animate={{ x: isGoogleProfileHydrating ? ["-85%", "185%"] : "100%" }}
+                    className="block h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#F6E3A3]/70 to-transparent"
+                    transition={{ duration: 0.92, ease: "easeInOut", repeat: isGoogleProfileHydrating ? Infinity : 0 }}
+                  />
+                </span>
+              </motion.div>
             ) : (
               <>
                 <motion.button
@@ -1235,23 +1304,34 @@ export function Component({
                 </label>
               </div>
 
-              <motion.button
-                className="group/button relative mt-2 h-11 overflow-hidden rounded-lg bg-white font-semibold text-black transition disabled:cursor-not-allowed disabled:opacity-70"
-                disabled={isPending}
+              <ShinyButton
+                className="group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
+                disabled={isPending || isGoogleProfileHydrating}
+                style={{
+                  "--shiny-button-border": "rgba(230, 199, 102, 0.52)",
+                  "--shiny-button-border-highlight": "rgba(255, 248, 215, 0.92)",
+                  "--shiny-button-border-muted": "rgba(230, 199, 102, 0.10)",
+                  "--shiny-button-foreground": "rgba(255, 255, 255, 0.9)",
+                  background: "#000000",
+                  fontSize: "0.875rem",
+                  fontWeight: 650,
+                  letterSpacing: 0,
+                } as CSSProperties}
                 type="submit"
                 whileHover={{ scale: 1.018 }}
                 whileTap={{ scale: 0.985 }}
               >
                 <AnimatePresence mode="wait">
-                  {isPending ? (
+                  {isPending || isGoogleProfileHydrating ? (
                     <motion.span
                       animate={{ opacity: 1 }}
-                      className="relative flex h-full items-center justify-center"
+                      className="relative flex h-full items-center justify-center gap-2"
                       exit={{ opacity: 0 }}
                       initial={{ opacity: 0 }}
                       key="loading"
                     >
-                      <span className="size-4 rounded-full border-2 border-black/70 border-t-transparent animate-spin" />
+                      <span className="size-4 rounded-full border-2 border-[#F6E3A3]/80 border-t-transparent animate-spin" />
+                      Sign Up
                     </motion.span>
                   ) : (
                     <motion.span
@@ -1266,7 +1346,7 @@ export function Component({
                     </motion.span>
                   )}
                 </AnimatePresence>
-              </motion.button>
+              </ShinyButton>
 
               <p className="pt-1 text-center text-xs text-white/58">
                 Already have an account?{" "}

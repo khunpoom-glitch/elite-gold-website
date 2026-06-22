@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Bell,
   BookOpenCheck,
+  CheckCircle2,
   FileClock,
   GraduationCap,
   MessagesSquare,
@@ -12,6 +13,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
+import { MemberMarketVisual } from "@/components/dashboard/member-market-visual";
 import { siteConfig } from "@/config/site";
 import { getActiveMemberOrRedirect } from "@/lib/member/session";
 
@@ -21,36 +23,55 @@ export const metadata: Metadata = {
 
 const quickActions = [
   {
-    description: "Review and update profile details",
+    description: "Update profile, verification, and member record",
     href: "/dashboard/account",
     icon: UserRound,
-    label: "Profile",
+    label: "My Account",
+    status: "Live",
   },
   {
-    description: "Preview learning progress shell",
+    description: "Preview the learning library foundation",
     href: "/dashboard/education",
     icon: GraduationCap,
     label: "Education",
+    status: "Preview",
   },
   {
-    description: "Preview journal activity shell",
+    description: "Open the staged trade review workflow",
     href: "/dashboard/journal",
     icon: FileClock,
     label: "Journal",
+    status: "Preview",
   },
   {
-    description: "Preview community updates shell",
+    description: "Check the community updates shell",
     href: "/dashboard/community",
     icon: MessagesSquare,
     label: "Community",
+    status: "Preview",
   },
 ];
 
-function getStatusTone(status: string) {
-  return status === "active"
-    ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200"
-    : "border-[#D4AF37]/28 bg-[#D4AF37]/10 text-[#F6E3A3]";
-}
+const activityCards = [
+  {
+    description: "Member updates, class notes, and platform notices will appear here.",
+    icon: Bell,
+    label: "Announcements",
+    state: "No active announcements",
+  },
+  {
+    description: "Course progress stays staged until the Phase 4 education library is built.",
+    icon: BookOpenCheck,
+    label: "Learning Progress",
+    state: "Foundation ready",
+  },
+  {
+    description: "Journal activity preview is staged before the full Trading Journal backend.",
+    icon: FileClock,
+    label: "Journal Snapshot",
+    state: "No entries in Phase 3",
+  },
+];
 
 function getAccessSignupLink(accessCode: string) {
   const signupUrl = new URL("/signup", siteConfig.url);
@@ -62,142 +83,144 @@ function getAccessSignupLink(accessCode: string) {
 export default async function DashboardPage() {
   const { email, memberName, memberStatus, profile } = await getActiveMemberOrRedirect("/dashboard");
   const accessSignupLink = getAccessSignupLink(profile.memberAccessCode);
-  const statusTone = getStatusTone(profile.status);
 
   return (
-    <section className="grid gap-6">
-      <header className="rounded-md border border-white/10 bg-black/68 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_24px_70px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:p-6">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-gold/24 bg-gold/10 px-3 py-1 text-xs font-bold uppercase text-soft-gold">
-              <ShieldCheck aria-hidden="true" className="size-3.5" />
-              Phase 3 Member Area
+    <section className="grid gap-5">
+      <header className="member-surface overflow-hidden p-5 sm:p-7">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(20rem,0.95fr)] lg:items-stretch">
+          <div className="flex min-w-0 flex-col justify-between gap-8">
+            <div>
+              <span className="member-kicker">
+                <ShieldCheck aria-hidden="true" className="size-3.5" />
+                Phase 3 Member Command Center
+              </span>
+              <h1 className="elite-display-type mt-5 text-balance text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
+                Welcome back, {memberName}
+              </h1>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/58 sm:text-base">
+                Your dashboard now focuses on account readiness, access attribution, and member entry points while the full education and journal systems stay staged for later phases.
+              </p>
             </div>
-            <h1 className="elite-display-type mt-4 text-balance text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
-              Welcome back, {memberName}
-            </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-              Dashboard นี้เป็น command center สำหรับ profile, membership status, access entry point และ preview ของ Education, Journal, Community ก่อนเข้าสู่ feature เต็มใน Phase 4.
-            </p>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="border-t border-white/10 pt-3">
+                <p className="text-[0.68rem] font-bold uppercase text-white/36">Member Status</p>
+                <p className="mt-1 flex items-center gap-2 text-sm font-semibold text-emerald-200">
+                  <CheckCircle2 aria-hidden="true" className="size-4" />
+                  {memberStatus}
+                </p>
+              </div>
+              <div className="border-t border-white/10 pt-3">
+                <p className="text-[0.68rem] font-bold uppercase text-white/36">Access Code</p>
+                <p className="mt-1 text-sm font-semibold text-[#F6E3A3]">{profile.memberAccessCode}</p>
+              </div>
+              <div className="border-t border-white/10 pt-3">
+                <p className="text-[0.68rem] font-bold uppercase text-white/36">Signed In</p>
+                <p className="mt-1 truncate text-sm font-semibold text-white/78">{email}</p>
+              </div>
+            </div>
           </div>
 
-          <div className="rounded-md border border-white/10 bg-white/[0.035] p-4 text-sm">
-            <p className="text-xs font-semibold uppercase text-white/42">Signed in as</p>
-            <p className="mt-2 max-w-[18rem] break-words font-semibold text-white">{email}</p>
-            <span className={`mt-3 inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${statusTone}`}>
-              {memberStatus}
-            </span>
-          </div>
+          <MemberMarketVisual className="min-h-[18rem]" />
         </div>
       </header>
 
-      <section className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <article className="rounded-md border border-white/10 bg-black/72 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)] sm:p-6">
-          <div className="flex items-start justify-between gap-4">
+      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(22rem,0.9fr)]">
+        <article className="member-surface p-5 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-xs font-bold uppercase text-soft-gold">Member Summary</p>
-              <h2 className="mt-2 text-xl font-semibold text-white">Profile foundation is live</h2>
+              <p className="text-xs font-bold uppercase text-white/38">Member Summary</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">Profile foundation</h2>
             </div>
-            <UserRound aria-hidden="true" className="size-6 shrink-0 text-soft-gold" />
+            <UserRound aria-hidden="true" className="size-6 shrink-0 text-white/42" />
           </div>
-          <dl className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-md border border-white/10 bg-white/[0.03] p-4">
-              <dt className="text-xs font-semibold uppercase text-white/42">Name</dt>
-              <dd className="mt-2 text-sm font-semibold text-white">{profile.fullName}</dd>
-            </div>
-            <div className="rounded-md border border-white/10 bg-white/[0.03] p-4">
-              <dt className="text-xs font-semibold uppercase text-white/42">Nickname</dt>
-              <dd className="mt-2 text-sm font-semibold text-white">{profile.nickname}</dd>
-            </div>
-            <div className="rounded-md border border-white/10 bg-white/[0.03] p-4">
-              <dt className="text-xs font-semibold uppercase text-white/42">Nationality</dt>
-              <dd className="mt-2 text-sm font-semibold text-white">{profile.nationality}</dd>
-            </div>
-            <div className="rounded-md border border-white/10 bg-white/[0.03] p-4">
-              <dt className="text-xs font-semibold uppercase text-white/42">Phone</dt>
-              <dd className="mt-2 text-sm font-semibold text-white">{profile.phoneCountry} {profile.phone}</dd>
-            </div>
+
+          <dl className="mt-6 grid gap-x-5 gap-y-4 sm:grid-cols-2">
+            {[
+              ["Name", profile.fullName],
+              ["Nickname", profile.nickname],
+              ["Nationality", profile.nationality],
+              ["Phone", `${profile.phoneCountry} ${profile.phone}`],
+            ].map(([label, value]) => (
+              <div className="border-t border-white/10 pt-3" key={label}>
+                <dt className="text-[0.68rem] font-bold uppercase text-white/36">{label}</dt>
+                <dd className="mt-1 break-words text-sm font-semibold text-white/82">{value}</dd>
+              </div>
+            ))}
           </dl>
         </article>
 
-        <article className="rounded-md border border-white/10 bg-black/72 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)] sm:p-6">
+        <article className="member-surface p-5 sm:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase text-soft-gold">Access</p>
-              <h2 className="mt-2 text-xl font-semibold text-white">Invite-ready link</h2>
+              <p className="text-xs font-bold uppercase text-white/38">Access</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white">Invite-ready link</h2>
             </div>
-            <Sparkles aria-hidden="true" className="size-6 shrink-0 text-soft-gold" />
+            <Sparkles aria-hidden="true" className="size-6 shrink-0 text-[#F6E3A3]/70" />
           </div>
-          <p className="mt-4 text-sm leading-7 text-muted-foreground">
-            Access tracking เต็มระบบจะอยู่ใน Phase 5 แต่ Phase 3 จะแสดง code และ signup link เพื่อเตรียม flow ให้พร้อม.
+          <p className="mt-4 text-sm leading-7 text-white/56">
+            Access tracking stays in Phase 5, but Phase 3 shows the code and signup link so the member workflow is ready.
           </p>
-          <div className="mt-5 rounded-md border border-gold/20 bg-gold/10 p-4">
-            <p className="text-xs font-semibold uppercase text-soft-gold">My Access Code</p>
-            <p className="mt-2 text-2xl font-bold text-white">{profile.memberAccessCode}</p>
-            <p className="mt-3 break-all text-xs leading-5 text-white/52">{accessSignupLink}</p>
-            <AccessCodeCopyButton className="mt-4" label="Copy Link" value={accessSignupLink} />
+
+          <div className="mt-5 border-t border-white/10 pt-4">
+            <p className="text-[0.68rem] font-bold uppercase text-white/36">My Access Code</p>
+            <p className="mt-2 text-3xl font-bold text-white">{profile.memberAccessCode}</p>
+            <p className="mt-3 break-all text-xs leading-5 text-white/46">{accessSignupLink}</p>
+            <AccessCodeCopyButton className="mt-4 h-10 px-4" label="Copy Access Link" value={accessSignupLink} />
           </div>
         </article>
       </section>
 
       <section className="grid gap-4 md:grid-cols-3">
-        <article className="rounded-md border border-white/10 bg-black/72 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)]">
-          <Bell aria-hidden="true" className="size-6 text-soft-gold" />
-          <h2 className="mt-5 text-base font-semibold text-white">Announcements</h2>
-          <p className="mt-2 text-sm leading-7 text-muted-foreground">
-            Preview area for member updates, class notes, and platform notices.
-          </p>
-          <p className="mt-4 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/48">
-            No active announcements yet.
-          </p>
-        </article>
-        <article className="rounded-md border border-white/10 bg-black/72 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)]">
-          <BookOpenCheck aria-hidden="true" className="size-6 text-soft-gold" />
-          <h2 className="mt-5 text-base font-semibold text-white">Education Progress</h2>
-          <p className="mt-2 text-sm leading-7 text-muted-foreground">
-            Learning progress is reserved for the Phase 4 course library.
-          </p>
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full w-1/5 rounded-full bg-soft-gold" />
-          </div>
-        </article>
-        <article className="rounded-md border border-white/10 bg-black/72 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)]">
-          <FileClock aria-hidden="true" className="size-6 text-soft-gold" />
-          <h2 className="mt-5 text-base font-semibold text-white">Journal Activity</h2>
-          <p className="mt-2 text-sm leading-7 text-muted-foreground">
-            Journal activity preview is staged here before the full Trading Journal build.
-          </p>
-          <p className="mt-4 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/48">
-            No journal entries in Phase 3.
-          </p>
-        </article>
+        {activityCards.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <article className="member-surface-soft p-5" key={item.label}>
+              <Icon aria-hidden="true" className="size-5 text-white/46" />
+              <h2 className="mt-5 text-base font-semibold text-white">{item.label}</h2>
+              <p className="mt-2 text-sm leading-7 text-white/52">{item.description}</p>
+              <p className="mt-4 rounded-xl border border-white/8 bg-white/[0.025] px-3 py-2 text-xs font-medium text-white/46">
+                {item.state}
+              </p>
+            </article>
+          );
+        })}
       </section>
 
-      <section className="rounded-md border border-white/10 bg-black/70 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.055)] sm:p-6">
+      <section className="member-surface p-5 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs font-bold uppercase text-soft-gold">Quick Actions</p>
-            <h2 className="mt-2 text-xl font-semibold text-white">Move through the member workflow</h2>
+            <p className="text-xs font-bold uppercase text-white/38">Quick Actions</p>
+            <h2 className="mt-2 text-2xl font-semibold text-white">Move through the member workflow</h2>
           </div>
-          <p className="text-sm text-white/46">Phase 3 navigation shell</p>
+          <p className="text-sm text-white/42">Phase 3 navigation shell</p>
         </div>
 
         <div className="mt-5 grid gap-3 md:grid-cols-4">
-          {quickActions.map((item) => {
+          {quickActions.map((item, index) => {
             const Icon = item.icon;
+            const isPrimary = index === 0;
 
             return (
               <Link
-                className="group rounded-md border border-white/10 bg-white/[0.03] p-4 transition hover:border-gold/28 hover:bg-gold/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-soft-gold/50"
+                className={isPrimary
+                  ? "member-shimmer-action group rounded-2xl border p-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50"
+                  : "group rounded-2xl border border-white/8 bg-white/[0.025] p-4 transition hover:border-white/14 hover:bg-white/[0.055] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/30"}
                 href={item.href}
                 key={item.label}
               >
-                <Icon aria-hidden="true" className="size-5 text-soft-gold" />
+                <div className="flex items-center justify-between gap-3">
+                  <Icon aria-hidden="true" className={isPrimary ? "size-5 text-[#F6E3A3]" : "size-5 text-white/46"} />
+                  <span className="rounded-full border border-white/10 bg-black/30 px-2 py-1 text-[0.62rem] font-bold uppercase text-white/42">
+                    {item.status}
+                  </span>
+                </div>
                 <h3 className="mt-4 flex items-center justify-between gap-3 text-sm font-semibold text-white">
                   {item.label}
-                  <ArrowRight aria-hidden="true" className="size-4 text-white/28 transition group-hover:translate-x-0.5 group-hover:text-soft-gold" />
+                  <ArrowRight aria-hidden="true" className="size-4 text-white/28 transition group-hover:translate-x-0.5 group-hover:text-[#F6E3A3]" />
                 </h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                <p className="mt-2 text-sm leading-6 text-white/50">{item.description}</p>
               </Link>
             );
           })}

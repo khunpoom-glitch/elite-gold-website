@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, type CSSProperties } from "react";
 import { AlertTriangle, CheckCircle2, Save } from "lucide-react";
 import { updateMemberProfileAction } from "@/app/auth/actions";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ShinyButton } from "@/components/ui/shiny-button";
 import { initialAuthActionState } from "@/lib/auth/action-state";
 import type { MemberProfile } from "@/lib/member/profile";
 
@@ -44,7 +44,7 @@ export function MemberProfileForm({
   return (
     <form action={formAction} className="grid gap-5" noValidate>
       <div className="grid gap-4 md:grid-cols-2">
-        <label className="grid gap-2 text-sm font-semibold text-white/82">
+        <label className="grid gap-2 text-sm font-semibold text-white/76">
           First Name
           <Input
             autoComplete="given-name"
@@ -55,7 +55,7 @@ export function MemberProfileForm({
           <FieldError message={state.fieldErrors?.firstName} />
         </label>
 
-        <label className="grid gap-2 text-sm font-semibold text-white/82">
+        <label className="grid gap-2 text-sm font-semibold text-white/76">
           Last Name
           <Input
             autoComplete="family-name"
@@ -66,7 +66,7 @@ export function MemberProfileForm({
           <FieldError message={state.fieldErrors?.lastName} />
         </label>
 
-        <label className="grid gap-2 text-sm font-semibold text-white/82">
+        <label className="grid gap-2 text-sm font-semibold text-white/76">
           Nickname
           <Input
             autoComplete="nickname"
@@ -77,7 +77,7 @@ export function MemberProfileForm({
           <FieldError message={state.fieldErrors?.nickname} />
         </label>
 
-        <label className="grid gap-2 text-sm font-semibold text-white/82">
+        <label className="grid gap-2 text-sm font-semibold text-white/76">
           Nationality
           <Input
             autoComplete="country-name"
@@ -89,7 +89,7 @@ export function MemberProfileForm({
           <FieldError message={state.fieldErrors?.nationality} />
         </label>
 
-        <label className="grid gap-2 text-sm font-semibold text-white/82">
+        <label className="grid gap-2 text-sm font-semibold text-white/76">
           Phone Country
           <Input
             autoComplete="tel-country-code"
@@ -101,7 +101,7 @@ export function MemberProfileForm({
           <FieldError message={state.fieldErrors?.phoneCountry} />
         </label>
 
-        <label className="grid gap-2 text-sm font-semibold text-white/82">
+        <label className="grid gap-2 text-sm font-semibold text-white/76">
           Phone Number
           <Input
             autoComplete="tel-national"
@@ -158,14 +158,14 @@ export function MemberProfileForm({
       </label>
 
       {state.status === "error" ? (
-        <div className="flex items-start gap-2 rounded-md border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]" role="alert">
+        <div className="member-status-warning flex items-start gap-2 rounded-2xl border px-3 py-2 text-sm" role="alert">
           <AlertTriangle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
           {state.message}
         </div>
       ) : null}
 
       {state.status === "success" ? (
-        <div className="flex items-start gap-2 rounded-md border border-emerald-400/25 bg-emerald-400/10 px-3 py-2 text-sm text-emerald-100" role="status">
+        <div className="member-status-success flex items-start gap-2 rounded-2xl border px-3 py-2 text-sm" role="status">
           <CheckCircle2 aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
           {state.message}
         </div>
@@ -175,10 +175,24 @@ export function MemberProfileForm({
         <p className="text-xs leading-6 text-white/42">
           Saved changes update your member profile only. Membership, billing, and access attribution stay locked for later phases.
         </p>
-        <Button className="rounded-md sm:w-auto" disabled={isPending} type="submit">
+        <ShinyButton
+          className="h-10 gap-2 rounded-xl px-4 py-2 text-sm font-bold sm:w-auto"
+          disabled={isPending}
+          style={{
+            "--shiny-button-border": "rgba(230, 199, 102, 0.46)",
+            "--shiny-button-border-highlight": "rgba(255, 248, 215, 0.88)",
+            "--shiny-button-border-muted": "rgba(230, 199, 102, 0.10)",
+            "--shiny-button-foreground": "rgba(246, 227, 163, 0.94)",
+            background: "#000000",
+            fontSize: "0.875rem",
+            fontWeight: 700,
+            letterSpacing: 0,
+          } as CSSProperties}
+          type="submit"
+        >
           <Save aria-hidden="true" className="size-4" />
           {isPending ? "Saving" : "Save Profile"}
-        </Button>
+        </ShinyButton>
       </div>
     </form>
   );

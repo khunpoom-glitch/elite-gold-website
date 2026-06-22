@@ -5,9 +5,9 @@ Use this file when current product status, scope, routes, deployment, or product
 ## Project Snapshot
 
 - Product: Elite Gold Community, the public website and member-platform foundation for Elite Gold trading education, journaling discipline, and community.
-- Phase: Phase 2 of 6 is complete; Phase 3 member dashboard expansion is next.
-- Phase 1 delivered the public website foundation. Phase 2 delivered production auth, profile capture, custom domain setup, transactional email wiring, and Access Code entry rules.
-- Phase 2 does not include payment flow, live Trading Journal backend, complete course platform, affiliate payouts, or production member operations.
+- Phase: Phase 3 of 6 is in progress.
+- Phase 1 delivered the public website foundation. Phase 2 delivered production auth, profile capture, custom domain setup, transactional email wiring, app-managed email verification, real login/signup testing, and Access Code entry rules.
+- Phase 3 has started with authenticated dashboard/account shells, email-verification gating, member navigation, and module placeholders. It does not yet include full education, journal, community, tools, payments, affiliate payouts, or admin operations.
 - Production URL: `https://elitegoldcommunity.com`
 - Production www URL: `https://www.elitegoldcommunity.com`
 - Current testing preference: production-first while pre-public. For routine non-destructive web/UI/auth fixes, deploy production after local checks and verify on the production URL.
@@ -23,10 +23,12 @@ Implemented:
 - Section URLs redirect back to `/`; `/home` also redirects to `/`.
 - `/login` and `/signup` open the public home experience with the auth modal active.
 - `/signup?ref=EG000` style Access Code handling is live.
-- `/dashboard` and `/dashboard/account` are live as Phase 3-ready shells behind authentication.
-- Supabase Auth supports email/password, Google OAuth callback completion, member profile creation, and email-confirmation status.
+- `/dashboard`, `/dashboard/account`, `/dashboard/education`, `/dashboard/journal`, and `/dashboard/community` are live as Phase 3 authenticated shells.
+- Supabase Auth supports email/password, Google OAuth callback completion with preserved OAuth state, member profile creation, and app-managed email verification status.
+- Real login/signup testing has driven hardening around form-value preservation, validation alerts, Google signup return animation, fixed OAuth callback handling, and auth bot-protection fields.
 - Access Code rules are production-enforced: first member can bootstrap as `EG000`; later members must use an existing Access Code and then receive `EG001`, `EG002`, and onward.
-- Resend is wired for app-triggered transactional emails, and Supabase Auth email delivery is configured for production email flows.
+- Resend is wired for app-triggered transactional emails, app-managed verification emails, password-change notifications, and Supabase Auth SMTP templates.
+- Email verification is app-managed through private token storage, `/auth/verify-email`, resend controls, and a 90-second resend cooldown.
 - Legal routes: `/privacy`, `/terms`, and `/risk-disclosure`.
 - SEO foundation: metadata, canonical URLs, noindex auth routes, sitemap, robots, and OG/Twitter social preview routes.
 - Supabase client/server environment wiring is active for auth/profile work.
@@ -35,8 +37,10 @@ Implemented:
 Still needed before Phase 3 is considered complete:
 
 - Final membership package names, pricing, and feature lists.
-- Full dashboard modules for education, journal, community, tools, access attribution reporting, and account settings.
-- Admin/member-management workflows for reviewing members and Access Code attribution.
+- Real-account QA for verified-member dashboard access after email verification.
+- UX polish from real testing, especially Google signup return/loading state and clear pending-verification messaging.
+- Phase 3 dashboard expansion beyond placeholders: account settings polish, dashboard overview data, tools entry point, and access attribution display.
+- Admin/member-management workflows for reviewing members and Access Code attribution remain Phase 6 unless explicitly pulled forward.
 - Payment/billing design decisions for Phase 5.
 
 Recommended before launch changes:
@@ -55,11 +59,14 @@ Recommended before launch changes:
 | `/faq` | Section URL, redirects to `/` |
 | `/login` | Opens home with Login modal |
 | `/signup` | Opens home with Sign Up modal |
+| `/forgot-password` | Opens forgot-password modal flow |
+| `/reset-password` | Opens reset-password modal flow |
+| `/auth/verify-email` | App-managed email verification token endpoint; redirects to `/dashboard/account` with status notice |
 | `/dashboard` | Authenticated Phase 3 shell; unauthenticated users redirect to `/login?next=%2Fdashboard` |
-| `/dashboard/account` | Authenticated profile/account foundation |
-| `/dashboard/education` | Authenticated Phase 3 placeholder |
-| `/dashboard/journal` | Authenticated Phase 3 placeholder |
-| `/dashboard/community` | Authenticated Phase 3 placeholder |
+| `/dashboard/account` | Authenticated profile/account foundation; pending members can verify/resend email here |
+| `/dashboard/education` | Authenticated Phase 3 placeholder; pending members redirect to account verification |
+| `/dashboard/journal` | Authenticated Phase 3 placeholder; pending members redirect to account verification |
+| `/dashboard/community` | Authenticated Phase 3 placeholder; pending members redirect to account verification |
 | `/privacy` | Phase 1 Privacy Policy |
 | `/terms` | Phase 1 Terms of Service |
 | `/risk-disclosure` | Phase 1 Risk Disclosure |

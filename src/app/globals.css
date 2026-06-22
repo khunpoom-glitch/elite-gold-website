@@ -529,6 +529,205 @@ textarea:-webkit-autofill:active {
   animation: shinyButtonRun var(--shiny-button-duration) linear infinite;
 }
 
+.member-shell {
+  background:
+    linear-gradient(180deg, #000000 0%, #050505 48%, #000000 100%);
+}
+
+.member-background-grid {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 18%, rgba(255, 255, 255, 0.018) 100%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
+  background-size: 100% 100%, 4.5rem 4.5rem, 4.5rem 4.5rem;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.36) 54%, transparent 100%);
+}
+
+.member-surface {
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 1.2rem;
+  background:
+    linear-gradient(145deg, rgba(28, 28, 28, 0.82), rgba(5, 5, 5, 0.96) 58%, rgba(0, 0, 0, 0.98)),
+    #050505;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 26px 80px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(22px);
+}
+
+.member-surface-soft {
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 1rem;
+  background:
+    linear-gradient(150deg, rgba(24, 24, 24, 0.72), rgba(7, 7, 7, 0.94)),
+    #050505;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 18px 54px rgba(0, 0, 0, 0.32);
+}
+
+.member-inset-panel {
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 0.95rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.member-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(246, 227, 163, 0.88);
+  padding: 0.34rem 0.62rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.member-shimmer-action {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: rgba(230, 199, 102, 0.28);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 248, 215, 0.09), transparent 60%),
+    #000000;
+  color: rgba(246, 227, 163, 0.92);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(230, 199, 102, 0.06),
+    0 18px 42px rgba(0, 0, 0, 0.34);
+}
+
+.member-shimmer-action::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -140% auto -140% 0;
+  width: 76%;
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 20%,
+      rgba(230, 199, 102, 0.10) 32%,
+      rgba(230, 199, 102, 0.52) 45%,
+      rgba(255, 248, 215, 0.82) 51%,
+      rgba(230, 199, 102, 0.42) 58%,
+      rgba(230, 199, 102, 0.10) 70%,
+      transparent 84%,
+      transparent 100%
+    );
+  filter: drop-shadow(0 0 10px rgba(230, 199, 102, 0.34));
+  transform: translateX(-175%) rotate(0.001deg);
+  animation: shinyButtonRun 4.8s linear infinite;
+  pointer-events: none;
+}
+
+.member-shimmer-action > * {
+  position: relative;
+  z-index: 1;
+}
+
+.member-status-success {
+  border-color: rgba(74, 222, 128, 0.24);
+  background: rgba(34, 197, 94, 0.085);
+  color: rgba(187, 247, 208, 0.92);
+}
+
+.member-status-warning {
+  border-color: rgba(230, 199, 102, 0.24);
+  background: rgba(230, 199, 102, 0.07);
+  color: rgba(246, 227, 163, 0.92);
+}
+
+.member-market-visual {
+  position: relative;
+  min-height: 17rem;
+  overflow: hidden;
+  border-radius: 1.15rem;
+  background:
+    linear-gradient(145deg, rgba(38, 38, 38, 0.62), rgba(7, 7, 7, 0.96) 62%),
+    #050505;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  perspective: 720px;
+}
+
+.member-market-visual::before {
+  content: "";
+  position: absolute;
+  inset: 16% 4% 4%;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1rem;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  opacity: 0.55;
+  transform: rotateX(60deg) rotateZ(-10deg) translateY(1.4rem);
+  transform-origin: 50% 82%;
+}
+
+.member-market-visual::after {
+  content: "";
+  position: absolute;
+  inset: 12% 10% auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(246, 227, 163, 0.62), transparent);
+  box-shadow: 0 0 22px rgba(230, 199, 102, 0.2);
+  animation: memberMarketSweep 5.8s ease-in-out infinite;
+}
+
+.member-market-bar {
+  position: absolute;
+  bottom: 22%;
+  width: 0.58rem;
+  border-radius: 999px 999px 0.24rem 0.24rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 18%),
+    linear-gradient(180deg, rgba(86, 86, 86, 0.9), rgba(18, 18, 18, 0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 18px 28px rgba(0, 0, 0, 0.34);
+  transform: rotateX(0deg) rotateZ(-8deg);
+}
+
+.member-market-bar.is-accent {
+  border-color: rgba(230, 199, 102, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 18px rgba(230, 199, 102, 0.12),
+    0 18px 28px rgba(0, 0, 0, 0.34);
+}
+
+.member-market-plate {
+  position: absolute;
+  inset: auto 12% 10%;
+  height: 3.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.065), transparent);
+  transform: rotateX(68deg) rotateZ(-10deg);
+  filter: blur(0.1px);
+}
+
+.member-market-node {
+  position: absolute;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: rgba(246, 227, 163, 0.74);
+  box-shadow: 0 0 16px rgba(230, 199, 102, 0.32);
+}
+
 .preview-hero-button-shell {
   border-color: rgba(255, 255, 255, 0.24);
   border-radius: 1.2rem;
@@ -1807,6 +2006,26 @@ textarea:-webkit-autofill:active {
   to {
     -webkit-mask-position: -145% 50%;
     mask-position: -145% 50%;
+  }
+}
+
+@keyframes memberMarketSweep {
+  0% {
+    opacity: 0.28;
+    transform: translateX(-18%);
+  }
+
+  45% {
+    opacity: 0.78;
+  }
+
+  55% {
+    opacity: 0.68;
+  }
+
+  100% {
+    opacity: 0.28;
+    transform: translateX(18%);
   }
 }
 
