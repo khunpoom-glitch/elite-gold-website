@@ -658,46 +658,48 @@ textarea:-webkit-autofill:active {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 -1px 0 rgba(255, 255, 255, 0.04);
-  perspective: 720px;
 }
 
 .member-market-visual::before {
   content: "";
   position: absolute;
   z-index: 0;
-  inset: 16% 4% 4%;
+  inset: 22% 5% 16%;
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 1rem;
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(180deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
   background-size: 2rem 2rem;
-  opacity: 0.55;
-  transform: rotateX(60deg) rotateZ(-10deg) translateY(1.4rem);
-  transform-origin: 50% 82%;
-  animation: memberMarketGridDrift 15s linear infinite;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 16%, #000 74%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 16%, #000 74%, transparent);
+  opacity: 0.42;
+  animation: memberMarketGridDrift 18s linear infinite;
 }
 
 .member-market-visual::after {
   content: "";
   position: absolute;
   z-index: 3;
-  inset: 12% 10% auto;
+  inset: 13% 9% auto;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(246, 227, 163, 0.62), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), rgba(246, 227, 163, 0.48), rgba(255, 255, 255, 0.18), transparent);
   box-shadow: 0 0 22px rgba(230, 199, 102, 0.2);
-  animation: memberMarketSweep 5.8s ease-in-out infinite;
+  animation: memberMarketSweep 7.2s cubic-bezier(0.45, 0, 0.2, 1) infinite;
 }
 
 .member-market-graph {
   position: absolute;
   z-index: 4;
-  inset: 10% 7% 24%;
+  top: 18%;
+  left: 8%;
+  height: 43%;
+  width: 84%;
   overflow: visible;
   pointer-events: none;
-  filter: drop-shadow(0 18px 18px rgba(0, 0, 0, 0.28));
-  transform: rotateX(42deg) rotateZ(-7deg) translate3d(0, 0.35rem, 0);
-  transform-origin: 50% 72%;
+  filter:
+    drop-shadow(0 14px 16px rgba(0, 0, 0, 0.32))
+    drop-shadow(0 0 11px rgba(230, 199, 102, 0.08));
 }
 
 .member-market-graph-base,
@@ -713,18 +715,16 @@ textarea:-webkit-autofill:active {
 
 .member-market-graph-runner {
   stroke: url("#member-market-line");
-  stroke-dasharray: 18 82;
-  stroke-dashoffset: 100;
   stroke-linecap: round;
   stroke-width: 1.08;
-  animation: memberMarketGraphRun 7.2s ease-in-out infinite;
-  filter: drop-shadow(0 0 8px rgba(230, 199, 102, 0.3));
+  animation: memberMarketGraphRun 8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  filter: drop-shadow(0 0 8px rgba(230, 199, 102, 0.28));
 }
 
 .member-market-tracer {
   fill: rgba(246, 227, 163, 0.88);
   opacity: 0.9;
-  animation: memberMarketTracerGlow 1.6s ease-in-out infinite;
+  animation: memberMarketTracerGlow 8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
   filter:
     drop-shadow(0 0 4px rgba(246, 227, 163, 0.56))
     drop-shadow(0 0 12px rgba(230, 199, 102, 0.26));
@@ -744,9 +744,9 @@ textarea:-webkit-autofill:active {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     0 18px 28px rgba(0, 0, 0, 0.34);
-  transform: rotateX(0deg) rotateZ(-8deg) scaleY(0.92);
+  transform: scaleY(0.92);
   transform-origin: bottom center;
-  animation: memberMarketBarPulse 5.8s ease-in-out infinite;
+  animation: memberMarketBarPulse 6.2s cubic-bezier(0.45, 0, 0.2, 1) infinite;
   animation-delay: var(--bar-delay);
   will-change: transform, opacity, filter;
 }
@@ -758,7 +758,7 @@ textarea:-webkit-autofill:active {
   background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.42), transparent);
   opacity: 0.34;
   transform: translateY(115%);
-  animation: memberMarketBarLight 5.8s ease-in-out infinite;
+  animation: memberMarketBarLight 6.2s cubic-bezier(0.45, 0, 0.2, 1) infinite;
   animation-delay: var(--bar-delay);
 }
 
@@ -778,7 +778,6 @@ textarea:-webkit-autofill:active {
   border: 1px solid rgba(255, 255, 255, 0.075);
   border-radius: 999px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.065), transparent);
-  transform: rotateX(68deg) rotateZ(-10deg);
   filter: blur(0.1px);
 }
 
@@ -790,31 +789,29 @@ textarea:-webkit-autofill:active {
   border-radius: 999px;
   background: rgba(246, 227, 163, 0.74);
   box-shadow: 0 0 16px rgba(230, 199, 102, 0.32);
-  animation: memberMarketNodePulse 4.2s ease-in-out infinite;
+  animation: memberMarketNodePulse 4.8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
   animation-delay: var(--node-delay);
 }
 
 .member-market-scan {
   position: absolute;
   z-index: 4;
-  inset: 24% 12% 23%;
+  inset: 24% 9% 18%;
   pointer-events: none;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    transparent 42%,
-    rgba(255, 255, 255, 0.06) 48%,
-    rgba(246, 227, 163, 0.18) 50%,
-    rgba(255, 255, 255, 0.05) 53%,
-    transparent 60%,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.045) 43%,
+    rgba(246, 227, 163, 0.14) 50%,
+    rgba(255, 255, 255, 0.045) 57%,
+    rgba(255, 255, 255, 0) 70%,
     transparent 100%
   );
-  background-size: 230% 100%;
+  background-size: 260% 100%;
   mix-blend-mode: screen;
-  opacity: 0.7;
-  transform: rotateX(62deg) rotateZ(-10deg);
-  transform-origin: 50% 80%;
-  animation: memberMarketFloorScan 6.8s ease-in-out infinite;
+  opacity: 0.62;
+  animation: memberMarketFloorScan 8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
 }
 
 .preview-hero-button-shell {
@@ -2099,55 +2096,74 @@ textarea:-webkit-autofill:active {
 }
 
 @keyframes memberMarketSweep {
-  0% {
-    opacity: 0.28;
-    transform: translateX(-18%);
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(-16%);
+  }
+
+  18% {
+    opacity: 0.5;
   }
 
   45% {
-    opacity: 0.78;
+    opacity: 0.72;
   }
 
-  55% {
-    opacity: 0.68;
+  82% {
+    opacity: 0.38;
+    transform: translateX(16%);
   }
 
-  100% {
-    opacity: 0.28;
-    transform: translateX(18%);
+  99% {
+    opacity: 0;
+    transform: translateX(16%);
   }
 }
 
 @keyframes memberMarketGraphRun {
-  0% {
-    opacity: 0.1;
-    stroke-dashoffset: 118;
+  0%,
+  100% {
+    opacity: 0;
   }
 
   12% {
-    opacity: 0.76;
+    opacity: 0.82;
   }
 
   72% {
-    opacity: 0.92;
+    opacity: 0.88;
   }
 
-  100% {
-    opacity: 0.14;
-    stroke-dashoffset: -18;
+  90% {
+    opacity: 0;
   }
 }
 
 @keyframes memberMarketTracerGlow {
-  0%,
-  100% {
-    opacity: 0.5;
-    r: 1.05;
+  0% {
+    opacity: 0;
+    r: 0.95;
+  }
+
+  10% {
+    opacity: 0.48;
+    r: 1.1;
   }
 
   48% {
-    opacity: 1;
-    r: 1.55;
+    opacity: 0.95;
+    r: 1.48;
+  }
+
+  88% {
+    opacity: 0.38;
+    r: 1.1;
+  }
+
+  100% {
+    opacity: 0;
+    r: 0.95;
   }
 }
 
@@ -2156,19 +2172,19 @@ textarea:-webkit-autofill:active {
   100% {
     opacity: 0.62;
     filter: brightness(0.82);
-    transform: rotateX(0deg) rotateZ(-8deg) scaleY(0.82);
+    transform: scaleY(0.82);
   }
 
   42% {
     opacity: 0.96;
     filter: brightness(1.14);
-    transform: rotateX(0deg) rotateZ(-8deg) scaleY(1.08);
+    transform: scaleY(1.08);
   }
 
   68% {
     opacity: 0.78;
     filter: brightness(0.94);
-    transform: rotateX(0deg) rotateZ(-8deg) scaleY(0.94);
+    transform: scaleY(0.94);
   }
 }
 
@@ -2214,13 +2230,18 @@ textarea:-webkit-autofill:active {
 
 @keyframes memberMarketFloorScan {
   0%,
-  12% {
+  10% {
     background-position: 145% 50%;
     opacity: 0;
   }
 
-  40% {
-    opacity: 0.68;
+  34% {
+    opacity: 0.58;
+  }
+
+  78% {
+    opacity: 0.42;
+    background-position: -60% 50%;
   }
 
   100% {
@@ -2316,8 +2337,8 @@ textarea:-webkit-autofill:active {
   }
 
   .member-market-graph-runner {
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
+    stroke: rgba(246, 227, 163, 0.34);
+    opacity: 0.52;
   }
 
   .member-market-tracer,
@@ -2327,6 +2348,6 @@ textarea:-webkit-autofill:active {
 
   .member-market-bar {
     opacity: 0.78;
-    transform: rotateX(0deg) rotateZ(-8deg) scaleY(1);
+    transform: scaleY(1);
   }
 }

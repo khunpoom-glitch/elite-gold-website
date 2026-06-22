@@ -23,7 +23,7 @@ const nodes = [
   { delay: "2.6s", left: "78%", top: "27%" },
 ];
 
-const graphPath = "M 4 35 C 12 29 17 33 24 23 S 35 11 42 16 S 53 39 60 25 S 70 9 77 17 S 87 37 96 24";
+const graphPath = "M 4 31 C 13 27 18 24 25 22 C 32 20 37 17 42 20 C 49 25 53 31 60 26 C 67 21 72 17 78 20 C 85 24 90 29 96 24";
 
 type MotionStyle = CSSProperties & Record<`--${string}`, string>;
 
@@ -41,17 +41,39 @@ export function MemberMarketVisual({
         viewBox="0 0 100 48"
       >
         <defs>
-          <linearGradient id="member-market-line" x1="0%" x2="100%" y1="0%" y2="0%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-            <stop offset="42%" stopColor="rgba(255,255,255,0.48)" />
-            <stop offset="68%" stopColor="rgba(246,227,163,0.92)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          <linearGradient
+            gradientUnits="userSpaceOnUse"
+            id="member-market-line"
+            x1="-90"
+            x2="-12"
+            y1="0"
+            y2="0"
+          >
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="28%" stopColor="#ffffff" stopOpacity="0.2" />
+            <stop offset="58%" stopColor="#f6e3a3" stopOpacity="0.86" />
+            <stop offset="82%" stopColor="#ffffff" stopOpacity="0.22" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            <animate
+              attributeName="x1"
+              dur="8s"
+              keyTimes="0;0.08;0.9;1"
+              repeatCount="indefinite"
+              values="-90;-90;126;126"
+            />
+            <animate
+              attributeName="x2"
+              dur="8s"
+              keyTimes="0;0.08;0.9;1"
+              repeatCount="indefinite"
+              values="-12;-12;204;204"
+            />
           </linearGradient>
         </defs>
         <path className="member-market-graph-base" d={graphPath} pathLength="100" />
         <path className="member-market-graph-runner" d={graphPath} pathLength="100" />
         <circle className="member-market-tracer" r="1.25">
-          <animateMotion dur="7.2s" path={graphPath} repeatCount="indefinite" rotate="auto" />
+          <animateMotion dur="8s" path={graphPath} repeatCount="indefinite" rotate="auto" />
         </circle>
       </svg>
       <div aria-hidden="true" className="member-market-plate" />
