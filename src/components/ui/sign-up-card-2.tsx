@@ -1301,11 +1301,12 @@ export function Component({
                 className="group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={isPending || isGoogleProfileHydrating}
                 style={{
-                  "--shiny-button-border": "rgba(230, 199, 102, 0.52)",
-                  "--shiny-button-border-highlight": "rgba(255, 248, 215, 0.92)",
-                  "--shiny-button-border-muted": "rgba(230, 199, 102, 0.10)",
-                  "--shiny-button-foreground": "rgba(255, 255, 255, 0.9)",
-                  background: "#000000",
+                  "--shiny-button-border": "rgba(255, 255, 255, 0.18)",
+                  "--shiny-button-border-highlight": "rgba(255, 255, 255, 0.42)",
+                  "--shiny-button-border-muted": "rgba(255, 255, 255, 0.08)",
+                  "--shiny-button-foreground": "rgba(255, 255, 255, 0.92)",
+                  background: "#181818",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                   fontSize: "0.875rem",
                   fontWeight: 650,
                   letterSpacing: 0,

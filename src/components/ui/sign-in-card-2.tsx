@@ -232,7 +232,7 @@ export function Component({
               ) : null}
 
               <motion.button
-                className="group/button relative mt-2 h-11 overflow-hidden rounded-lg bg-white font-semibold text-black transition disabled:cursor-not-allowed disabled:opacity-70"
+                className="group/button relative mt-2 h-11 overflow-hidden rounded-lg border border-white/10 bg-[#181818] font-semibold text-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition hover:border-white/18 hover:bg-[#202020] disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={isPending}
                 type="submit"
                 whileHover={{ scale: 1.018 }}
@@ -247,7 +247,7 @@ export function Component({
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                     >
-                      <span className="size-4 rounded-full border-2 border-black/70 border-t-transparent animate-spin" />
+                      <span className="size-4 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
                     </motion.span>
                   ) : (
                     <motion.span
