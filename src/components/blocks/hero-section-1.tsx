@@ -22,7 +22,6 @@ import {
 } from 'lucide-react'
 import type { Variants } from 'framer-motion'
 import { useFormStatus } from 'react-dom'
-import { logoutAction } from '@/app/auth/actions'
 import { Button } from '@/components/blocks/hero-section-1-button'
 import { EliteGoldNavbarLogo as Logo } from '@/components/shared/elite-gold-navbar-logo'
 import { AnimatedGroup } from '@/components/ui/animated-group'
@@ -195,7 +194,7 @@ function SigningOutOverlay() {
             role="status">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/24 bg-[#050505]/92 px-4 py-2 text-[0.75rem] font-semibold leading-none text-[#F6E3A3] shadow-[0_16px_46px_rgba(0,0,0,0.45)]">
                 <LoaderCircle aria-hidden="true" className="size-3.5 animate-spin" />
-                <span>Signing out securely...</span>
+                <span>Signing out...</span>
             </div>
         </div>
     )
@@ -556,7 +555,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             <Settings aria-hidden="true" className={memberMenuIconClass} />
                             <span className={memberMenuLabelClass}>My Profile</span>
                         </Link>
-                        <form action={logoutAction} onSubmitCapture={handleLogoutSubmit}>
+                        <form action="/auth/logout" method="post" onSubmitCapture={handleLogoutSubmit}>
                             <MemberLogoutMenuButton />
                         </form>
                     </div>

@@ -11,10 +11,8 @@ import {
   getEmailVerificationExpiresAt,
 } from "@/lib/auth/email-verification";
 import { getRequestOrigin } from "@/lib/auth/origin";
-import {
-  clearServerAuthSessionPolicy,
-  setServerAuthSessionPolicy,
-} from "@/lib/auth/session-policy-server";
+import { clearLogoutCookiesOnServerAction } from "@/lib/auth/logout";
+import { setServerAuthSessionPolicy } from "@/lib/auth/session-policy-server";
 import {
   getSafeRedirectPath,
   validateEmailChangeForm,
@@ -52,7 +50,6 @@ const signupSuccessMessage =
   "Sign up completed. Please check your email and click Verify Email to activate your account.";
 const emailVerificationCooldownMessage =
   "Please wait 90 seconds before requesting another verification email.";
-const logoutSignOutTimeoutMs = 2500;
 
 function getStringField(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -74,39 +71,6 @@ function getUserMetadataString(user: User, keys: string[]) {
 
 function getMemberDisplayName(fields: { firstName?: string; fullName?: string; nickname?: string }) {
   return fields.nickname || fields.firstName || fields.fullName || "Elite Gold Member";
-}
-
-async function signOutSupabaseSession(
-  supabase: NonNullable<Awaited<ReturnType<typeof createSupabaseServerClient>>>,
-) {
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  const timeout = new Promise<"timeout">((resolve) => {
-    timeoutId = setTimeout(() => resolve("timeout"), logoutSignOutTimeoutMs);
-  });
-  const signOut = supabase.auth
-    .signOut({ scope: "local" })
-    .then(({ error }) => {
-      if (error) {
-        console.warn("[auth] Supabase local sign out returned an error.", error.message);
-      }
-
-      return "done" as const;
-    })
-    .catch((error: unknown) => {
-      console.warn("[auth] Supabase local sign out failed.", error);
-
-      return "done" as const;
-    });
-
-  const result = await Promise.race([signOut, timeout]);
-
-  if (timeoutId) {
-    clearTimeout(timeoutId);
-  }
-
-  if (result === "timeout") {
-    console.warn("[auth] Supabase local sign out timed out; continuing logout redirect.");
-  }
 }
 
 async function issueEmailVerificationEmail(
@@ -779,12 +743,6 @@ export async function updateMemberProfileAction(
 }
 
 export async function logoutAction() {
-  const supabase = await createSupabaseServerClient();
-
-  await clearServerAuthSessionPolicy();
-  if (supabase) {
-    await signOutSupabaseSession(supabase);
-  }
-  revalidatePath("/", "layout");
+  await clearLogoutCookiesOnServerAction();
   redirect("/?auth=signed-out");
 }

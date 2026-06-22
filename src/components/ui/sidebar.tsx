@@ -15,7 +15,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useFormStatus } from "react-dom";
-import { logoutAction } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
 
 type SessionNavBarProps = {
@@ -235,7 +234,7 @@ export function SessionNavBar({
               {memberInitial}
             </div>
 
-            <form action={logoutAction}>
+            <form action="/auth/logout" method="post">
               <DashboardLogoutButton />
             </form>
           </div>
