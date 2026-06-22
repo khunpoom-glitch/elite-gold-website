@@ -52,5 +52,5 @@ jobs:
 
       - name: Deploy
         run: |
-          deployment_url="$(vercel deploy --prebuilt ${{ steps.target.outputs.deploy_args }} --token=${{ secrets.VERCEL_TOKEN }})"
+          deployment_url="$(vercel deploy --prebuilt ${{ steps.target.outputs.deploy_args }} --yes --token=${{ secrets.VERCEL_TOKEN }})"
           echo "Deployment URL: $deployment_url"
