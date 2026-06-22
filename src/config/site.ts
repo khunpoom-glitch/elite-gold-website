@@ -1,4 +1,5 @@
 import type { FaqItem, MembershipPlan } from "@/types";
+import { getConfiguredSiteUrl } from "./site-url";
 
 export const siteConfig = {
   name: "Elite Gold Community",
@@ -7,7 +8,7 @@ export const siteConfig = {
     "คอมมูนิตี้และแพลตฟอร์มการเรียนรู้สำหรับเทรดเดอร์ที่ต้องการพัฒนาทักษะ วินัย และระบบการเก็บสถิติอย่างยั่งยืน",
   shortDescription:
     "Trading education, journaling discipline, and community for long-term trader growth.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: getConfiguredSiteUrl(),
   keywords: [
     "Elite Gold",
     "Elite Gold Community",

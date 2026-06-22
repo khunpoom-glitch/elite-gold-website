@@ -1,3 +1,8 @@
+import {
+  canonicalizeProductionSiteUrl,
+  productionCanonicalSiteUrl,
+} from "@/config/site-url";
+
 type SendEmailInput = {
   headers?: Record<string, string>;
   html: string;
@@ -11,7 +16,7 @@ type SendEmailResult =
   | { ok: false; reason: "missing-config" | "resend-error" | "network-error" };
 
 const resendApiUrl = "https://api.resend.com/emails";
-const fallbackSiteUrl = "https://elitegoldcommunity.com";
+const fallbackSiteUrl = productionCanonicalSiteUrl;
 const automatedFooterHtml =
   "This is an automated email from Elite Gold Community.<br>If you did not create this account, you can safely ignore this email.";
 
@@ -45,7 +50,9 @@ function getReplyToAddress() {
 }
 
 function getPublicAssetUrl(path: string) {
-  const siteUrl = getEnvValue("NEXT_PUBLIC_SITE_URL") || fallbackSiteUrl;
+  const siteUrl = canonicalizeProductionSiteUrl(
+    getEnvValue("NEXT_PUBLIC_SITE_URL") || fallbackSiteUrl,
+  );
 
   try {
     return new URL(path, siteUrl.endsWith("/") ? siteUrl : `${siteUrl}/`).toString();
