@@ -3,7 +3,7 @@
 import type { User } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { sendEmailVerificationEmail } from "@/lib/email/resend";
+import { sendEmailVerificationEmail, sendPasswordChangedEmail } from "@/lib/email/resend";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AuthActionState } from "@/lib/auth/action-state";
 import {
@@ -45,6 +45,8 @@ function successState(message: string, redirectTo?: string): AuthActionState {
 
 const signupSuccessMessage =
   "Sign up completed. Please check your email and click Verify Email to activate your account.";
+const emailVerificationCooldownMessage =
+  "Please wait 90 seconds before requesting another verification email.";
 
 function getStringField(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -80,12 +82,17 @@ async function issueEmailVerificationEmail(
   });
 
   if (error) {
+    const isCooldownError = error.message.includes("email_verification_cooldown");
+
     console.error("[auth] Failed to create email verification token.", {
       code: error.code,
       message: error.message,
     });
 
-    return { ok: false as const };
+    return {
+      ok: false as const,
+      reason: isCooldownError ? "cooldown" : "token-error",
+    };
   }
 
   const verificationUrl = new URL("/auth/verify-email", await getRequestOrigin());
@@ -98,7 +105,9 @@ async function issueEmailVerificationEmail(
     verificationUrl: verificationUrl.toString(),
   });
 
-  return { ok: emailResult.ok } as const;
+  return emailResult.ok
+    ? { ok: true as const }
+    : { ok: false as const, reason: "email-error" as const };
 }
 
 function getAccessCodeResolution(row: unknown) {
@@ -321,6 +330,10 @@ export async function signupWithPasswordAction(
   const verification = await issueEmailVerificationEmail(client.supabase, memberProfile);
 
   if (!verification.ok) {
+    if (verification.reason === "cooldown") {
+      return errorState(emailVerificationCooldownMessage);
+    }
+
     return errorState("Signup was created, but the verification email could not be sent. Please login and resend it from My Profile.");
   }
 
@@ -364,6 +377,10 @@ export async function resendEmailVerificationAction(
   const verification = await issueEmailVerificationEmail(client.supabase, profile);
 
   if (!verification.ok) {
+    if (verification.reason === "cooldown") {
+      return errorState(emailVerificationCooldownMessage);
+    }
+
     return errorState("We could not send the verification email right now. Please try again.");
   }
 
@@ -482,6 +499,10 @@ export async function completeGoogleSignupAction(
   const verification = await issueEmailVerificationEmail(client.supabase, memberProfile);
 
   if (!verification.ok) {
+    if (verification.reason === "cooldown") {
+      return errorState(emailVerificationCooldownMessage);
+    }
+
     return errorState("Signup was created, but the verification email could not be sent. Please login and resend it from My Profile.");
   }
 
@@ -534,12 +555,36 @@ export async function updatePasswordAction(
     return client.state;
   }
 
-  const { error } = await client.supabase.auth.updateUser({
+  const { data, error } = await client.supabase.auth.updateUser({
     password: validation.data.password,
   });
 
   if (error) {
     return errorState(getReadableAuthError(error.message));
+  }
+
+  const updatedUser = data.user;
+  const memberProfile = updatedUser
+    ? await getMemberProfileByUserId(client.supabase, updatedUser.id)
+    : null;
+  const notificationEmail = memberProfile?.email || updatedUser?.email;
+
+  if (notificationEmail) {
+    const dashboardUrl = new URL("/dashboard/account", await getRequestOrigin()).toString();
+    const fallbackName = updatedUser
+      ? getUserMetadataString(updatedUser, ["nickname", "first_name", "full_name", "name"])
+      : "";
+    const emailResult = await sendPasswordChangedEmail({
+      dashboardUrl,
+      name: getMemberDisplayName(memberProfile ?? { firstName: fallbackName }),
+      to: notificationEmail,
+    });
+
+    if (!emailResult.ok) {
+      console.warn("[auth] Password changed notification email was not sent.", {
+        reason: emailResult.reason,
+      });
+    }
   }
 
   revalidatePath("/", "layout");

@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  authBotProtectionFieldNames,
+  getAuthBotProtectionError,
   getAuthRedirectUrl,
   getEmailOtpType,
   validateForgotPasswordForm,
@@ -22,6 +24,26 @@ function formDataFromEntries(entries: Record<string, string>) {
 }
 
 describe("auth form validation", () => {
+  it("rejects bot-trap submissions", () => {
+    const formData = formDataFromEntries({
+      email: "member@elitegold.com",
+      password: "secret-password",
+      [authBotProtectionFieldNames.website]: "https://spam.example",
+    });
+
+    const result = validateLoginForm(formData);
+
+    assert.equal(result.ok, false);
+  });
+
+  it("rejects submissions that arrive too quickly", () => {
+    const formData = formDataFromEntries({
+      [authBotProtectionFieldNames.startedAt]: "1000",
+    });
+
+    assert.equal(getAuthBotProtectionError(formData, 1200), "Please wait a moment and try again.");
+  });
+
   it("normalizes valid login credentials", () => {
     const result = validateLoginForm(
       formDataFromEntries({

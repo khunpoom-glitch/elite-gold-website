@@ -24,6 +24,7 @@ import {
   getSignupVerificationStatusAction,
   signupWithPasswordAction,
 } from "@/app/auth/actions";
+import { AuthBotProtectionFields } from "@/components/auth/bot-protection-fields";
 import { GoogleLogo } from "@/components/ui/google-logo";
 import { initialAuthActionState } from "@/lib/auth/action-state";
 import type { GoogleSignupProfile } from "@/lib/member/profile";
@@ -1026,6 +1027,7 @@ export function Component({
             >
               <input name="next" type="hidden" value={nextPath} />
               <input name="signupProvider" type="hidden" value={isGoogleSignup ? "google" : "email"} />
+              <AuthBotProtectionFields />
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className={cn(labelClassName, "sm:col-span-2")}>
                   Nationality

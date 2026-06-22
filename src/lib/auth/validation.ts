@@ -40,6 +40,11 @@ export type UpdateProfileFields = {
 };
 
 export const rootAccessCode = "EG000";
+export const authBotProtectionFieldNames = {
+  startedAt: "authFormStartedAt",
+  website: "companyWebsite",
+} as const;
+export const authMinimumSubmitMs = 900;
 const defaultRedirectPath = "/dashboard";
 const supportedEmailOtpTypes = new Set([
   "email",
@@ -56,6 +61,32 @@ function getStringField(formData: FormData, name: string) {
   const value = formData.get(name);
 
   return typeof value === "string" ? value.trim() : "";
+}
+
+export function getAuthBotProtectionError(formData: FormData, now = Date.now()) {
+  const website = getStringField(formData, authBotProtectionFieldNames.website);
+
+  if (website) {
+    return "We could not verify this request. Please try again.";
+  }
+
+  const startedAtValue = getStringField(formData, authBotProtectionFieldNames.startedAt);
+
+  if (!startedAtValue) {
+    return null;
+  }
+
+  const startedAt = Number.parseInt(startedAtValue, 10);
+
+  if (!Number.isFinite(startedAt)) {
+    return "We could not verify this request. Please try again.";
+  }
+
+  if (now - startedAt < authMinimumSubmitMs) {
+    return "Please wait a moment and try again.";
+  }
+
+  return null;
 }
 
 function normalizeEmail(email: string) {
@@ -118,6 +149,12 @@ function validatePassword(password: string, label = "Password") {
 export function validateLoginForm(
   formData: FormData,
 ): AuthValidationResult<LoginCredentials> {
+  const botProtectionError = getAuthBotProtectionError(formData);
+
+  if (botProtectionError) {
+    return invalid(botProtectionError);
+  }
+
   const email = normalizeEmail(getStringField(formData, "email"));
   const password = getStringField(formData, "password");
   const missingMessage = requireFields([
@@ -145,6 +182,12 @@ export function validateLoginForm(
 export function validateSignupProfileForm(
   formData: FormData,
 ): AuthValidationResult<SignupProfileFields> {
+  const botProtectionError = getAuthBotProtectionError(formData);
+
+  if (botProtectionError) {
+    return invalid(botProtectionError);
+  }
+
   const nationality = getStringField(formData, "nationality");
   const firstName = getStringField(formData, "firstName");
   const lastName = getStringField(formData, "lastName");
@@ -239,6 +282,12 @@ export function validateSignupForm(
 export function validateForgotPasswordForm(
   formData: FormData,
 ): AuthValidationResult<ForgotPasswordCredentials> {
+  const botProtectionError = getAuthBotProtectionError(formData);
+
+  if (botProtectionError) {
+    return invalid(botProtectionError);
+  }
+
   const email = normalizeEmail(getStringField(formData, "email"));
 
   if (!email) {

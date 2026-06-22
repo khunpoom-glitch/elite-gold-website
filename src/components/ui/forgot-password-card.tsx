@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Mail, X } from "lucide-react";
 import { requestPasswordResetAction } from "@/app/auth/actions";
+import { AuthBotProtectionFields } from "@/components/auth/bot-protection-fields";
 import { initialAuthActionState } from "@/lib/auth/action-state";
 import { cn } from "@/lib/utils";
 
@@ -68,6 +69,7 @@ export function Component({
           </div>
 
           <form action={formAction} className="grid gap-3" noValidate>
+            <AuthBotProtectionFields />
             <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-white/80">
               Email
               <span className="relative">

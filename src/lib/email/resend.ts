@@ -79,7 +79,7 @@ function getButtonHtml(url: string, label: string) {
   </table>`;
 }
 
-function getEmailShell(title: string, body: string) {
+function getEmailShell(title: string, body: string, footerHtml = automatedFooterHtml) {
   const logoUrl = escapeHtml(getPublicAssetUrl("/brand/elite-gold-email-logo.png"));
   const safeTitle = escapeHtml(title);
 
@@ -131,7 +131,7 @@ function getEmailShell(title: string, body: string) {
             </tr>
             <tr>
               <td bgcolor="#080808" style="padding:15px 22px;border-top:1px solid rgba(255,255,255,0.08);color:#8A8A8A;font-size:11px;line-height:1.6;background-color:#080808 !important;text-align:center;">
-                ${automatedFooterHtml}
+                ${footerHtml}
               </td>
             </tr>
           </table>
@@ -249,6 +249,58 @@ export async function sendEmailVerificationEmail({
     memberAccessCode,
     name,
     verificationUrl,
+  });
+
+  return sendTransactionalEmail({
+    headers: email.headers,
+    html: email.html,
+    subject: email.subject,
+    text: email.text,
+    to,
+  });
+}
+
+export function buildPasswordChangedEmail({
+  dashboardUrl,
+  name,
+}: {
+  dashboardUrl: string;
+  name: string;
+}) {
+  const safeDashboardUrl = escapeHtml(dashboardUrl);
+  const safeName = escapeHtml(name || "Elite Gold Member");
+  const html = getEmailShell(
+    "Your password was changed",
+    `<p style="margin:0 0 14px;">Hi ${safeName},</p>
+     <p style="margin:0 0 13px;color:#CFCFCF;">The password for your Elite Gold account was changed successfully.</p>
+     <p style="margin:0 0 20px;color:#CFCFCF;">If this was you, no action is required. If you did not make this change, please reset your password immediately.</p>
+     ${getButtonHtml(safeDashboardUrl, "Open Account")}`,
+    "This is an automated security email from Elite Gold Community.<br>If you did not change your password, reset it immediately.",
+  );
+  const text = `Hi ${name || "Elite Gold Member"},\n\nThe password for your Elite Gold account was changed successfully.\n\nIf this was you, no action is required. If you did not make this change, please reset your password immediately.\n\nOpen Account: ${dashboardUrl}`;
+
+  return {
+    headers: {
+      "X-Entity-Ref-ID": `elite-password-changed-${Date.now()}`,
+    },
+    html,
+    subject: "Your Elite Gold password was changed",
+    text,
+  };
+}
+
+export async function sendPasswordChangedEmail({
+  dashboardUrl,
+  name,
+  to,
+}: {
+  dashboardUrl: string;
+  name: string;
+  to: string;
+}) {
+  const email = buildPasswordChangedEmail({
+    dashboardUrl,
+    name,
   });
 
   return sendTransactionalEmail({

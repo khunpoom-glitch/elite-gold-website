@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { AlertTriangle, CheckCircle2, MailCheck, Send } from "lucide-react";
 import { resendEmailVerificationAction } from "@/app/auth/actions";
 import { initialAuthActionState } from "@/lib/auth/action-state";
@@ -9,11 +9,46 @@ type EmailVerificationBannerProps = {
   email: string;
 };
 
+const resendCooldownMs = 90_000;
+
 export function EmailVerificationBanner({ email }: EmailVerificationBannerProps) {
   const [state, formAction, isPending] = useActionState(
     resendEmailVerificationAction,
     initialAuthActionState,
   );
+  const [cooldownEndsAt, setCooldownEndsAt] = useState(0);
+  const [now, setNow] = useState(0);
+  const remainingSeconds = Math.max(0, Math.ceil((cooldownEndsAt - now) / 1000));
+  const isCoolingDown = remainingSeconds > 0;
+
+  useEffect(() => {
+    if (state.status === "success") {
+      const timer = window.setTimeout(() => {
+        const nextCooldownEndsAt = Date.now() + resendCooldownMs;
+
+        setCooldownEndsAt(nextCooldownEndsAt);
+        setNow(Date.now());
+      }, 0);
+
+      return () => {
+        window.clearTimeout(timer);
+      };
+    }
+  }, [state]);
+
+  useEffect(() => {
+    if (!cooldownEndsAt) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [cooldownEndsAt]);
 
   return (
     <section className="rounded-md border border-[#D4AF37]/30 bg-[#D4AF37]/10 p-4 shadow-[inset_0_1px_0_rgba(246,227,163,0.08),0_18px_54px_rgba(0,0,0,0.28)] sm:p-5">
@@ -33,11 +68,15 @@ export function EmailVerificationBanner({ email }: EmailVerificationBannerProps)
         <form action={formAction}>
           <button
             className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-[#D4AF37]/35 bg-[#D4AF37]/14 px-4 text-sm font-bold text-[#F6E3A3] transition hover:border-[#F6E3A3] hover:bg-[#D4AF37]/20 hover:text-white disabled:cursor-wait disabled:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50"
-            disabled={isPending}
+            disabled={isPending || isCoolingDown}
             type="submit"
           >
             <Send aria-hidden="true" className="size-4" />
-            {isPending ? "Sending" : "Resend Verification Email"}
+            {isPending
+              ? "Sending"
+              : isCoolingDown
+                ? `Resend in ${remainingSeconds}s`
+                : "Resend Verification Email"}
           </button>
         </form>
       </div>

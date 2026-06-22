@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import { ArrowRight, Check, Eye, EyeClosed, Lock, Mail, X } from "lucide-react";
 import { loginWithPasswordAction } from "@/app/auth/actions";
+import { AuthBotProtectionFields } from "@/components/auth/bot-protection-fields";
 import { GoogleLogo } from "@/components/ui/google-logo";
 import { initialAuthActionState } from "@/lib/auth/action-state";
 import { cn } from "@/lib/utils";
@@ -131,6 +132,7 @@ export function Component({
 
             <form action={formAction} className="grid gap-3" noValidate>
               <input name="next" type="hidden" value={nextPath} />
+              <AuthBotProtectionFields />
               <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-white/80">
                 Email
                 <span className="relative">
