@@ -5,13 +5,28 @@ import {
   getReadableMemberStatus,
   isActiveMemberStatus,
 } from "@/lib/member/profile";
+import { getServerAuthSessionPolicyStatus } from "@/lib/auth/session-policy-server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-function getLoginRedirectPath(nextPath: string) {
-  return `/login?next=${encodeURIComponent(nextPath)}`;
+function getLoginRedirectPath(nextPath: string, sessionExpired = false) {
+  const searchParams = new URLSearchParams({
+    next: nextPath,
+  });
+
+  if (sessionExpired) {
+    searchParams.set("session", "expired");
+  }
+
+  return `/login?${searchParams.toString()}`;
 }
 
 export const getAuthenticatedMember = cache(async (nextPath = "/dashboard") => {
+  const sessionPolicy = await getServerAuthSessionPolicyStatus();
+
+  if (sessionPolicy.state !== "active") {
+    redirect(getLoginRedirectPath(nextPath, sessionPolicy.state !== "missing"));
+  }
+
   const supabase = await createSupabaseServerClient();
 
   if (!supabase) {

@@ -2,6 +2,13 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  createAuthSessionPolicyValue,
+  getAuthSessionDurationSeconds,
+  getAuthSessionPolicyStatus,
+  rememberedSessionDurationSeconds,
+  standardSessionDurationSeconds,
+} from "./session-policy.ts";
+import {
   authBotProtectionFieldNames,
   getAuthBotProtectionError,
   getAuthRedirectUrl,
@@ -59,7 +66,24 @@ describe("auth form validation", () => {
       assert.deepEqual(result.data, {
         email: "member@elitegold.com",
         password: "secret-password",
+        remember: false,
       });
+    }
+  });
+
+  it("normalizes remembered login credentials", () => {
+    const result = validateLoginForm(
+      formDataFromEntries({
+        email: "member@elitegold.com",
+        password: "secret-password",
+        remember: "on",
+      }),
+    );
+
+    assert.equal(result.ok, true);
+
+    if (result.ok) {
+      assert.equal(result.data.remember, true);
     }
   });
 
@@ -241,6 +265,25 @@ describe("auth form validation", () => {
     if (!result.ok) {
       assert.equal(result.fieldErrors?.firstName, "กรุณากรอก First Name");
     }
+  });
+});
+
+describe("auth session policy", () => {
+  it("uses 4 hours for standard sessions and 30 days for remembered sessions", () => {
+    assert.equal(getAuthSessionDurationSeconds("standard"), standardSessionDurationSeconds);
+    assert.equal(getAuthSessionDurationSeconds("remembered"), rememberedSessionDurationSeconds);
+    assert.equal(standardSessionDurationSeconds, 4 * 60 * 60);
+    assert.equal(rememberedSessionDurationSeconds, 30 * 24 * 60 * 60);
+  });
+
+  it("expires standard session policies after their deadline", () => {
+    const now = 1_000;
+    const value = createAuthSessionPolicyValue("standard", now);
+    const active = getAuthSessionPolicyStatus(value, now + standardSessionDurationSeconds * 1000 - 1);
+    const expired = getAuthSessionPolicyStatus(value, now + standardSessionDurationSeconds * 1000);
+
+    assert.equal(active.state, "active");
+    assert.equal(expired.state, "expired");
   });
 });
 

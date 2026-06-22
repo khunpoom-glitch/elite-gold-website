@@ -1,6 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { oauthStateCookieName, parseOAuthState } from "@/lib/auth/oauth-state";
 import { normalizeLocalOrigin } from "@/lib/auth/origin";
+import {
+  authSessionPolicyCookieName,
+  createAuthSessionPolicyValue,
+  getAuthSessionCookieOptions,
+} from "@/lib/auth/session-policy";
 import { getSafeRedirectPath, normalizeAccessCode } from "@/lib/auth/validation";
 import { getMemberProfileByUserId } from "@/lib/member/profile";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -27,13 +32,24 @@ function getGoogleSignupUrl(
   return signupUrl;
 }
 
-function redirectAndClearOAuthState(url: URL) {
+function redirectAndClearOAuthState(
+  url: URL,
+  options?: { setStandardSession?: boolean },
+) {
   const response = NextResponse.redirect(url);
 
   response.cookies.set(oauthStateCookieName, "", {
     maxAge: 0,
     path: "/",
   });
+
+  if (options?.setStandardSession) {
+    response.cookies.set(
+      authSessionPolicyCookieName,
+      createAuthSessionPolicyValue("standard"),
+      getAuthSessionCookieOptions("standard", url.protocol === "https:"),
+    );
+  }
 
   return response;
 }
@@ -90,7 +106,10 @@ export async function GET(request: NextRequest) {
   }
 
   if (intent === "signup") {
-    return redirectAndClearOAuthState(getGoogleSignupUrl(origin, nextPath, accessCode));
+    return redirectAndClearOAuthState(
+      getGoogleSignupUrl(origin, nextPath, accessCode),
+      { setStandardSession: true },
+    );
   }
 
   const profile = await getMemberProfileByUserId(supabase, user.id);
@@ -98,8 +117,11 @@ export async function GET(request: NextRequest) {
   if (!profile) {
     return redirectAndClearOAuthState(
       getGoogleSignupUrl(origin, nextPath, accessCode, "google_profile_required"),
+      { setStandardSession: true },
     );
   }
 
-  return redirectAndClearOAuthState(new URL(nextPath, origin));
+  return redirectAndClearOAuthState(new URL(nextPath, origin), {
+    setStandardSession: true,
+  });
 }

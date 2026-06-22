@@ -5,6 +5,7 @@ export type AuthValidationResult<T> =
 export type LoginCredentials = {
   email: string;
   password: string;
+  remember: boolean;
 };
 
 export type SignupProfileFields = {
@@ -179,6 +180,7 @@ export function validateLoginForm(
     data: {
       email,
       password,
+      remember: formData.get("remember") === "on",
     },
   };
 }

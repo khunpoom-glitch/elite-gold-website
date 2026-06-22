@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { Clock3 } from "lucide-react";
 import { Component as ForgotPasswordCard3D } from "@/components/ui/forgot-password-card";
 import { Component as SignInCard3D } from "@/components/ui/sign-in-card-2";
 import { Component as SignUpCard3D } from "@/components/ui/sign-up-card-2";
@@ -17,6 +18,27 @@ type AuthModalProps = {
   onClose: () => void;
   onModeChange: (mode: AuthMode) => void;
 };
+
+function SessionExpiredPopup() {
+  return (
+    <div
+      className="mb-3 flex items-start gap-3 rounded-2xl border border-[#D4AF37]/28 bg-[#080808]/95 px-4 py-3 text-left shadow-[0_18px_55px_rgba(0,0,0,0.42)] ring-1 ring-white/[0.04]"
+      role="status"
+    >
+      <span className="grid size-8 shrink-0 place-items-center rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 text-[#F6E3A3]">
+        <Clock3 aria-hidden="true" className="size-4" />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-sm font-semibold leading-5 text-[#F6E3A3]">
+          Session expired
+        </span>
+        <span className="mt-0.5 block text-xs leading-5 text-white/62">
+          Please login again to continue securely.
+        </span>
+      </span>
+    </div>
+  );
+}
 
 export function AuthModal({
   accessCode,
@@ -68,6 +90,7 @@ export function AuthModal({
           type="button"
         />
         <div className="relative z-10 w-full max-w-[26rem]">
+          {notice === "session_expired" ? <SessionExpiredPopup /> : null}
           <SignInCard3D
             onClose={onClose}
             onForgotPasswordClick={() => onModeChange("forgotPassword")}

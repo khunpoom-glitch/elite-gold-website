@@ -12,6 +12,10 @@ import {
 } from "@/lib/auth/email-verification";
 import { getRequestOrigin } from "@/lib/auth/origin";
 import {
+  clearServerAuthSessionPolicy,
+  setServerAuthSessionPolicy,
+} from "@/lib/auth/session-policy-server";
+import {
   getSafeRedirectPath,
   validateEmailChangeForm,
   validateForgotPasswordForm,
@@ -255,12 +259,14 @@ export async function loginWithPasswordAction(
     return client.state;
   }
 
-  const { error } = await client.supabase.auth.signInWithPassword(validation.data);
+  const { remember, ...credentials } = validation.data;
+  const { error } = await client.supabase.auth.signInWithPassword(credentials);
 
   if (error) {
     return errorState(getReadableAuthError(error.message));
   }
 
+  await setServerAuthSessionPolicy(remember ? "remembered" : "standard");
   revalidatePath("/", "layout");
 
   return successState(
@@ -338,6 +344,7 @@ export async function signupWithPasswordAction(
     return errorState("Signup was created, but the verification email could not be sent. Please login and resend it from My Profile.");
   }
 
+  await setServerAuthSessionPolicy("standard");
   revalidatePath("/", "layout");
 
   return successState(signupSuccessMessage);
@@ -507,6 +514,7 @@ export async function completeGoogleSignupAction(
     return errorState("Signup was created, but the verification email could not be sent. Please login and resend it from My Profile.");
   }
 
+  await setServerAuthSessionPolicy("standard");
   revalidatePath("/", "layout");
   revalidatePath("/dashboard");
 
@@ -740,6 +748,7 @@ export async function logoutAction() {
   const supabase = await createSupabaseServerClient();
 
   await supabase?.auth.signOut();
+  await clearServerAuthSessionPolicy();
   revalidatePath("/", "layout");
   redirect("/");
 }

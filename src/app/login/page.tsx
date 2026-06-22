@@ -14,8 +14,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{
+    session?: string | string[];
+  }>;
+};
+
+function getFirstSearchParam(value?: string | string[]) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const params = await searchParams;
+  const sessionNotice =
+    getFirstSearchParam(params.session) === "expired"
+      ? "session_expired"
+      : undefined;
   const publicSession = await getPublicSessionState();
 
-  return <HomePage initialAuthMode="login" publicSession={publicSession} />;
+  return (
+    <HomePage
+      initialAuthMode="login"
+      initialAuthNotice={sessionNotice}
+      publicSession={publicSession}
+    />
+  );
 }

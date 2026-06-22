@@ -1,6 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { hashEmailVerificationToken } from "@/lib/auth/email-verification";
 import { normalizeLocalOrigin } from "@/lib/auth/origin";
+import {
+  authSessionPolicyCookieName,
+  createAuthSessionPolicyValue,
+  getAuthSessionCookieOptions,
+} from "@/lib/auth/session-policy";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 function getDashboardRedirectUrl(origin: string, key: "verified" | "notice", value: string) {
@@ -53,7 +58,17 @@ export async function GET(request: NextRequest) {
   const result = getVerificationResult(data);
 
   if (result === "verified" || result === "already_verified") {
-    return NextResponse.redirect(getDashboardRedirectUrl(origin, "verified", "email"));
+    const response = NextResponse.redirect(
+      getDashboardRedirectUrl(origin, "verified", "email"),
+    );
+
+    response.cookies.set(
+      authSessionPolicyCookieName,
+      createAuthSessionPolicyValue("standard"),
+      getAuthSessionCookieOptions("standard", origin.startsWith("https://")),
+    );
+
+    return response;
   }
 
   if (result === "expired") {

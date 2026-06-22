@@ -6,6 +6,7 @@ import {
   getReadableMemberStatus,
   isActiveMemberStatus,
 } from "@/lib/member/profile";
+import { getServerAuthSessionPolicyStatus } from "@/lib/auth/session-policy-server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type PublicSessionState = {
@@ -57,6 +58,12 @@ function getUserAvatarUrl(user: User) {
 }
 
 export async function getPublicSessionState(): Promise<PublicSessionState> {
+  const sessionPolicy = await getServerAuthSessionPolicyStatus();
+
+  if (sessionPolicy.state !== "active") {
+    return guestPublicSession;
+  }
+
   const supabase = await createSupabaseServerClient();
 
   if (!supabase) {
