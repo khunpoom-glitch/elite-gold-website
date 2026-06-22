@@ -52,5 +52,14 @@ jobs:
 
       - name: Deploy
         run: |
-          deployment_url="$(vercel deploy --prebuilt ${{ steps.target.outputs.deploy_args }} --yes --token=${{ secrets.VERCEL_TOKEN }})"
+          set +e
+          deploy_output="$(vercel deploy --prebuilt ${{ steps.target.outputs.deploy_args }} --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1)"
+          deploy_status="$?"
+          printf '%s\n' "$deploy_output"
+          if [ "$deploy_status" -ne 0 ]; then
+            deploy_message="$(printf '%s' "$deploy_output" | tr '\n' ' ' | cut -c 1-3000)"
+            echo "::error title=Vercel deploy failed::$deploy_message"
+            exit "$deploy_status"
+          fi
+          deployment_url="$(printf '%s\n' "$deploy_output" | tail -n 1)"
           echo "Deployment URL: $deployment_url"
