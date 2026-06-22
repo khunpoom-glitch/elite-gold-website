@@ -120,8 +120,8 @@ export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
           role="status"
           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-[#050505]/92 px-4 py-3 text-left text-white shadow-[0_18px_55px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-            <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full border border-emerald-400/24 bg-emerald-400/10 text-emerald-300">
+          <div className="flex min-h-[4.5rem] items-center gap-3 rounded-2xl border border-white/10 bg-[#050505]/92 px-4 py-3 text-left text-white shadow-[0_18px_55px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+            <span className="grid size-7 shrink-0 place-items-center rounded-full border border-emerald-400/24 bg-emerald-400/10 text-emerald-300">
               <CheckCircle2 aria-hidden="true" className="size-4" />
             </span>
             <span className="min-w-0 flex-1">
@@ -130,7 +130,7 @@ export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
             </span>
             <button
               aria-label={`Dismiss ${copy.title.toLowerCase()} notice`}
-              className="-mr-1 mt-0.5 inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/42 transition hover:bg-white/8 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35"
+              className="-mr-1 inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/42 transition hover:bg-white/8 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35"
               onClick={() => setIsDismissed(true)}
               type="button"
             >

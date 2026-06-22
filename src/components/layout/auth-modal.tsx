@@ -22,13 +22,13 @@ type AuthModalProps = {
 function SessionExpiredPopup() {
   return (
     <div
-      className="mb-3 flex items-start gap-3 rounded-2xl border border-[#D4AF37]/28 bg-[#080808]/95 px-4 py-3 text-left shadow-[0_18px_55px_rgba(0,0,0,0.42)] ring-1 ring-white/[0.04]"
+      className="mb-3 flex min-h-[4.25rem] items-center gap-3 rounded-2xl border border-[#D4AF37]/28 bg-[#080808]/95 px-4 py-3 text-left shadow-[0_18px_55px_rgba(0,0,0,0.42)] ring-1 ring-white/[0.04]"
       role="status"
     >
       <span className="grid size-8 shrink-0 place-items-center rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 text-[#F6E3A3]">
         <Clock3 aria-hidden="true" className="size-4" />
       </span>
-      <span className="min-w-0">
+      <span className="min-w-0 flex-1">
         <span className="block text-sm font-semibold leading-5 text-[#F6E3A3]">
           Session expired
         </span>

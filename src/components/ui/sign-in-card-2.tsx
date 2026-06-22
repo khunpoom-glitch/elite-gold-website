@@ -100,7 +100,7 @@ function LoginValidationPopup({
       role="alert"
       transition={{ duration: 0.18, ease: "easeOut" }}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex min-h-[3.5rem] items-center gap-3">
         <span className="grid size-8 shrink-0 place-items-center rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 text-[#F6E3A3]">
           <AlertTriangle aria-hidden="true" className="size-4" />
         </span>
@@ -110,7 +110,7 @@ function LoginValidationPopup({
         </span>
         <button
           aria-label="Close login notice"
-          className="-mr-1 -mt-1 grid size-7 shrink-0 place-items-center rounded-full text-white/42 transition hover:bg-white/[0.06] hover:text-white"
+          className="-mr-1 grid size-7 shrink-0 place-items-center rounded-full text-white/42 transition hover:bg-white/[0.06] hover:text-white"
           onClick={onClose}
           type="button"
         >

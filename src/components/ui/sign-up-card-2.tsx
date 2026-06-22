@@ -936,15 +936,15 @@ export function Component({
               {isValidationPopupVisible && state.status === "error" && state.fieldErrors ? (
                 <motion.div
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="pointer-events-none fixed inset-x-0 top-4 z-[100] flex justify-center px-4 sm:top-5"
+                  className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+4.75rem)] z-[100] flex justify-center px-4 sm:top-[5.5rem] lg:top-[5.75rem]"
                   exit={{ opacity: 0, y: -10, scale: 0.98 }}
                   initial={{ opacity: 0, y: -10, scale: 0.98 }}
                   role="alert"
                   transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <div className="pointer-events-auto w-full max-w-[22rem] rounded-2xl border border-[#D4AF37]/35 bg-[#070707]/95 px-3.5 py-3 text-white shadow-[0_18px_54px_rgba(0,0,0,0.48),0_0_28px_rgba(212,175,55,0.16)] backdrop-blur-xl">
-                    <div className="flex items-start gap-2.5">
-                      <span className="mt-0.5 inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/12 text-[#F6E3A3]">
+                    <div className="flex min-h-[3.5rem] items-center gap-2.5">
+                      <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/12 text-[#F6E3A3]">
                         <AlertTriangle aria-hidden="true" className="size-3.5" />
                       </span>
                       <div className="min-w-0 flex-1">
