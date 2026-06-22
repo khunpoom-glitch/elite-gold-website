@@ -20,6 +20,7 @@ import {
     type AuthModalEventDetail,
     type AuthModalMode,
 } from '@/config/auth-modal'
+import type { PublicSessionState } from '@/lib/member/public-session'
 import { cn } from '@/lib/utils'
 
 const transitionVariants: { item: Variants } = {
@@ -125,10 +126,28 @@ function navigateToAuthModal(
     window.dispatchEvent(new CustomEvent(AUTH_MODAL_EVENT_NAME, { detail }))
 }
 
-export function HeroSection() {
+type HeroSectionProps = {
+    publicSession: PublicSessionState
+}
+
+export function HeroSection({ publicSession }: HeroSectionProps) {
+    function handleCommunityClick() {
+        if (publicSession.isAuthenticated) {
+            window.location.assign(publicSession.primaryActionHref)
+            return
+        }
+
+        const detail: AuthModalEventDetail = {
+            mode: 'signup',
+            returnHref: `${window.location.pathname}${window.location.search}`,
+        }
+
+        window.dispatchEvent(new CustomEvent(AUTH_MODAL_EVENT_NAME, { detail }))
+    }
+
     return (
         <>
-            <HeroHeader />
+            <HeroHeader publicSession={publicSession} />
             <main className="overflow-hidden">
                 <section className="border-b border-white/8" id="top">
                     <div className="relative flex min-h-[calc(100svh+4rem)] flex-col justify-center pb-20 pt-28 md:pt-32 lg:min-h-[calc(100svh+5rem)] lg:pb-24 lg:pt-32">
@@ -167,6 +186,7 @@ export function HeroSection() {
                                     className="mt-10 flex flex-col items-center justify-center gap-4 md:flex-row">
                                     <ShinyButton
                                         key={1}
+                                        onClick={handleCommunityClick}
                                         type="button"
                                         className="h-11 min-w-[16.1875rem] cursor-pointer gap-2.5 rounded-lg px-6 py-2 text-sm font-medium text-white/90 hover:shadow-[0_0_20px_rgba(250,250,250,0.10)]"
                                         style={{
@@ -255,9 +275,32 @@ export function HeroSection() {
     )
 }
 
-const HeroHeader = () => {
+const HeroHeader = ({ publicSession }: { publicSession: PublicSessionState }) => {
     const [menuState, setMenuState] = React.useState(false)
     const [isScrolled, setIsScrolled] = React.useState(false)
+    const isSignedIn = publicSession.isAuthenticated
+    const primaryActionHref = isSignedIn ? publicSession.primaryActionHref : AUTH_MODAL_ROUTES.signup
+    const primaryActionLabel = isSignedIn ? publicSession.primaryActionLabel : 'Sign Up'
+    const secondaryActionHref = isSignedIn ? publicSession.secondaryActionHref : AUTH_MODAL_ROUTES.login
+    const secondaryActionLabel = isSignedIn ? publicSession.secondaryActionLabel : 'Login'
+
+    function handlePrimaryAction(event: React.MouseEvent<HTMLAnchorElement>) {
+        if (isSignedIn) {
+            setMenuState(false)
+            return
+        }
+
+        navigateToAuthModal(event, 'signup', () => setMenuState(false))
+    }
+
+    function handleSecondaryAction(event: React.MouseEvent<HTMLAnchorElement>) {
+        if (isSignedIn) {
+            setMenuState(false)
+            return
+        }
+
+        navigateToAuthModal(event, 'login', () => setMenuState(false))
+    }
 
     React.useEffect(() => {
         const handleScroll = () => {
@@ -323,25 +366,27 @@ const HeroHeader = () => {
                                 </ul>
                             </div>
                             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                                <Button
-                                    asChild
-                                    variant="outline"
-                                    size="sm"
-                                    className={cn('h-9 px-3 text-sm font-medium border-white/10 bg-transparent shadow-none hover:border-white/20 hover:bg-white/5 hover:text-foreground focus-visible:ring-white/20', isScrolled && 'lg:hidden')}>
-                                    <Link
-                                        href={AUTH_MODAL_ROUTES.login}
-                                        onClick={(event) => navigateToAuthModal(event, 'login', () => setMenuState(false))}>
-                                        <span>Login</span>
-                                    </Link>
-                                </Button>
+                                {secondaryActionHref && secondaryActionLabel ? (
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        size="sm"
+                                        className={cn('h-9 px-3 text-sm font-medium border-white/10 bg-transparent shadow-none hover:border-white/20 hover:bg-white/5 hover:text-foreground focus-visible:ring-white/20', isScrolled && 'lg:hidden')}>
+                                        <Link
+                                            href={secondaryActionHref}
+                                            onClick={handleSecondaryAction}>
+                                            <span>{secondaryActionLabel}</span>
+                                        </Link>
+                                    </Button>
+                                ) : null}
                                 <Button
                                     asChild
                                     size="sm"
                                     className={cn('elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled && 'lg:hidden')}>
                                     <Link
-                                        href={AUTH_MODAL_ROUTES.signup}
-                                        onClick={(event) => navigateToAuthModal(event, 'signup', () => setMenuState(false))}>
-                                        <span>Sign Up</span>
+                                        href={primaryActionHref}
+                                        onClick={handlePrimaryAction}>
+                                        <span>{primaryActionLabel}</span>
                                     </Link>
                                 </Button>
                                 <Button
@@ -349,9 +394,9 @@ const HeroHeader = () => {
                                     size="sm"
                                     className={cn('elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled ? 'lg:inline-flex' : 'hidden')}>
                                     <Link
-                                        href={AUTH_MODAL_ROUTES.signup}
-                                        onClick={(event) => navigateToAuthModal(event, 'signup', () => setMenuState(false))}>
-                                        <span>Get Started</span>
+                                        href={primaryActionHref}
+                                        onClick={handlePrimaryAction}>
+                                        <span>{isSignedIn ? primaryActionLabel : 'Get Started'}</span>
                                     </Link>
                                 </Button>
                             </div>

@@ -7,6 +7,7 @@ import {
   getMemberProfileByUserId,
   isActiveMemberStatus,
 } from "@/lib/member/profile";
+import { getPublicSessionState } from "@/lib/member/public-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -70,12 +71,15 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
     }
   }
 
+  const publicSession = await getPublicSessionState();
+
   return (
     <HomePage
       initialAccessCode={accessCode}
       initialAuthMode="signup"
       initialAuthNotice={notice}
       initialGoogleSignupProfile={googleSignupProfile}
+      publicSession={publicSession}
     />
   );
 }

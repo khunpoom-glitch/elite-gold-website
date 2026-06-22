@@ -8,6 +8,10 @@ import { HomeScrollController } from "@/components/sections/home-scroll-controll
 import { EliteGoldNavbarLogo } from "@/components/shared/elite-gold-navbar-logo";
 import { TOP_SECTION_ID, type HomeSectionId } from "@/config/home-sections";
 import type { GoogleSignupProfile } from "@/lib/member/profile";
+import {
+  guestPublicSession,
+  type PublicSessionState,
+} from "@/lib/member/public-session";
 
 const prompt = Prompt({
   display: "swap",
@@ -22,19 +26,21 @@ export function HomePage({
   initialAuthNotice,
   initialGoogleSignupProfile,
   initialSection = TOP_SECTION_ID,
+  publicSession = guestPublicSession,
 }: {
   initialAccessCode?: string;
   initialAuthMode?: AuthMode | null;
   initialAuthNotice?: string;
   initialGoogleSignupProfile?: GoogleSignupProfile;
   initialSection?: HomeSectionId;
+  publicSession?: PublicSessionState;
 }) {
   return (
     <div
       className={`${prompt.variable} airova-reference-page dark min-h-screen bg-background font-[family-name:var(--font-airova-sans)] text-foreground`}
     >
       <HomeScrollController initialSection={initialSection} />
-      <HeroSection />
+      <HeroSection publicSession={publicSession} />
       <AuthRouteModal
         accessCode={initialAccessCode}
         initialGoogleSignupProfile={initialGoogleSignupProfile}

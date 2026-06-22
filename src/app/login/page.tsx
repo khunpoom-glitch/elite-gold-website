@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { HomePage } from "@/components/sections/home-page";
+import { getPublicSessionState } from "@/lib/member/public-session";
 
 export const metadata: Metadata = {
   title: "Login",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LoginPage() {
-  return <HomePage initialAuthMode="login" />;
+export default async function LoginPage() {
+  const publicSession = await getPublicSessionState();
+
+  return <HomePage initialAuthMode="login" publicSession={publicSession} />;
 }
