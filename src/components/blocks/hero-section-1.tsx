@@ -387,17 +387,17 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
                 <span
                     aria-hidden="true"
-                    className="hidden size-8 place-items-center rounded-full border border-white/10 bg-white/[0.025] text-white/52 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] sm:grid">
-                    <Bell className="size-3.5 stroke-[1.75]" />
+                    className="hidden size-9 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-white/58 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:grid">
+                    <Bell className="size-4 stroke-[1.75]" />
                 </span>
                 <button
                     aria-expanded={isOpen}
                     aria-haspopup="menu"
                     aria-label="Open member profile menu"
-                    className="flex h-9 min-w-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.055] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55"
+                    className="flex h-10 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55"
                     onClick={() => setIsOpen((current) => !current)}
                     type="button">
-                    <span className="relative grid size-7 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/22 bg-[#101010] text-[0.62rem] font-extrabold text-[#F6E3A3]">
+                    <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/24 bg-[#11131A] text-[0.68rem] font-extrabold text-[#F6E3A3]">
                         {publicSession.memberAvatarUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -411,7 +411,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                     </span>
                     <ChevronDown
                         aria-hidden="true"
-                        className={cn('size-3.5 shrink-0 text-white/48 transition-transform', isOpen && 'rotate-180 text-[#F6E3A3]')}
+                        className={cn('size-4 shrink-0 text-white/48 transition-transform', isOpen && 'rotate-180 text-[#F6E3A3]')}
                     />
                 </button>
             </div>
