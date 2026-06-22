@@ -76,7 +76,9 @@ export function MemberMarketVisual({
           <animateMotion dur="8s" path={graphPath} repeatCount="indefinite" rotate="auto" />
         </circle>
       </svg>
+      <span aria-hidden="true" className="member-market-frame" />
       <div aria-hidden="true" className="member-market-plate" />
+      <span aria-hidden="true" className="member-market-baseline" />
       {bars.map((bar) => (
         <span
           aria-hidden="true"
@@ -102,11 +104,6 @@ export function MemberMarketVisual({
         />
       ))}
       <span aria-hidden="true" className="member-market-scan" />
-      <div aria-hidden="true" className="absolute inset-x-8 bottom-7 z-10 flex items-center justify-between text-[0.62rem] font-semibold uppercase text-white/26">
-        <span>Discipline</span>
-        <span>Journal</span>
-        <span>Growth</span>
-      </div>
     </div>
   );
 }

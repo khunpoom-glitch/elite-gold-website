@@ -651,49 +651,56 @@ textarea:-webkit-autofill:active {
   isolation: isolate;
   min-height: 17rem;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.075);
   border-radius: 1.15rem;
   background:
-    linear-gradient(145deg, rgba(38, 38, 38, 0.62), rgba(7, 7, 7, 0.96) 62%),
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.075), transparent 24%),
+    radial-gradient(circle at 72% 30%, rgba(150, 164, 184, 0.07), transparent 27%),
+    linear-gradient(145deg, rgba(34, 34, 34, 0.72), rgba(7, 7, 7, 0.98) 64%),
     #050505;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    0 22px 70px rgba(0, 0, 0, 0.24);
 }
 
 .member-market-visual::before {
   content: "";
   position: absolute;
   z-index: 0;
-  inset: 22% 5% 16%;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 1rem;
+  inset: 21% 6% 18%;
+  border-radius: 0.85rem;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.038) 1px, transparent 1px);
   background-size: 2rem 2rem;
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 16%, #000 74%, transparent);
-  mask-image: linear-gradient(180deg, transparent, #000 16%, #000 74%, transparent);
-  opacity: 0.42;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent),
+    linear-gradient(180deg, transparent, #000 15%, #000 78%, transparent);
+  mask-image:
+    linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent),
+    linear-gradient(180deg, transparent, #000 15%, #000 78%, transparent);
+  opacity: 0.38;
   animation: memberMarketGridDrift 18s linear infinite;
 }
 
 .member-market-visual::after {
   content: "";
   position: absolute;
-  z-index: 3;
-  inset: 13% 9% auto;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), rgba(246, 227, 163, 0.48), rgba(255, 255, 255, 0.18), transparent);
-  box-shadow: 0 0 22px rgba(230, 199, 102, 0.2);
-  animation: memberMarketSweep 7.2s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 10%, rgba(246, 227, 163, 0.075), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 38%);
 }
 
 .member-market-graph {
   position: absolute;
   z-index: 4;
-  top: 18%;
+  top: 20%;
   left: 8%;
-  height: 43%;
+  height: 38%;
   width: 84%;
   overflow: visible;
   pointer-events: none;
@@ -709,7 +716,7 @@ textarea:-webkit-autofill:active {
 }
 
 .member-market-graph-base {
-  stroke: rgba(255, 255, 255, 0.19);
+  stroke: rgba(255, 255, 255, 0.17);
   stroke-width: 0.64;
 }
 
@@ -733,8 +740,8 @@ textarea:-webkit-autofill:active {
 .member-market-bar {
   position: absolute;
   z-index: 5;
-  bottom: 22%;
-  width: 0.58rem;
+  bottom: 26%;
+  width: 0.56rem;
   overflow: hidden;
   border-radius: 999px 999px 0.24rem 0.24rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -743,7 +750,7 @@ textarea:-webkit-autofill:active {
     linear-gradient(180deg, rgba(86, 86, 86, 0.9), rgba(18, 18, 18, 0.98));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 18px 28px rgba(0, 0, 0, 0.34);
+    0 16px 30px rgba(0, 0, 0, 0.38);
   transform: scaleY(0.92);
   transform-origin: bottom center;
   animation: memberMarketBarPulse 6.2s cubic-bezier(0.45, 0, 0.2, 1) infinite;
@@ -773,12 +780,43 @@ textarea:-webkit-autofill:active {
 .member-market-plate {
   position: absolute;
   z-index: 2;
-  inset: auto 12% 10%;
-  height: 3.2rem;
+  inset: auto 12% 15%;
+  height: 2.9rem;
   border: 1px solid rgba(255, 255, 255, 0.075);
   border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.065), transparent);
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent),
+    rgba(255, 255, 255, 0.012);
   filter: blur(0.1px);
+}
+
+.member-market-frame {
+  position: absolute;
+  z-index: 2;
+  inset: 18% 6% 18%;
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: 0.95rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 68%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.member-market-baseline {
+  position: absolute;
+  z-index: 3;
+  right: 14%;
+  bottom: 27.5%;
+  left: 14%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.18),
+    rgba(230, 199, 102, 0.12),
+    rgba(255, 255, 255, 0.12),
+    transparent
+  );
 }
 
 .member-market-node {
@@ -796,7 +834,7 @@ textarea:-webkit-autofill:active {
 .member-market-scan {
   position: absolute;
   z-index: 4;
-  inset: 24% 9% 18%;
+  inset: 22% 8% 23%;
   pointer-events: none;
   background: linear-gradient(
     90deg,
@@ -810,7 +848,7 @@ textarea:-webkit-autofill:active {
   );
   background-size: 260% 100%;
   mix-blend-mode: screen;
-  opacity: 0.62;
+  opacity: 0.46;
   animation: memberMarketFloorScan 8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
 }
 
@@ -2092,32 +2130,6 @@ textarea:-webkit-autofill:active {
   to {
     -webkit-mask-position: -145% 50%;
     mask-position: -145% 50%;
-  }
-}
-
-@keyframes memberMarketSweep {
-  0%,
-  100% {
-    opacity: 0;
-    transform: translateX(-16%);
-  }
-
-  18% {
-    opacity: 0.5;
-  }
-
-  45% {
-    opacity: 0.72;
-  }
-
-  82% {
-    opacity: 0.38;
-    transform: translateX(16%);
-  }
-
-  99% {
-    opacity: 0;
-    transform: translateX(16%);
   }
 }
 
