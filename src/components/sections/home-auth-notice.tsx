@@ -114,7 +114,7 @@ export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
         <motion.div
           animate={{ opacity: 1, y: 0 }}
           aria-live="polite"
-          className="fixed left-1/2 top-4 z-[120] w-[min(22rem,calc(100vw-2rem))] -translate-x-1/2 sm:top-5"
+          className="fixed left-1/2 top-[calc(env(safe-area-inset-top)+4.75rem)] z-[120] w-[min(22rem,calc(100vw-2rem))] -translate-x-1/2 sm:top-[5.5rem] lg:top-[5.75rem]"
           exit={{ opacity: 0, y: -10 }}
           initial={{ opacity: 0, y: -10 }}
           role="status"
