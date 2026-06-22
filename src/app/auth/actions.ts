@@ -750,5 +750,5 @@ export async function logoutAction() {
   await supabase?.auth.signOut();
   await clearServerAuthSessionPolicy();
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect("/?auth=signed-out");
 }

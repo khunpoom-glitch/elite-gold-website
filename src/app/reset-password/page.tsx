@@ -3,7 +3,7 @@ import { ResetPasswordCard } from "@/components/ui/reset-password-card";
 
 export const metadata: Metadata = {
   title: "Reset Password",
-  description: "ตั้งรหัสผ่านใหม่สำหรับสมาชิก Elite Gold Community",
+  description: "Create a new password for your Elite Gold Community account.",
   alternates: {
     canonical: "/reset-password",
   },

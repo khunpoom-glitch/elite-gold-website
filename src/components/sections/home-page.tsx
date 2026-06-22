@@ -4,6 +4,7 @@ import { AuthRouteModal } from "@/components/layout/auth-route-modal";
 import type { AuthMode } from "@/components/layout/auth-modal";
 import { PublicFooter } from "@/components/layout/public-footer";
 import { HomeContentSections } from "@/components/sections/home-content-sections";
+import { HomeAuthNotice } from "@/components/sections/home-auth-notice";
 import { HomeScrollController } from "@/components/sections/home-scroll-controller";
 import { EliteGoldNavbarLogo } from "@/components/shared/elite-gold-navbar-logo";
 import { TOP_SECTION_ID, type HomeSectionId } from "@/config/home-sections";
@@ -25,6 +26,7 @@ export function HomePage({
   initialAuthMode = null,
   initialAuthNotice,
   initialGoogleSignupProfile,
+  initialHomeNotice,
   initialSection = TOP_SECTION_ID,
   publicSession = guestPublicSession,
 }: {
@@ -32,6 +34,7 @@ export function HomePage({
   initialAuthMode?: AuthMode | null;
   initialAuthNotice?: string;
   initialGoogleSignupProfile?: GoogleSignupProfile;
+  initialHomeNotice?: "signed_out";
   initialSection?: HomeSectionId;
   publicSession?: PublicSessionState;
 }) {
@@ -40,6 +43,7 @@ export function HomePage({
       className={`${prompt.variable} airova-reference-page dark min-h-screen bg-background font-[family-name:var(--font-airova-sans)] text-foreground`}
     >
       <HomeScrollController initialSection={initialSection} />
+      <HomeAuthNotice notice={initialHomeNotice} />
       <HeroSection publicSession={publicSession} />
       <AuthRouteModal
         accessCode={initialAccessCode}

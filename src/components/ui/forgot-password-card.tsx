@@ -4,10 +4,10 @@ import { useActionState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Mail, X } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, Mail, X } from "lucide-react";
 import { requestPasswordResetAction } from "@/app/auth/actions";
 import { AuthBotProtectionFields } from "@/components/auth/bot-protection-fields";
-import { initialAuthActionState } from "@/lib/auth/action-state";
+import { initialAuthActionState, type AuthActionState } from "@/lib/auth/action-state";
 import { cn } from "@/lib/utils";
 
 type ForgotPasswordCardProps = {
@@ -16,6 +16,30 @@ type ForgotPasswordCardProps = {
   onLoginClick?: () => void;
   titleId?: string;
 };
+
+function getForgotPasswordNoticeCopy(state: AuthActionState) {
+  if (state.status === "success") {
+    return {
+      icon: CheckCircle2,
+      title: "Reset link sent",
+      message: "Please check your inbox for the secure password reset link.",
+    };
+  }
+
+  if (state.status === "error") {
+    const hasEmailError = Boolean(state.fieldErrors?.email);
+
+    return {
+      icon: AlertTriangle,
+      title: hasEmailError ? "Check your email" : "Unable to send reset link",
+      message: hasEmailError
+        ? "Please enter a valid member email to continue."
+        : "Please try again in a moment.",
+    };
+  }
+
+  return null;
+}
 
 export function Component({
   className,
@@ -27,6 +51,8 @@ export function Component({
     requestPasswordResetAction,
     initialAuthActionState,
   );
+  const noticeCopy = getForgotPasswordNoticeCopy(state);
+  const NoticeIcon = noticeCopy?.icon;
 
   return (
     <motion.div
@@ -64,7 +90,7 @@ export function Component({
               Reset Password
             </h2>
             <p className="mt-2 text-xs font-light text-text-secondary">
-              ส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ไปยังอีเมลสมาชิกของคุณ
+              Enter your member email and we will send a secure reset link.
             </p>
           </div>
 
@@ -88,16 +114,22 @@ export function Component({
               </span>
             </label>
 
-            {state.status === "error" ? (
-              <div className="rounded-lg border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]" role="alert">
-                {state.message}
+            {noticeCopy && NoticeIcon ? (
+              <div
+                className={cn(
+                  "flex items-start gap-2 rounded-xl border px-3 py-2.5 text-left",
+                  state.status === "success"
+                    ? "border-emerald-400/24 bg-emerald-400/8 text-emerald-100"
+                    : "border-[#D4AF37]/28 bg-[#D4AF37]/10 text-[#F6E3A3]",
+                )}
+                role={state.status === "error" ? "alert" : "status"}
+              >
+                <NoticeIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+                <span className="min-w-0">
+                  <span className="block text-xs font-semibold leading-4">{noticeCopy.title}</span>
+                  <span className="mt-0.5 block text-xs leading-5 text-white/62">{noticeCopy.message}</span>
+                </span>
               </div>
-            ) : null}
-
-            {state.status === "success" ? (
-              <p className="rounded-lg border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]">
-                {state.message}
-              </p>
             ) : null}
 
             <motion.button

@@ -186,6 +186,20 @@ function MemberLogoutMenuButton() {
     )
 }
 
+function SigningOutOverlay() {
+    return (
+        <div
+            aria-live="polite"
+            className="fixed inset-0 z-[120] grid place-items-center bg-black/42 px-4 backdrop-blur-[2px]"
+            role="status">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/24 bg-[#050505]/92 px-4 py-2 text-[0.75rem] font-semibold leading-none text-[#F6E3A3] shadow-[0_16px_46px_rgba(0,0,0,0.45)]">
+                <LoaderCircle aria-hidden="true" className="size-3.5 animate-spin" />
+                <span>Signing out securely...</span>
+            </div>
+        </div>
+    )
+}
+
 type HeroSectionProps = {
     publicSession: PublicSessionState
 }
@@ -343,6 +357,7 @@ type MemberProfileMenuProps = {
 function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps) {
     const [isOpen, setIsOpen] = React.useState(false)
     const [copyState, setCopyState] = React.useState<'idle' | 'copied' | 'error'>('idle')
+    const [isSigningOut, setIsSigningOut] = React.useState(false)
     const menuRef = React.useRef<HTMLDivElement>(null)
     const isActive = publicSession.memberStatus === 'Active'
     const memberInitials = getMemberInitials(publicSession.memberName, publicSession.memberEmail)
@@ -410,8 +425,15 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
         onNavigate()
     }
 
+    function handleLogoutSubmit() {
+        setIsSigningOut(true)
+        setIsOpen(false)
+        onNavigate()
+    }
+
     return (
         <div ref={menuRef} className="relative flex w-full justify-end sm:w-auto">
+            {isSigningOut ? <SigningOutOverlay /> : null}
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
                 <span
                     aria-hidden="true"
@@ -421,8 +443,10 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                 <button
                     aria-expanded={isOpen}
                     aria-haspopup="menu"
+                    aria-disabled={isSigningOut}
                     aria-label="Open member profile menu"
-                    className="flex h-10 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55"
+                    className="flex h-10 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55 disabled:cursor-wait disabled:opacity-70"
+                    disabled={isSigningOut}
                     onClick={() => setIsOpen((current) => !current)}
                     type="button">
                     <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/24 bg-[#11131A] text-[0.68rem] font-extrabold text-[#F6E3A3]">
@@ -531,7 +555,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             <Settings aria-hidden="true" className={memberMenuIconClass} />
                             <span className={memberMenuLabelClass}>My Profile</span>
                         </Link>
-                        <form action={logoutAction}>
+                        <form action={logoutAction} onSubmitCapture={handleLogoutSubmit}>
                             <MemberLogoutMenuButton />
                         </form>
                     </div>

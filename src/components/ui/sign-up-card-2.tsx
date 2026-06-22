@@ -601,7 +601,7 @@ function getInitialNextPath() {
 
 function getReadableNotice(notice?: string) {
   if (notice === "google_profile_required") {
-    return "ยังไม่พบข้อมูลสมาชิกของบัญชี Google นี้ กรุณากรอกข้อมูลสมัครให้ครบก่อนเข้า Dashboard";
+    return "No member profile was found for this Google account. Please complete signup before opening the dashboard.";
   }
 
   return null;

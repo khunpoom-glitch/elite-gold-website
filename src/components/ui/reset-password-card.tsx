@@ -4,9 +4,29 @@ import { useActionState, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Eye, EyeClosed, Lock } from "lucide-react";
+import { AlertTriangle, ArrowRight, Eye, EyeClosed, Lock } from "lucide-react";
 import { updatePasswordAction } from "@/app/auth/actions";
-import { initialAuthActionState } from "@/lib/auth/action-state";
+import { initialAuthActionState, type AuthActionState } from "@/lib/auth/action-state";
+
+function getResetPasswordNoticeCopy(state: AuthActionState) {
+  if (state.status !== "error") {
+    return null;
+  }
+
+  const fieldNames = Object.keys(state.fieldErrors ?? {});
+
+  if (fieldNames.includes("password") || fieldNames.includes("confirmPassword")) {
+    return {
+      title: "Check your new password",
+      message: "Please complete both password fields and make sure they match.",
+    };
+  }
+
+  return {
+    title: "Unable to update password",
+    message: "Please try again in a moment.",
+  };
+}
 
 export function ResetPasswordCard() {
   const [state, formAction, isPending] = useActionState(
@@ -15,6 +35,7 @@ export function ResetPasswordCard() {
   );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const noticeCopy = getResetPasswordNoticeCopy(state);
 
   useEffect(() => {
     if (state.status === "success" && state.redirectTo) {
@@ -46,7 +67,7 @@ export function ResetPasswordCard() {
             New Password
           </h1>
           <p className="mt-2 text-xs font-light text-text-secondary">
-            ตั้งรหัสผ่านใหม่สำหรับบัญชี Elite Gold Community
+            Create a new password for your Elite Gold account.
           </p>
         </div>
 
@@ -103,9 +124,16 @@ export function ResetPasswordCard() {
             </span>
           </label>
 
-          {state.status === "error" ? (
-            <div className="rounded-lg border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]" role="alert">
-              {state.message}
+          {noticeCopy ? (
+            <div
+              className="flex items-start gap-2 rounded-xl border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-3 py-2.5 text-left text-[#F6E3A3]"
+              role="alert"
+            >
+              <AlertTriangle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+              <span className="min-w-0">
+                <span className="block text-xs font-semibold leading-4">{noticeCopy.title}</span>
+                <span className="mt-0.5 block text-xs leading-5 text-white/62">{noticeCopy.message}</span>
+              </span>
             </div>
           ) : null}
 
@@ -143,7 +171,7 @@ export function ResetPasswordCard() {
           </motion.button>
 
           <p className="pt-1 text-center text-xs text-white/58">
-            กลับไปหน้า{" "}
+            Back to{" "}
             <Link className="font-semibold text-[#F6E3A3] transition hover:text-white" href="/login">
               Login
             </Link>

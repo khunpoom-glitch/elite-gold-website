@@ -8,8 +8,29 @@ export const metadata: Metadata = {
   description: siteConfig.description,
 };
 
-export default async function RootHomePage() {
-  const publicSession = await getPublicSessionState();
+type RootHomeSearchParams = {
+  auth?: string | string[];
+};
 
-  return <HomePage publicSession={publicSession} />;
+type RootHomePageProps = {
+  searchParams?: Promise<RootHomeSearchParams>;
+};
+
+export default async function RootHomePage({ searchParams }: RootHomePageProps) {
+  const [publicSession, resolvedSearchParams] = await Promise.all([
+    getPublicSessionState(),
+    searchParams ?? Promise.resolve<RootHomeSearchParams>({}),
+  ]);
+  const authParam = resolvedSearchParams.auth;
+  const initialHomeNotice =
+    (Array.isArray(authParam) ? authParam[0] : authParam) === "signed-out"
+      ? "signed_out"
+      : undefined;
+
+  return (
+    <HomePage
+      initialHomeNotice={initialHomeNotice}
+      publicSession={publicSession}
+    />
+  );
 }
