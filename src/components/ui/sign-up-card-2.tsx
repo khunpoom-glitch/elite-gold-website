@@ -1008,7 +1008,7 @@ export function Component({
             {isGoogleSignup ? (
               <motion.div
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-3 overflow-hidden rounded-xl border border-white/12 bg-[#0A0A0A]/94 px-3 py-2.5 text-xs leading-5 text-white/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_46px_rgba(0,0,0,0.34)]"
+                className="mb-3 overflow-hidden rounded-lg border border-white/10 bg-[#080808]/92 px-2.5 py-2 text-xs leading-5 text-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)]"
                 initial={{ opacity: 0, y: 6 }}
                 role="status"
               >
@@ -1020,24 +1020,17 @@ export function Component({
                     </span>
                   </span>
                   {isGoogleProfileHydrating ? (
-                    <LoaderCircle aria-hidden="true" className="size-3.5 shrink-0 animate-spin text-[#F6E3A3]" />
+                    <LoaderCircle aria-hidden="true" className="size-3.5 shrink-0 animate-spin text-white/50" />
                   ) : (
                     <CheckCircle2 aria-hidden="true" className="size-3.5 shrink-0 text-emerald-300" />
                   )}
                 </div>
-                <span className="mt-1 block break-words text-white/54">{googleSignupProfile?.email}</span>
-                <p className="mt-1.5 text-[0.7rem] leading-5 text-white/46">
+                <span className="mt-0.5 block break-words text-white/52">{googleSignupProfile?.email}</span>
+                <p className="mt-1 text-[0.68rem] leading-5 text-white/44">
                   {isGoogleProfileHydrating
                     ? "Securely filling your signup details from Google..."
                     : "Review the member details below, then press Sign Up."}
                 </p>
-                <span aria-hidden="true" className="mt-2 block h-px overflow-hidden rounded-full bg-white/10">
-                  <motion.span
-                    animate={{ x: isGoogleProfileHydrating ? ["-85%", "185%"] : "100%" }}
-                    className="block h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#F6E3A3]/70 to-transparent"
-                    transition={{ duration: 0.92, ease: "easeInOut", repeat: isGoogleProfileHydrating ? Infinity : 0 }}
-                  />
-                </span>
               </motion.div>
             ) : (
               <>
