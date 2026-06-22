@@ -162,6 +162,7 @@ const memberMenuItemClass = 'flex min-h-8 items-center gap-2 rounded-lg px-2 tex
 const memberMenuDangerItemClass = 'flex min-h-8 w-full items-center gap-2 rounded-lg px-2 text-left text-[0.8125rem] font-medium leading-none tracking-normal text-[#FF6B6B] transition hover:bg-red-500/10 hover:text-[#FF8A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45'
 const memberMenuIconClass = 'size-3.5 text-[#91A0C5]'
 const memberMenuDangerIconClass = 'size-3.5 text-[#FF6B6B]'
+const memberMenuLabelClass = 'text-[0.8125rem] font-medium leading-none tracking-normal'
 
 type HeroSectionProps = {
     publicSession: PublicSessionState
@@ -489,7 +490,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             onClick={handleMenuLinkClick}
                             role="menuitem">
                             <LayoutDashboard aria-hidden="true" className={memberMenuIconClass} />
-                            <span>Dashboard</span>
+                            <span className={memberMenuLabelClass}>Dashboard</span>
                         </Link>
                         <button
                             className={memberMenuItemClass}
@@ -498,7 +499,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             role="menuitem"
                             type="button">
                             <Clipboard aria-hidden="true" className={memberMenuIconClass} />
-                            <span>{copyState === 'copied' ? 'Access link copied' : copyState === 'error' ? 'Copy not available' : 'Copy Access Link'}</span>
+                            <span className={memberMenuLabelClass}>{copyState === 'copied' ? 'Access link copied' : copyState === 'error' ? 'Copy not available' : 'Copy Access Link'}</span>
                         </button>
                         <Link
                             className={memberMenuItemClass}
@@ -506,7 +507,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             onClick={handleMenuLinkClick}
                             role="menuitem">
                             <Settings aria-hidden="true" className={memberMenuIconClass} />
-                            <span>My Profile</span>
+                            <span className={memberMenuLabelClass}>My Profile</span>
                         </Link>
                         <form action={logoutAction}>
                             <button
@@ -514,7 +515,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                                 role="menuitem"
                                 type="submit">
                                 <LogOut aria-hidden="true" className={memberMenuDangerIconClass} />
-                                <span>Sign Out</span>
+                                <span className={memberMenuLabelClass}>Sign Out</span>
                             </button>
                         </form>
                     </div>
