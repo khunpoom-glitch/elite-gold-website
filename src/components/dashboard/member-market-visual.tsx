@@ -8,22 +8,23 @@ type MemberMarketVisualProps = {
 };
 
 const bars = [
-  { accent: false, delay: "0s", height: "36%", left: "16%" },
-  { accent: false, delay: "0.45s", height: "58%", left: "27%" },
-  { accent: true, delay: "0.9s", height: "76%", left: "39%" },
-  { accent: false, delay: "1.35s", height: "48%", left: "52%" },
-  { accent: false, delay: "1.8s", height: "64%", left: "64%" },
-  { accent: true, delay: "2.25s", height: "42%", left: "76%" },
+  { accent: false, delay: "0s", height: "28%", left: "15%" },
+  { accent: false, delay: "0.45s", height: "42%", left: "26%" },
+  { accent: true, delay: "0.9s", height: "58%", left: "38%" },
+  { accent: false, delay: "1.35s", height: "34%", left: "51%" },
+  { accent: false, delay: "1.8s", height: "46%", left: "63%" },
+  { accent: true, delay: "2.25s", height: "31%", left: "75%" },
 ];
 
 const nodes = [
-  { delay: "0.2s", left: "22%", top: "39%" },
-  { delay: "1s", left: "42%", top: "24%" },
-  { delay: "1.8s", left: "61%", top: "34%" },
-  { delay: "2.6s", left: "78%", top: "27%" },
+  { delay: "0.2s", left: "23%", top: "42%" },
+  { delay: "1s", left: "39%", top: "33%" },
+  { delay: "1.8s", left: "61%", top: "39%" },
+  { delay: "2.6s", left: "77%", top: "34%" },
 ];
 
-const graphPath = "M 4 31 C 13 27 18 24 25 22 C 32 20 37 17 42 20 C 49 25 53 31 60 26 C 67 21 72 17 78 20 C 85 24 90 29 96 24";
+const graphPath = "M 4 30 C 13 27 18 23 25 22 C 33 21 38 16 45 19 C 53 23 56 30 64 26 C 72 22 77 18 84 21 C 89 23 93 27 96 24";
+const graphAreaPath = `${graphPath} L 96 42 L 4 42 Z`;
 
 type MotionStyle = CSSProperties & Record<`--${string}`, string>;
 
@@ -33,6 +34,7 @@ export function MemberMarketVisual({
 }: MemberMarketVisualProps) {
   return (
     <div aria-label={label} className={cn("member-market-visual", className)} role="img">
+      <span aria-hidden="true" className="member-market-chrome" />
       <svg
         aria-hidden="true"
         className="member-market-graph"
@@ -69,7 +71,13 @@ export function MemberMarketVisual({
               values="-12;-12;204;204"
             />
           </linearGradient>
+          <linearGradient id="member-market-area" x1="0%" x2="0%" y1="0%" y2="100%">
+            <stop offset="0%" stopColor="#f6e3a3" stopOpacity="0.14" />
+            <stop offset="48%" stopColor="#9aa4b8" stopOpacity="0.055" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
         </defs>
+        <path className="member-market-graph-area" d={graphAreaPath} fill="url(#member-market-area)" />
         <path className="member-market-graph-base" d={graphPath} pathLength="100" />
         <path className="member-market-graph-runner" d={graphPath} pathLength="100" />
         <circle className="member-market-tracer" r="1.25">
@@ -79,6 +87,7 @@ export function MemberMarketVisual({
       <span aria-hidden="true" className="member-market-frame" />
       <div aria-hidden="true" className="member-market-plate" />
       <span aria-hidden="true" className="member-market-baseline" />
+      <span aria-hidden="true" className="member-market-depth" />
       {bars.map((bar) => (
         <span
           aria-hidden="true"
