@@ -23,6 +23,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", origin));
   }
 
+  if (intent === "signup") {
+    const { error: discardDraftError } = await supabase.rpc(
+      "discard_elite_google_signup_draft",
+    );
+
+    if (discardDraftError) {
+      console.warn("[auth] Failed to discard stale Google signup draft.", {
+        code: discardDraftError.code,
+        message: discardDraftError.message,
+      });
+    }
+  }
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {

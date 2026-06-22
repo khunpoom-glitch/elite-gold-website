@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState, type CSSProperties, type FocusEvent, type KeyboardEvent, type MouseEvent } from "react";
+import { useActionState, useCallback, useEffect, useMemo, useState, type CSSProperties, type FocusEvent, type KeyboardEvent, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
@@ -677,6 +677,25 @@ export function Component({
   const validationPopupMessage = hasAccessCodeError
     ? "Please use a valid signup link before continuing."
     : "Please complete the highlighted fields before continuing.";
+  const requestGoogleSignupDraftDiscard = useCallback((useBeacon = false) => {
+    if (!isGoogleSignup || isSignupComplete || isPending) {
+      return;
+    }
+
+    const cleanupUrl = "/auth/discard-google-signup";
+
+    if (useBeacon && typeof navigator.sendBeacon === "function") {
+      navigator.sendBeacon(cleanupUrl);
+      return;
+    }
+
+    void fetch(cleanupUrl, {
+      cache: "no-store",
+      credentials: "same-origin",
+      keepalive: useBeacon,
+      method: "POST",
+    }).catch(() => undefined);
+  }, [isGoogleSignup, isPending, isSignupComplete]);
 
   useEffect(() => {
     if (!googleSignupProfile?.email) {
@@ -724,6 +743,22 @@ export function Component({
       window.location.assign(state.redirectTo);
     }
   }, [state]);
+
+  useEffect(() => {
+    if (!isGoogleSignup || isSignupComplete || isPending) {
+      return;
+    }
+
+    function handlePageHide() {
+      requestGoogleSignupDraftDiscard(true);
+    }
+
+    window.addEventListener("pagehide", handlePageHide);
+
+    return () => {
+      window.removeEventListener("pagehide", handlePageHide);
+    };
+  }, [isGoogleSignup, isPending, isSignupComplete, requestGoogleSignupDraftDiscard]);
 
   useEffect(() => {
     if (!isSignupComplete || isRedirectingAfterVerification) {
@@ -830,6 +865,7 @@ export function Component({
   }
 
   function handleGoogleSignup() {
+    requestGoogleSignupDraftDiscard();
     setIsGoogleRedirecting(true);
 
     const searchParams = new URLSearchParams({
@@ -844,6 +880,16 @@ export function Component({
     window.setTimeout(() => {
       window.location.assign(`/auth/google?${searchParams.toString()}`);
     }, 120);
+  }
+
+  function handleCloseClick() {
+    requestGoogleSignupDraftDiscard();
+    onClose?.();
+  }
+
+  function handleLoginClick() {
+    requestGoogleSignupDraftDiscard();
+    onLoginClick?.();
   }
 
   return (
@@ -878,7 +924,7 @@ export function Component({
             <button
               aria-label="Close"
               className="absolute right-3 top-3 z-20 inline-flex size-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/42 transition-colors duration-200 hover:border-white/18 hover:bg-white/[0.07] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35"
-              onClick={onClose}
+              onClick={handleCloseClick}
               type="button"
             >
               <X aria-hidden="true" className="size-4" />
@@ -1347,13 +1393,17 @@ export function Component({
                 {onLoginClick ? (
                   <button
                     className="font-semibold text-[#F6E3A3] transition hover:text-white"
-                    onClick={onLoginClick}
+                    onClick={handleLoginClick}
                     type="button"
                   >
                     Login
                   </button>
                 ) : (
-                  <Link className="font-semibold text-[#F6E3A3] transition hover:text-white" href="/login">
+                  <Link
+                    className="font-semibold text-[#F6E3A3] transition hover:text-white"
+                    href="/login"
+                    onClick={() => requestGoogleSignupDraftDiscard()}
+                  >
                     Login
                   </Link>
                 )}
