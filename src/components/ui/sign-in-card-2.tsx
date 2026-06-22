@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useState, type CSSProperties, type MouseEvent } from "react";
+import { useActionState, useEffect, useState, type CSSProperties, type FormEvent, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
-import { ArrowRight, Check, Eye, EyeClosed, Lock, Mail, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, Check, Eye, EyeClosed, LoaderCircle, Lock, Mail, X } from "lucide-react";
 import { loginWithPasswordAction } from "@/app/auth/actions";
 import { AuthBotProtectionFields } from "@/components/auth/bot-protection-fields";
 import { GoogleLogo } from "@/components/ui/google-logo";
@@ -27,6 +27,99 @@ const forgotPasswordLinkStyle = {
   fontWeight: 400,
   lineHeight: "1rem",
 };
+
+type LoginNotice = {
+  key: string;
+  title: string;
+  message: string;
+};
+
+function getReadableLoginNotice(message: string, fieldErrors?: Record<string, string>): LoginNotice | null {
+  if (fieldErrors && Object.keys(fieldErrors).length > 0) {
+    const fields = Object.keys(fieldErrors).map((field) =>
+      field === "email" ? "Email" : field === "password" ? "Password" : field,
+    );
+
+    return {
+      key: `missing-${fields.join("-")}`,
+      title: "Complete required fields",
+      message: `Please enter ${fields.join(", ")} to continue.`,
+    };
+  }
+
+  if (!message) {
+    return null;
+  }
+
+  const lowerMessage = message.toLowerCase();
+
+  if (lowerMessage.includes("อีเมลหรือรหัสผ่าน") || lowerMessage.includes("invalid login")) {
+    return {
+      key: "invalid-credentials",
+      title: "Login failed",
+      message: "The email or password you entered is incorrect.",
+    };
+  }
+
+  if (lowerMessage.includes("ยืนยันอีเมล") || lowerMessage.includes("email not confirmed")) {
+    return {
+      key: "email-not-confirmed",
+      title: "Email verification required",
+      message: "Please verify your email before logging in.",
+    };
+  }
+
+  if (lowerMessage.includes("กรอกอีเมลให้ถูกต้อง")) {
+    return {
+      key: "invalid-email",
+      title: "Invalid email",
+      message: "Please enter a valid email address.",
+    };
+  }
+
+  return {
+    key: `login-error-${message}`,
+    title: "Unable to login",
+    message: "Please check your details and try again.",
+  };
+}
+
+function LoginValidationPopup({
+  notice,
+  onClose,
+}: {
+  notice: LoginNotice;
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      className="absolute bottom-[calc(100%+0.7rem)] left-0 right-0 z-30 mx-auto w-[min(24rem,calc(100vw-2rem))] rounded-2xl border border-[#D4AF37]/32 bg-[#080808]/96 px-4 py-3 text-left shadow-[0_20px_58px_rgba(0,0,0,0.5)] ring-1 ring-white/[0.04] backdrop-blur-xl"
+      exit={{ opacity: 0, y: 8, scale: 0.98 }}
+      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+      role="alert"
+      transition={{ duration: 0.18, ease: "easeOut" }}
+    >
+      <div className="flex items-start gap-3">
+        <span className="grid size-8 shrink-0 place-items-center rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 text-[#F6E3A3]">
+          <AlertTriangle aria-hidden="true" className="size-4" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-semibold leading-5 text-[#F6E3A3]">{notice.title}</span>
+          <span className="mt-0.5 block text-xs leading-5 text-white/64">{notice.message}</span>
+        </span>
+        <button
+          aria-label="Close login notice"
+          className="-mr-1 -mt-1 grid size-7 shrink-0 place-items-center rounded-full text-white/42 transition hover:bg-white/[0.06] hover:text-white"
+          onClick={onClose}
+          type="button"
+        >
+          <X aria-hidden="true" className="size-4" />
+        </button>
+      </div>
+    </motion.div>
+  );
+}
 
 function getInitialNextPath() {
   if (typeof window === "undefined") {
@@ -51,8 +144,15 @@ export function Component({
   );
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [loginNotice, setLoginNotice] = useState<LoginNotice | null>(null);
+  const [dismissedNoticeKey, setDismissedNoticeKey] = useState<string | null>(null);
   const [focusedInput, setFocusedInput] = useState<"email" | "password" | null>(null);
   const [nextPath] = useState(getInitialNextPath);
+  const serverLoginNotice =
+    state.status === "error" ? getReadableLoginNotice(state.message, state.fieldErrors) : null;
+  const visibleLoginNotice =
+    loginNotice ?? (serverLoginNotice?.key === dismissedNoticeKey ? null : serverLoginNotice);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const rotateX = useTransform(mouseY, [-260, 260], [8, -8]);
@@ -76,12 +176,67 @@ export function Component({
   }
 
   function handleGoogleLogin() {
+    if (isGoogleLoading) {
+      return;
+    }
+
+    setIsGoogleLoading(true);
     const searchParams = new URLSearchParams({
       intent: "login",
       next: nextPath,
     });
 
-    window.location.assign(`/auth/google?${searchParams.toString()}`);
+    window.setTimeout(() => {
+      window.location.assign(`/auth/google?${searchParams.toString()}`);
+    }, 350);
+  }
+
+  function validateLoginFormElement(form: HTMLFormElement) {
+    const formData = new FormData(form);
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+    const missingFields = [
+      !email ? "Email" : null,
+      !password ? "Password" : null,
+    ].filter(Boolean) as string[];
+
+    if (missingFields.length > 0) {
+      setLoginNotice({
+        key: `client-missing-${missingFields.join("-")}`,
+        title: "Complete required fields",
+        message: `Please enter ${missingFields.join(", ")} to continue.`,
+      });
+      setDismissedNoticeKey(null);
+      return false;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setLoginNotice({
+        key: "client-invalid-email",
+        title: "Invalid email",
+        message: "Please enter a valid email address.",
+      });
+      setDismissedNoticeKey(null);
+      return false;
+    }
+
+    setLoginNotice(null);
+    setDismissedNoticeKey(null);
+    return true;
+  }
+
+  function handleLoginSubmit(event: FormEvent<HTMLFormElement>) {
+    if (!validateLoginFormElement(event.currentTarget)) {
+      event.preventDefault();
+    }
+  }
+
+  function handleLoginButtonClick(event: MouseEvent<HTMLButtonElement>) {
+    const form = event.currentTarget.form;
+
+    if (form && !validateLoginFormElement(form)) {
+      event.preventDefault();
+    }
   }
 
   return (
@@ -92,6 +247,18 @@ export function Component({
       transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
       style={{ perspective: 1400 }}
     >
+      <AnimatePresence>
+        {visibleLoginNotice ? (
+          <LoginValidationPopup
+            key={visibleLoginNotice.key}
+            notice={visibleLoginNotice}
+            onClose={() => {
+              setLoginNotice(null);
+              setDismissedNoticeKey(visibleLoginNotice.key);
+            }}
+          />
+        ) : null}
+      </AnimatePresence>
       <motion.div
         className="group relative"
         onMouseLeave={handleMouseLeave}
@@ -131,7 +298,7 @@ export function Component({
               </p>
             </div>
 
-            <form action={formAction} className="grid gap-3" noValidate>
+            <form action={formAction} className="grid gap-3" noValidate onSubmitCapture={handleLoginSubmit}>
               <input name="next" type="hidden" value={nextPath} />
               <AuthBotProtectionFields />
               <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-white/80">
@@ -226,12 +393,6 @@ export function Component({
                 )}
               </div>
 
-              {state.status === "error" ? (
-                <div className="rounded-lg border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]" role="alert">
-                  {state.message}
-                </div>
-              ) : null}
-
               <ShinyButton
                 className="group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={isPending}
@@ -246,20 +407,21 @@ export function Component({
                   fontWeight: 650,
                   letterSpacing: 0,
                 } as CSSProperties}
+                onClickCapture={handleLoginButtonClick}
                 type="submit"
                 whileHover={{ scale: 1.018 }}
                 whileTap={{ scale: 0.985 }}
               >
                 <AnimatePresence mode="wait">
                   {isPending ? (
-                    <motion.span
-                      key="loading"
-                      className="relative flex h-full items-center justify-center"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
+	                    <motion.span
+	                      key="loading"
+	                      initial={{ opacity: 0 }}
+	                      animate={{ opacity: 1 }}
+	                      className="relative flex h-full items-center justify-center gap-2"
                       exit={{ opacity: 0 }}
                     >
-                      <span className="size-4 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
+                      <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
                       Login
                     </motion.span>
                   ) : (
@@ -284,15 +446,20 @@ export function Component({
               </div>
 
               <motion.button
-                className="flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white"
+                className="flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-75"
+                disabled={isGoogleLoading || isPending}
                 onClick={handleGoogleLogin}
                 style={{ fontSize: "0.78rem", lineHeight: 1 }}
                 type="button"
-                whileHover={{ scale: 1.018 }}
-                whileTap={{ scale: 0.985 }}
+                whileHover={isGoogleLoading || isPending ? undefined : { scale: 1.018 }}
+                whileTap={isGoogleLoading || isPending ? undefined : { scale: 0.985 }}
               >
-                <GoogleLogo />
-                Login with Google
+                {isGoogleLoading ? (
+                  <LoaderCircle aria-hidden="true" className="size-4 animate-spin text-[#F6E3A3]" />
+                ) : (
+                  <GoogleLogo />
+                )}
+                {isGoogleLoading ? "Connecting to Google..." : "Login with Google"}
               </motion.button>
 
               <p className="pt-1 text-center text-xs text-white/58">

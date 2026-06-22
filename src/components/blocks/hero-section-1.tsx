@@ -12,6 +12,7 @@ import {
     ChevronDown,
     LayoutDashboard,
     Link2,
+    LoaderCircle,
     LogOut,
     Menu,
     NotebookPen,
@@ -20,6 +21,7 @@ import {
     X,
 } from 'lucide-react'
 import type { Variants } from 'framer-motion'
+import { useFormStatus } from 'react-dom'
 import { logoutAction } from '@/app/auth/actions'
 import { Button } from '@/components/blocks/hero-section-1-button'
 import { EliteGoldNavbarLogo as Logo } from '@/components/shared/elite-gold-navbar-logo'
@@ -163,6 +165,26 @@ const memberMenuDangerItemClass = 'flex min-h-8 w-full items-center gap-2 rounde
 const memberMenuIconClass = 'size-3.5 text-[#91A0C5]'
 const memberMenuDangerIconClass = 'size-3.5 text-[#FF6B6B]'
 const memberMenuLabelClass = 'text-[0.8125rem] font-medium leading-none tracking-normal'
+
+function MemberLogoutMenuButton() {
+    const { pending } = useFormStatus()
+
+    return (
+        <button
+            aria-disabled={pending}
+            className={memberMenuDangerItemClass}
+            disabled={pending}
+            role="menuitem"
+            type="submit">
+            {pending ? (
+                <LoaderCircle aria-hidden="true" className={`${memberMenuDangerIconClass} animate-spin`} />
+            ) : (
+                <LogOut aria-hidden="true" className={memberMenuDangerIconClass} />
+            )}
+            <span className={memberMenuLabelClass}>{pending ? 'Signing out...' : 'Sign Out'}</span>
+        </button>
+    )
+}
 
 type HeroSectionProps = {
     publicSession: PublicSessionState
@@ -510,13 +532,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             <span className={memberMenuLabelClass}>My Profile</span>
                         </Link>
                         <form action={logoutAction}>
-                            <button
-                                className={memberMenuDangerItemClass}
-                                role="menuitem"
-                                type="submit">
-                                <LogOut aria-hidden="true" className={memberMenuDangerIconClass} />
-                                <span className={memberMenuLabelClass}>Sign Out</span>
-                            </button>
+                            <MemberLogoutMenuButton />
                         </form>
                     </div>
                 </div>
