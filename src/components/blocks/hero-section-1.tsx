@@ -336,12 +336,22 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
             }
         }
 
+        function handleScrollDismiss() {
+            setIsOpen(false)
+        }
+
         document.addEventListener('pointerdown', handlePointerDown)
         document.addEventListener('keydown', handleKeyDown)
+        window.addEventListener('scroll', handleScrollDismiss, { passive: true })
+        window.addEventListener('wheel', handleScrollDismiss, { passive: true })
+        window.addEventListener('touchmove', handleScrollDismiss, { passive: true })
 
         return () => {
             document.removeEventListener('pointerdown', handlePointerDown)
             document.removeEventListener('keydown', handleKeyDown)
+            window.removeEventListener('scroll', handleScrollDismiss)
+            window.removeEventListener('wheel', handleScrollDismiss)
+            window.removeEventListener('touchmove', handleScrollDismiss)
         }
     }, [])
 
@@ -377,17 +387,17 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
                 <span
                     aria-hidden="true"
-                    className="hidden size-9 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-white/58 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:grid">
-                    <Bell className="size-4 stroke-[1.75]" />
+                    className="hidden size-8 place-items-center rounded-full border border-white/10 bg-white/[0.025] text-white/52 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] sm:grid">
+                    <Bell className="size-3.5 stroke-[1.75]" />
                 </span>
                 <button
                     aria-expanded={isOpen}
                     aria-haspopup="menu"
                     aria-label="Open member profile menu"
-                    className="flex h-10 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55"
+                    className="flex h-9 min-w-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.055] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55"
                     onClick={() => setIsOpen((current) => !current)}
                     type="button">
-                    <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/24 bg-[#11131A] text-[0.68rem] font-extrabold text-[#F6E3A3]">
+                    <span className="relative grid size-7 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/22 bg-[#101010] text-[0.62rem] font-extrabold text-[#F6E3A3]">
                         {publicSession.memberAvatarUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -401,18 +411,18 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                     </span>
                     <ChevronDown
                         aria-hidden="true"
-                        className={cn('size-4 shrink-0 text-white/48 transition-transform', isOpen && 'rotate-180 text-[#F6E3A3]')}
+                        className={cn('size-3.5 shrink-0 text-white/48 transition-transform', isOpen && 'rotate-180 text-[#F6E3A3]')}
                     />
                 </button>
             </div>
 
             {isOpen ? (
                 <div
-                    className="absolute right-0 top-[calc(100%+0.75rem)] z-50 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.35rem] border border-white/10 bg-[#07080C]/95 text-left shadow-[0_24px_80px_rgba(0,0,0,0.56)] backdrop-blur-xl"
+                    className="absolute right-0 top-[calc(100%+0.55rem)] z-50 w-[min(18.75rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.1rem] border border-white/10 bg-[#050505]/96 text-left shadow-[0_18px_58px_rgba(0,0,0,0.52)] backdrop-blur-xl"
                     role="menu">
-                    <div className="border-b border-white/8 p-5">
-                        <div className="flex min-w-0 items-start gap-3">
-                            <span className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/22 bg-[#11131A] text-sm font-extrabold text-[#F6E3A3]">
+                    <div className="border-b border-white/8 p-4">
+                        <div className="flex min-w-0 items-start gap-2.5">
+                            <span className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/22 bg-[#101010] text-xs font-extrabold text-[#F6E3A3]">
                                 {publicSession.memberAvatarUrl ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
@@ -425,34 +435,34 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                                 )}
                             </span>
                             <span className="min-w-0">
-                                <span className="block truncate text-base font-bold leading-6 text-white">
+                                <span className="block truncate text-sm font-bold leading-5 text-white">
                                     {publicSession.memberName}
                                 </span>
-                                <span className="block truncate text-sm font-medium leading-5 text-[#91A0C5]">
+                                <span className="block truncate text-xs font-medium leading-4 text-[#91A0C5]">
                                     {publicSession.memberEmail || 'Email not set'}
                                 </span>
                             </span>
                         </div>
 
-                        <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.025] p-3">
-                            <div className="flex items-center justify-between gap-3">
-                                <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-white">
+                        <div className="mt-3 rounded-[1rem] border border-white/10 bg-white/[0.018] p-2.5">
+                            <div className="flex items-center justify-between gap-2.5">
+                                <span className="flex min-w-0 items-center gap-2 text-xs font-semibold text-white">
                                     <StatusIcon
                                         aria-hidden="true"
-                                        className={cn('size-4 shrink-0', isActive ? 'text-emerald-400' : 'text-[#F6A623]')}
+                                        className={cn('size-3.5 shrink-0', isActive ? 'text-emerald-400' : 'text-[#F6A623]')}
                                     />
                                     <span className="truncate">{publicSession.memberStatus}</span>
                                 </span>
                                 <Link
-                                    className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-[#F6E3A3] transition hover:text-white"
+                                    className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-[#F6E3A3] transition hover:text-white"
                                     href={statusActionHref}
                                     onClick={handleMenuLinkClick}>
                                     <span>{publicSession.primaryActionLabel}</span>
-                                    <ArrowRight aria-hidden="true" className="size-3.5" />
+                                    <ArrowRight aria-hidden="true" className="size-3" />
                                 </Link>
                             </div>
 
-                            <div className="mt-3 grid gap-2 border-t border-white/8 pt-3 text-xs font-medium text-white/48">
+                            <div className="mt-2.5 grid gap-1.5 border-t border-white/8 pt-2.5 text-[0.68rem] font-medium text-white/46">
                                 {publicSession.memberNickname ? (
                                     <div className="flex items-center justify-between gap-3">
                                         <span>Nickname</span>
@@ -467,38 +477,38 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                         </div>
                     </div>
 
-                    <div className="grid p-2">
+                    <div className="grid p-1.5">
                         <Link
-                            className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
+                            className="flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-xs font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
                             href="/dashboard"
                             onClick={handleMenuLinkClick}
                             role="menuitem">
-                            <LayoutDashboard aria-hidden="true" className="size-4 text-[#91A0C5]" />
+                            <LayoutDashboard aria-hidden="true" className="size-3.5 text-[#91A0C5]" />
                             <span>Dashboard</span>
                         </Link>
                         <button
-                            className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-left text-sm font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45 disabled:cursor-not-allowed disabled:text-white/32"
+                            className="flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-left text-xs font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45 disabled:cursor-not-allowed disabled:text-white/32"
                             disabled={!accessCode}
                             onClick={handleCopyAccessLink}
                             role="menuitem"
                             type="button">
-                            <Clipboard aria-hidden="true" className="size-4 text-[#91A0C5]" />
+                            <Clipboard aria-hidden="true" className="size-3.5 text-[#91A0C5]" />
                             <span>{copyState === 'copied' ? 'Access link copied' : copyState === 'error' ? 'Copy not available' : 'Copy Access Link'}</span>
                         </button>
                         <Link
-                            className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
+                            className="flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-xs font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
                             href={profileHref}
                             onClick={handleMenuLinkClick}
                             role="menuitem">
-                            <Settings aria-hidden="true" className="size-4 text-[#91A0C5]" />
+                            <Settings aria-hidden="true" className="size-3.5 text-[#91A0C5]" />
                             <span>My Profile</span>
                         </Link>
                         <form action={logoutAction}>
                             <button
-                                className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-semibold text-[#FF6B6B] transition hover:bg-red-500/10 hover:text-[#FF8A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45"
+                                className="flex min-h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-xs font-semibold text-[#FF6B6B] transition hover:bg-red-500/10 hover:text-[#FF8A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45"
                                 role="menuitem"
                                 type="submit">
-                                <LogOut aria-hidden="true" className="size-4" />
+                                <LogOut aria-hidden="true" className="size-3.5" />
                                 <span>Sign Out</span>
                             </button>
                         </form>
