@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
     AlertCircle,
     ArrowRight,
@@ -39,6 +40,7 @@ import {
     type AuthModalMode,
 } from '@/config/auth-modal'
 import { homeSignedOutNoticeEventName } from '@/components/sections/home-auth-notice'
+import { clearClientAuthSession, waitForLogoutFeedback } from '@/lib/auth/client-logout'
 import type { PublicSessionState } from '@/lib/member/public-session'
 import { cn } from '@/lib/utils'
 
@@ -362,6 +364,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
     const [copyState, setCopyState] = React.useState<'idle' | 'copied' | 'error'>('idle')
     const [isSigningOut, setIsSigningOut] = React.useState(false)
     const menuRef = React.useRef<HTMLDivElement>(null)
+    const router = useRouter()
     const isActive = publicSession.memberStatus === 'Active'
     const memberInitials = getMemberInitials(publicSession.memberName, publicSession.memberEmail)
     const profileHref = publicSession.secondaryActionHref ?? '/dashboard/account'
@@ -436,25 +439,15 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
         }
 
         setIsSigningOut(true)
-        setIsOpen(false)
-        onNavigate()
-        onLogout()
 
         try {
-            const response = await fetch('/auth/logout', {
-                cache: 'no-store',
-                credentials: 'include',
-                headers: {
-                    'x-elite-logout': 'fetch',
-                },
-                method: 'POST',
-            })
+            await Promise.all([clearClientAuthSession(), waitForLogoutFeedback()])
 
-            if (!response.ok) {
-                throw new Error(`Logout failed with status ${response.status}`)
-            }
-
+            onLogout()
+            setIsOpen(false)
+            onNavigate()
             window.dispatchEvent(new CustomEvent(homeSignedOutNoticeEventName))
+            router.refresh()
         } catch {
             window.location.assign('/?auth=signed-out')
         }

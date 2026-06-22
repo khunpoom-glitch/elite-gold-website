@@ -13,8 +13,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useFormStatus } from "react-dom";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { clearClientAuthSession, waitForLogoutFeedback } from "@/lib/auth/client-logout";
 import { cn } from "@/lib/utils";
 
 type SessionNavBarProps = {
@@ -31,14 +32,12 @@ type NavItem = {
   status?: string;
 };
 
-function DashboardLogoutButton() {
-  const { pending } = useFormStatus();
-
+function DashboardLogoutButton({ pending }: { pending: boolean }) {
   return (
     <button
       aria-disabled={pending}
       aria-label={pending ? "Signing out" : "Logout"}
-      className="grid size-11 place-items-center rounded-2xl border border-white/8 bg-white/[0.025] text-white/54 transition hover:border-[#E6C766]/24 hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50 disabled:cursor-wait disabled:opacity-75"
+      className="group relative grid size-11 place-items-center rounded-2xl border border-white/8 bg-white/[0.025] text-white/54 transition hover:border-[#E6C766]/24 hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50 disabled:cursor-wait disabled:opacity-75"
       disabled={pending}
       title={pending ? "Signing out..." : "Logout"}
       type="submit"
@@ -48,7 +47,43 @@ function DashboardLogoutButton() {
       ) : (
         <LogOut aria-hidden="true" className="size-4" />
       )}
+      <span
+        className={cn(
+          "pointer-events-none absolute left-[calc(100%+0.65rem)] top-1/2 z-50 min-w-max -translate-y-1/2 rounded-xl border border-white/10 bg-[#080808]/96 px-3 py-2 text-xs font-semibold text-white/82 opacity-0 shadow-[0_18px_42px_rgba(0,0,0,0.45)] backdrop-blur-xl transition group-hover:opacity-100 group-focus-visible:opacity-100",
+          pending && "opacity-100",
+        )}
+      >
+        {pending ? "Signing out..." : "Logout"}
+      </span>
     </button>
+  );
+}
+
+function DashboardLogoutForm() {
+  const [pending, setPending] = useState(false);
+  const router = useRouter();
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (pending) {
+      return;
+    }
+
+    setPending(true);
+
+    try {
+      await Promise.all([clearClientAuthSession(), waitForLogoutFeedback()]);
+      router.replace("/?auth=signed-out");
+    } catch {
+      window.location.assign("/?auth=signed-out");
+    }
+  }
+
+  return (
+    <form action="/auth/logout" method="post" onSubmit={handleSubmit}>
+      <DashboardLogoutButton pending={pending} />
+    </form>
   );
 }
 
@@ -234,9 +269,7 @@ export function SessionNavBar({
               {memberInitial}
             </div>
 
-            <form action="/auth/logout" method="post">
-              <DashboardLogoutButton />
-            </form>
+            <DashboardLogoutForm />
           </div>
         </div>
       </aside>
