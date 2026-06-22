@@ -418,11 +418,11 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
 
             {isOpen ? (
                 <div
-                    className="absolute right-0 top-[calc(100%+0.55rem)] z-50 w-[min(18.75rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.1rem] border border-white/10 bg-[#050505]/96 text-left shadow-[0_18px_58px_rgba(0,0,0,0.52)] backdrop-blur-xl"
+                    className="absolute right-0 top-[calc(100%+0.55rem)] z-50 w-[min(16.75rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1rem] border border-white/10 bg-[#050505]/96 text-left shadow-[0_18px_58px_rgba(0,0,0,0.52)] backdrop-blur-xl"
                     role="menu">
-                    <div className="border-b border-white/8 p-4">
+                    <div className="border-b border-white/8 p-3.5">
                         <div className="flex min-w-0 items-start gap-2.5">
-                            <span className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/22 bg-[#101010] text-xs font-extrabold text-[#F6E3A3]">
+                            <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/22 bg-[#101010] text-[0.68rem] font-extrabold text-[#F6E3A3]">
                                 {publicSession.memberAvatarUrl ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
@@ -435,18 +435,18 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                                 )}
                             </span>
                             <span className="min-w-0">
-                                <span className="block truncate text-sm font-bold leading-5 text-white">
+                                <span className="block truncate text-[0.8125rem] font-bold leading-5 text-white">
                                     {publicSession.memberName}
                                 </span>
-                                <span className="block truncate text-xs font-medium leading-4 text-[#91A0C5]">
+                                <span className="block truncate text-[0.72rem] font-medium leading-4 text-[#91A0C5]">
                                     {publicSession.memberEmail || 'Email not set'}
                                 </span>
                             </span>
                         </div>
 
-                        <div className="mt-3 rounded-[1rem] border border-white/10 bg-white/[0.018] p-2.5">
+                        <div className="mt-2.5 rounded-[0.875rem] border border-white/10 bg-white/[0.018] p-2">
                             <div className="flex items-center justify-between gap-2.5">
-                                <span className="flex min-w-0 items-center gap-2 text-xs font-semibold text-white">
+                                <span className="flex min-w-0 items-center gap-1.5 text-[0.8125rem] font-semibold text-white">
                                     <StatusIcon
                                         aria-hidden="true"
                                         className={cn('size-3.5 shrink-0', isActive ? 'text-emerald-400' : 'text-[#F6A623]')}
@@ -454,7 +454,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                                     <span className="truncate">{publicSession.memberStatus}</span>
                                 </span>
                                 <Link
-                                    className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-[#F6E3A3] transition hover:text-white"
+                                    className="inline-flex shrink-0 items-center gap-1 text-[0.8125rem] font-semibold text-[#F6E3A3] transition hover:text-white"
                                     href={statusActionHref}
                                     onClick={handleMenuLinkClick}>
                                     <span>{publicSession.primaryActionLabel}</span>
@@ -479,7 +479,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
 
                     <div className="grid p-1.5">
                         <Link
-                            className="flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-xs font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
+                            className="flex min-h-8 items-center gap-2 rounded-lg px-2 text-[0.8125rem] font-semibold leading-none text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
                             href="/dashboard"
                             onClick={handleMenuLinkClick}
                             role="menuitem">
@@ -487,7 +487,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             <span>Dashboard</span>
                         </Link>
                         <button
-                            className="flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-left text-xs font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45 disabled:cursor-not-allowed disabled:text-white/32"
+                            className="flex min-h-8 items-center gap-2 rounded-lg px-2 text-left text-[0.8125rem] font-semibold leading-none text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45 disabled:cursor-not-allowed disabled:text-white/32"
                             disabled={!accessCode}
                             onClick={handleCopyAccessLink}
                             role="menuitem"
@@ -496,16 +496,16 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             <span>{copyState === 'copied' ? 'Access link copied' : copyState === 'error' ? 'Copy not available' : 'Copy Access Link'}</span>
                         </button>
                         <Link
-                            className="flex min-h-9 items-center gap-2.5 rounded-lg px-2.5 text-xs font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
+                            className="flex min-h-8 items-center gap-2 rounded-lg px-2 text-[0.8125rem] font-semibold leading-none text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
                             href={profileHref}
                             onClick={handleMenuLinkClick}
                             role="menuitem">
                             <Settings aria-hidden="true" className="size-3.5 text-[#91A0C5]" />
-                            <span>My Profile</span>
+                            <span>Setting</span>
                         </Link>
                         <form action={logoutAction}>
                             <button
-                                className="flex min-h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-xs font-semibold text-[#FF6B6B] transition hover:bg-red-500/10 hover:text-[#FF8A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45"
+                                className="flex min-h-8 w-full items-center gap-2 rounded-lg px-2 text-left text-[0.8125rem] font-semibold leading-none text-[#FF6B6B] transition hover:bg-red-500/10 hover:text-[#FF8A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45"
                                 role="menuitem"
                                 type="submit">
                                 <LogOut aria-hidden="true" className="size-3.5" />
