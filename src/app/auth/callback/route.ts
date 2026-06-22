@@ -78,6 +78,17 @@ export async function GET(request: NextRequest) {
     return redirectAndClearOAuthState(new URL("/login", origin));
   }
 
+  const { error: syncEmailError } = await supabase.rpc(
+    "sync_elite_profile_email_after_auth_change",
+  );
+
+  if (syncEmailError) {
+    console.warn("[auth] Failed to sync profile email after auth callback.", {
+      code: syncEmailError.code,
+      message: syncEmailError.message,
+    });
+  }
+
   if (intent === "signup") {
     return redirectAndClearOAuthState(getGoogleSignupUrl(origin, nextPath, accessCode));
   }

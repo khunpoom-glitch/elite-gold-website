@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { KeyRound, MailCheck, ReceiptText, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import { EmailVerificationBanner } from "@/components/dashboard/email-verification-banner";
 import { MemberProfileForm } from "@/components/dashboard/member-profile-form";
+import { getPendingEmailChangeRequest } from "@/lib/member/profile";
 import { getAuthenticatedMember } from "@/lib/member/session";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "My Account",
@@ -52,6 +54,13 @@ function getAccountNotice(verified?: string, notice?: string) {
     };
   }
 
+  if (notice === "email_change_verified") {
+    return {
+      message: "Email changed successfully. Your member profile is now synced with the verified email.",
+      tone: "success" as const,
+    };
+  }
+
   return null;
 }
 
@@ -91,6 +100,10 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
     getFirstSearchParam(params.notice),
   );
   const { isMemberActive, memberStatus, profile } = await getAuthenticatedMember("/dashboard/account");
+  const supabase = await createSupabaseServerClient();
+  const pendingEmailChange = supabase
+    ? await getPendingEmailChangeRequest(supabase, profile.id)
+    : null;
   const statusValues = [
     formatEmailStatus(profile.emailConfirmedAt),
     memberStatus,
@@ -170,7 +183,11 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
           </div>
         </div>
 
-        <MemberProfileForm isMemberActive={isMemberActive} profile={profile} />
+        <MemberProfileForm
+          isMemberActive={isMemberActive}
+          pendingEmailChange={pendingEmailChange}
+          profile={profile}
+        />
       </section>
 
       <section className="grid gap-4 md:grid-cols-3">

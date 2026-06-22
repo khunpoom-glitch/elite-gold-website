@@ -31,5 +31,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(fallbackUrl);
   }
 
+  if (otpType === "email_change") {
+    const { error: syncEmailError } = await supabase.rpc(
+      "sync_elite_profile_email_after_auth_change",
+    );
+
+    if (syncEmailError) {
+      console.warn("[auth] Failed to sync profile email after email change confirmation.", {
+        code: syncEmailError.code,
+        message: syncEmailError.message,
+      });
+    }
+  }
+
   return NextResponse.redirect(new URL(nextPath, origin));
 }

@@ -29,6 +29,11 @@ export type GoogleSignupProfile = {
   avatarUrl: string | null;
 };
 
+export type PendingEmailChangeRequest = {
+  newEmail: string;
+  requestedAt: string;
+};
+
 export const memberProfileSelect = [
   "id",
   "email",
@@ -143,6 +148,33 @@ export async function getMemberProfileByUserId(
   }
 
   return parseMemberProfile(data);
+}
+
+export async function getPendingEmailChangeRequest(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<PendingEmailChangeRequest | null> {
+  const { data, error } = await supabase
+    .from("profile_email_change_requests")
+    .select("new_email, requested_at")
+    .eq("profile_id", userId)
+    .eq("status", "pending")
+    .order("requested_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  if (!isRecord(data)) {
+    return null;
+  }
+
+  return {
+    newEmail: getString(data.new_email),
+    requestedAt: getString(data.requested_at),
+  };
 }
 
 export function getGoogleSignupProfileFromUser(user: User): GoogleSignupProfile {

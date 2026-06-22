@@ -13,6 +13,7 @@ import {
 import { getRequestOrigin } from "@/lib/auth/origin";
 import {
   getSafeRedirectPath,
+  validateEmailChangeForm,
   validateForgotPasswordForm,
   validateLoginForm,
   validateSignupProfileForm,
@@ -590,6 +591,100 @@ export async function updatePasswordAction(
   revalidatePath("/", "layout");
 
   return successState("ตั้งรหัสผ่านใหม่เรียบร้อย", "/dashboard");
+}
+
+export async function requestEmailChangeAction(
+  _previousState: AuthActionState,
+  formData: FormData,
+): Promise<AuthActionState> {
+  const validation = validateEmailChangeForm(formData);
+
+  if (!validation.ok) {
+    return errorState(validation.message, validation.fieldErrors);
+  }
+
+  const client = await getConfiguredSupabaseClient();
+
+  if (!client.ok) {
+    return client.state;
+  }
+
+  const {
+    data: { user },
+    error: userError,
+  } = await client.supabase.auth.getUser();
+
+  if (userError || !user) {
+    return errorState("กรุณาเข้าสู่ระบบก่อนเปลี่ยนอีเมล");
+  }
+
+  const profile = await getMemberProfileByUserId(client.supabase, user.id);
+
+  if (!profile) {
+    return errorState("ไม่พบข้อมูลสมาชิก กรุณาติดต่อทีมงาน");
+  }
+
+  if (profile.email.toLowerCase() === validation.data.email) {
+    return errorState("อีเมลใหม่นี้เป็นอีเมลปัจจุบันอยู่แล้ว", {
+      email: "กรุณากรอกอีเมลใหม่ที่แตกต่างจากอีเมลปัจจุบัน",
+    });
+  }
+
+  await client.supabase
+    .from("profile_email_change_requests")
+    .update({ status: "cancelled" })
+    .eq("profile_id", user.id)
+    .eq("status", "pending");
+
+  const { data: requestRow, error: requestError } = await client.supabase
+    .from("profile_email_change_requests")
+    .insert({
+      profile_id: user.id,
+      old_email: profile.email,
+      new_email: validation.data.email,
+      status: "pending",
+    })
+    .select("id")
+    .single();
+
+  if (requestError) {
+    console.error("[auth] Failed to create email change request.", {
+      code: requestError.code,
+      message: requestError.message,
+    });
+
+    return errorState("ยังไม่สามารถเริ่มการเปลี่ยนอีเมลได้ กรุณาลองใหม่อีกครั้ง");
+  }
+
+  const { error } = await client.supabase.auth.updateUser(
+    {
+      email: validation.data.email,
+    },
+    {
+      emailRedirectTo: await getAuthCallbackUrl("/dashboard/account?notice=email_change_verified"),
+    },
+  );
+
+  if (error) {
+    const requestId =
+      typeof requestRow === "object" && requestRow !== null && "id" in requestRow
+        ? requestRow.id
+        : null;
+
+    if (typeof requestId === "string") {
+      await client.supabase
+        .from("profile_email_change_requests")
+        .update({ status: "failed" })
+        .eq("id", requestId);
+    }
+
+    return errorState(getReadableAuthError(error.message));
+  }
+
+  revalidatePath("/dashboard", "layout");
+  revalidatePath("/dashboard/account");
+
+  return successState("Verification email sent. Please check your new email and click the confirmation link.");
 }
 
 export async function updateMemberProfileAction(

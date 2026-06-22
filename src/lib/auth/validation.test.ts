@@ -6,6 +6,7 @@ import {
   getAuthBotProtectionError,
   getAuthRedirectUrl,
   getEmailOtpType,
+  validateEmailChangeForm,
   validateForgotPasswordForm,
   validateLoginForm,
   validateSignupForm,
@@ -164,6 +165,36 @@ describe("auth form validation", () => {
       assert.deepEqual(result.data, {
         password: "new-secret-password",
       });
+    }
+  });
+
+  it("normalizes email change requests", () => {
+    const result = validateEmailChangeForm(
+      formDataFromEntries({
+        email: " New.Member@EliteGold.com ",
+      }),
+    );
+
+    assert.equal(result.ok, true);
+
+    if (result.ok) {
+      assert.deepEqual(result.data, {
+        email: "new.member@elitegold.com",
+      });
+    }
+  });
+
+  it("rejects invalid email change requests", () => {
+    const result = validateEmailChangeForm(
+      formDataFromEntries({
+        email: "not-an-email",
+      }),
+    );
+
+    assert.equal(result.ok, false);
+
+    if (!result.ok) {
+      assert.equal(result.fieldErrors?.email, "กรุณากรอกอีเมลใหม่ให้ถูกต้อง");
     }
   });
 

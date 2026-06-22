@@ -30,6 +30,10 @@ export type UpdatePasswordCredentials = {
   password: string;
 };
 
+export type EmailChangeFields = {
+  email: string;
+};
+
 export type UpdateProfileFields = {
   nationality: string;
   firstName: string;
@@ -329,6 +333,31 @@ export function validateUpdatePasswordForm(
     ok: true,
     data: {
       password,
+    },
+  };
+}
+
+export function validateEmailChangeForm(
+  formData: FormData,
+): AuthValidationResult<EmailChangeFields> {
+  const email = normalizeEmail(getStringField(formData, "email"));
+
+  if (!email) {
+    return invalid("กรุณากรอกอีเมลใหม่", {
+      email: "กรุณากรอกอีเมลใหม่",
+    });
+  }
+
+  if (!validateEmail(email)) {
+    return invalid("กรุณากรอกอีเมลใหม่ให้ถูกต้อง", {
+      email: "กรุณากรอกอีเมลใหม่ให้ถูกต้อง",
+    });
+  }
+
+  return {
+    ok: true,
+    data: {
+      email,
     },
   };
 }
