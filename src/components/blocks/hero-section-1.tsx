@@ -27,6 +27,7 @@ import { Button } from '@/components/blocks/hero-section-1-button'
 import { EliteGoldNavbarLogo as Logo } from '@/components/shared/elite-gold-navbar-logo'
 import { AnimatedGroup } from '@/components/ui/animated-group'
 import { ShinyButton } from '@/components/ui/shiny-button'
+import { siteConfig } from '@/config/site'
 import {
     HOME_PATH,
     HOME_SECTION_ROUTES,
@@ -403,7 +404,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
             return
         }
 
-        const signupUrl = new URL('/signup', window.location.origin)
+        const signupUrl = new URL('/signup', siteConfig.url)
         signupUrl.searchParams.set('accessCode', accessCode)
 
         try {

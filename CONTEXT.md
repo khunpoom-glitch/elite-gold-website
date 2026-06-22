@@ -26,6 +26,7 @@ Implemented:
 - `/dashboard`, `/dashboard/account`, `/dashboard/education`, `/dashboard/journal`, and `/dashboard/community` are live as Phase 3 authenticated shells.
 - Supabase Auth supports email/password, Google OAuth callback completion with preserved OAuth state, member profile creation, and app-managed email verification status.
 - Real login/signup testing has driven hardening around form-value preservation, validation alerts, Google signup return animation, fixed OAuth callback handling, and auth bot-protection fields.
+- Phase 2 profile audit and email-change hardening now surface in Phase 3 through the account profile form, pending email-change indicator, and profile update states.
 - Access Code rules are production-enforced: first member can bootstrap as `EG000`; later members must use an existing Access Code and then receive `EG001`, `EG002`, and onward.
 - Resend is wired for app-triggered transactional emails, app-managed verification emails, password-change notifications, and Supabase Auth SMTP templates.
 - Email verification is app-managed through private token storage, `/auth/verify-email`, resend controls, and a 90-second resend cooldown.
@@ -38,8 +39,8 @@ Still needed before Phase 3 is considered complete:
 
 - Final membership package names, pricing, and feature lists.
 - Real-account QA for verified-member dashboard access after email verification.
-- UX polish from real testing, especially Google signup return/loading state and clear pending-verification messaging.
-- Phase 3 dashboard expansion beyond placeholders: account settings polish, dashboard overview data, tools entry point, and access attribution display.
+- UX polish from real testing, especially clear pending-verification messaging across account and protected member routes.
+- Phase 3 dashboard expansion beyond the current overview shell: command-center layout, tools entry point, and access attribution display.
 - Admin/member-management workflows for reviewing members and Access Code attribution remain Phase 6 unless explicitly pulled forward.
 - Payment/billing design decisions for Phase 5.
 

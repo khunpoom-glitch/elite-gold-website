@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   ArrowRight,
   Bell,
@@ -19,6 +20,13 @@ import { getActiveMemberOrRedirect } from "@/lib/member/session";
 
 export const metadata: Metadata = {
   title: "Dashboard",
+};
+
+type DashboardPageProps = {
+  searchParams: Promise<{
+    notice?: string | string[];
+    verified?: string | string[];
+  }>;
 };
 
 const quickActions = [
@@ -80,7 +88,44 @@ function getAccessSignupLink(accessCode: string) {
   return signupUrl.toString();
 }
 
-export default async function DashboardPage() {
+function getFirstSearchParam(value?: string | string[]) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function getAccountRedirectFromNotice(verified?: string, notice?: string) {
+  const redirectUrl = new URL("/dashboard/account", siteConfig.url);
+
+  if (verified === "email") {
+    redirectUrl.searchParams.set("verified", "email");
+
+    return `${redirectUrl.pathname}${redirectUrl.search}`;
+  }
+
+  if (
+    notice === "verification_expired" ||
+    notice === "verification_invalid" ||
+    notice === "verify_required" ||
+    notice === "email_change_verified"
+  ) {
+    redirectUrl.searchParams.set("notice", notice);
+
+    return `${redirectUrl.pathname}${redirectUrl.search}`;
+  }
+
+  return null;
+}
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+  const params = await searchParams;
+  const noticeRedirect = getAccountRedirectFromNotice(
+    getFirstSearchParam(params.verified),
+    getFirstSearchParam(params.notice),
+  );
+
+  if (noticeRedirect) {
+    redirect(noticeRedirect);
+  }
+
   const { email, memberName, memberStatus, profile } = await getActiveMemberOrRedirect("/dashboard");
   const accessSignupLink = getAccessSignupLink(profile.memberAccessCode);
 

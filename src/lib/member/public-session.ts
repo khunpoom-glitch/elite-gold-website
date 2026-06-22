@@ -90,9 +90,9 @@ export async function getPublicSessionState(): Promise<PublicSessionState> {
         memberEmail: user.email ?? "",
         memberAccessCode: null,
         memberAvatarUrl: getUserAvatarUrl(user),
-        memberStatus: "Complete Sign Up",
+        memberStatus: "Profile Required",
         primaryActionHref: "/signup?auth=google&next=%2Fdashboard",
-        primaryActionLabel: "Complete Sign Up",
+        primaryActionLabel: "Sign Up",
         secondaryActionHref: null,
         secondaryActionLabel: null,
       };
