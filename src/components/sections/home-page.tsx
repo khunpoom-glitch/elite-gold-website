@@ -4,7 +4,7 @@ import { AuthRouteModal } from "@/components/layout/auth-route-modal";
 import type { AuthMode } from "@/components/layout/auth-modal";
 import { PublicFooter } from "@/components/layout/public-footer";
 import { HomeContentSections } from "@/components/sections/home-content-sections";
-import { HomeAuthNotice } from "@/components/sections/home-auth-notice";
+import { HomeAuthNotice, type HomeAuthNoticeType } from "@/components/sections/home-auth-notice";
 import { HomeScrollController } from "@/components/sections/home-scroll-controller";
 import { EliteGoldNavbarLogo } from "@/components/shared/elite-gold-navbar-logo";
 import { TOP_SECTION_ID, type HomeSectionId } from "@/config/home-sections";
@@ -34,7 +34,7 @@ export function HomePage({
   initialAuthMode?: AuthMode | null;
   initialAuthNotice?: string;
   initialGoogleSignupProfile?: GoogleSignupProfile;
-  initialHomeNotice?: "signed_out";
+  initialHomeNotice?: HomeAuthNoticeType;
   initialSection?: HomeSectionId;
   publicSession?: PublicSessionState;
 }) {

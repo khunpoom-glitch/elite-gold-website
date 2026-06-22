@@ -16,7 +16,8 @@ import {
 import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
 import { MemberMarketVisual } from "@/components/dashboard/member-market-visual";
 import { siteConfig } from "@/config/site";
-import { getActiveMemberOrRedirect } from "@/lib/member/session";
+import { addAuthNoticeToRedirectPath, loggedInAuthNoticeValue } from "@/lib/auth/redirect-notice";
+import { getAuthenticatedMember } from "@/lib/member/session";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
 
 type DashboardPageProps = {
   searchParams: Promise<{
+    auth?: string | string[];
     notice?: string | string[];
     verified?: string | string[];
   }>;
@@ -92,13 +94,17 @@ function getFirstSearchParam(value?: string | string[]) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function getAccountRedirectFromNotice(verified?: string, notice?: string) {
+function getAccountRedirectFromNotice(verified?: string, notice?: string, auth?: string) {
   const redirectUrl = new URL("/dashboard/account", siteConfig.url);
 
   if (verified === "email") {
     redirectUrl.searchParams.set("verified", "email");
 
-    return `${redirectUrl.pathname}${redirectUrl.search}`;
+    const redirectPath = `${redirectUrl.pathname}${redirectUrl.search}`;
+
+    return auth === loggedInAuthNoticeValue
+      ? addAuthNoticeToRedirectPath(redirectPath, loggedInAuthNoticeValue)
+      : redirectPath;
   }
 
   if (
@@ -109,7 +115,11 @@ function getAccountRedirectFromNotice(verified?: string, notice?: string) {
   ) {
     redirectUrl.searchParams.set("notice", notice);
 
-    return `${redirectUrl.pathname}${redirectUrl.search}`;
+    const redirectPath = `${redirectUrl.pathname}${redirectUrl.search}`;
+
+    return auth === loggedInAuthNoticeValue
+      ? addAuthNoticeToRedirectPath(redirectPath, loggedInAuthNoticeValue)
+      : redirectPath;
   }
 
   return null;
@@ -117,16 +127,29 @@ function getAccountRedirectFromNotice(verified?: string, notice?: string) {
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const params = await searchParams;
+  const authNotice = getFirstSearchParam(params.auth);
   const noticeRedirect = getAccountRedirectFromNotice(
     getFirstSearchParam(params.verified),
     getFirstSearchParam(params.notice),
+    authNotice,
   );
 
   if (noticeRedirect) {
     redirect(noticeRedirect);
   }
 
-  const { email, memberName, memberStatus, profile } = await getActiveMemberOrRedirect("/dashboard");
+  const { email, isMemberActive, memberName, memberStatus, profile } = await getAuthenticatedMember("/dashboard");
+
+  if (!isMemberActive) {
+    const verifyRequiredPath = "/dashboard/account?notice=verify_required";
+
+    redirect(
+      authNotice === loggedInAuthNoticeValue
+        ? addAuthNoticeToRedirectPath(verifyRequiredPath, loggedInAuthNoticeValue)
+        : verifyRequiredPath,
+    );
+  }
+
   const accessSignupLink = getAccessSignupLink(profile.memberAccessCode);
 
   return (

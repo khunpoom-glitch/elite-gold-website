@@ -3,34 +3,89 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, X } from "lucide-react";
+import {
+  authNoticeParamName,
+  loggedInAuthNoticeValue,
+  signedOutAuthNoticeValue,
+} from "@/lib/auth/redirect-notice";
+
+export type HomeAuthNoticeType = "logged_in" | "signed_out";
 
 type HomeAuthNoticeProps = {
-  notice?: "signed_out";
+  notice?: HomeAuthNoticeType;
 };
 
+export const homeLoggedInNoticeEventName = "elite-gold:logged-in";
 export const homeSignedOutNoticeEventName = "elite-gold:signed-out";
 
 const noticeCopy = {
+  logged_in: {
+    title: "Logged in successfully",
+    message: "Your member session is now active.",
+  },
   signed_out: {
     title: "Signed out securely",
     message: "Your session has been cleared.",
   },
-} satisfies Record<NonNullable<HomeAuthNoticeProps["notice"]>, { title: string; message: string }>;
+} satisfies Record<HomeAuthNoticeType, { title: string; message: string }>;
+
+function getNoticeFromSearch(search: string): HomeAuthNoticeType | undefined {
+  const searchParams = new URLSearchParams(search);
+  const authNotice = searchParams.get(authNoticeParamName);
+
+  if (authNotice === loggedInAuthNoticeValue) {
+    return "logged_in";
+  }
+
+  if (authNotice === signedOutAuthNoticeValue) {
+    return "signed_out";
+  }
+
+  return undefined;
+}
+
+function cleanAuthNoticeFromUrl() {
+  const searchParams = new URLSearchParams(window.location.search);
+
+  if (!searchParams.has(authNoticeParamName)) {
+    return;
+  }
+
+  searchParams.delete(authNoticeParamName);
+
+  const cleanSearch = searchParams.toString();
+  const cleanUrl = `${window.location.pathname}${cleanSearch ? `?${cleanSearch}` : ""}${window.location.hash}`;
+
+  window.history.replaceState(null, "", cleanUrl || "/");
+}
 
 export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
-  const [activeNotice, setActiveNotice] = useState<HomeAuthNoticeProps["notice"]>(notice);
+  const [activeNotice, setActiveNotice] = useState<HomeAuthNoticeType | undefined>(() => {
+    if (notice || typeof window === "undefined") {
+      return notice;
+    }
+
+    return getNoticeFromSearch(window.location.search);
+  });
   const [isDismissed, setIsDismissed] = useState(false);
   const isVisible = Boolean(activeNotice) && !isDismissed;
 
   useEffect(() => {
+    function handleLoggedInNotice() {
+      setActiveNotice("logged_in");
+      setIsDismissed(false);
+    }
+
     function handleSignedOutNotice() {
       setActiveNotice("signed_out");
       setIsDismissed(false);
     }
 
+    window.addEventListener(homeLoggedInNoticeEventName, handleLoggedInNotice);
     window.addEventListener(homeSignedOutNoticeEventName, handleSignedOutNotice);
 
     return () => {
+      window.removeEventListener(homeLoggedInNoticeEventName, handleLoggedInNotice);
       window.removeEventListener(homeSignedOutNoticeEventName, handleSignedOutNotice);
     };
   }, []);
@@ -42,10 +97,7 @@ export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
 
     const timer = window.setTimeout(() => setIsDismissed(true), 3200);
 
-    if (window.location.search.includes("auth=signed-out")) {
-      const cleanUrl = `${window.location.pathname}${window.location.hash}`;
-      window.history.replaceState(null, "", cleanUrl || "/");
-    }
+    cleanAuthNoticeFromUrl();
 
     return () => window.clearTimeout(timer);
   }, [activeNotice]);
@@ -77,7 +129,7 @@ export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
               <span className="mt-0.5 block text-xs leading-5 text-white/58">{copy.message}</span>
             </span>
             <button
-              aria-label="Dismiss signed out notice"
+              aria-label={`Dismiss ${copy.title.toLowerCase()} notice`}
               className="-mr-1 mt-0.5 inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/42 transition hover:bg-white/8 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35"
               onClick={() => setIsDismissed(true)}
               type="button"

@@ -12,6 +12,7 @@ import {
 } from "@/lib/auth/email-verification";
 import { getRequestOrigin } from "@/lib/auth/origin";
 import { clearLogoutCookiesOnServerAction } from "@/lib/auth/logout";
+import { addAuthNoticeToRedirectPath, loggedInAuthNoticeValue } from "@/lib/auth/redirect-notice";
 import { setServerAuthSessionPolicy } from "@/lib/auth/session-policy-server";
 import {
   getSafeRedirectPath,
@@ -269,7 +270,10 @@ export async function loginWithPasswordAction(
 
   return successState(
     "เข้าสู่ระบบสำเร็จ กำลังพาไปยัง Member Dashboard",
-    getSafeRedirectPath(getStringField(formData, "next")),
+    addAuthNoticeToRedirectPath(
+      getSafeRedirectPath(getStringField(formData, "next")),
+      loggedInAuthNoticeValue,
+    ),
   );
 }
 

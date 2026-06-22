@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { HomePage } from "@/components/sections/home-page";
 import { siteConfig } from "@/config/site";
+import { loggedInAuthNoticeValue, signedOutAuthNoticeValue } from "@/lib/auth/redirect-notice";
 import { getPublicSessionState } from "@/lib/member/public-session";
 
 export const metadata: Metadata = {
@@ -22,10 +23,13 @@ export default async function RootHomePage({ searchParams }: RootHomePageProps) 
     searchParams ?? Promise.resolve<RootHomeSearchParams>({}),
   ]);
   const authParam = resolvedSearchParams.auth;
+  const authNotice = Array.isArray(authParam) ? authParam[0] : authParam;
   const initialHomeNotice =
-    (Array.isArray(authParam) ? authParam[0] : authParam) === "signed-out"
-      ? "signed_out"
-      : undefined;
+    authNotice === loggedInAuthNoticeValue
+      ? "logged_in"
+      : authNotice === signedOutAuthNoticeValue
+        ? "signed_out"
+        : undefined;
 
   return (
     <HomePage

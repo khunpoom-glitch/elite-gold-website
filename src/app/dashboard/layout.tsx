@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { HomeAuthNotice } from "@/components/sections/home-auth-notice";
 import { SessionNavBar } from "@/components/ui/sidebar";
 import { getAuthenticatedMember } from "@/lib/member/session";
 
@@ -23,6 +24,7 @@ export default async function DashboardLayout({
 
   return (
     <main className="member-shell airova-reference-page dark min-h-dvh bg-black text-foreground">
+      <HomeAuthNotice />
       <SessionNavBar
         memberEmail={email}
         memberName={memberName}

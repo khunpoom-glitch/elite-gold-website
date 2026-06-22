@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { oauthStateCookieName, parseOAuthState } from "@/lib/auth/oauth-state";
 import { normalizeLocalOrigin } from "@/lib/auth/origin";
+import { addAuthNoticeToRedirectPath, loggedInAuthNoticeValue } from "@/lib/auth/redirect-notice";
 import {
   authSessionPolicyCookieName,
   createAuthSessionPolicyValue,
@@ -121,7 +122,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  return redirectAndClearOAuthState(new URL(nextPath, origin), {
-    setStandardSession: true,
-  });
+  return redirectAndClearOAuthState(
+    new URL(addAuthNoticeToRedirectPath(nextPath, loggedInAuthNoticeValue), origin),
+    {
+      setStandardSession: true,
+    },
+  );
 }

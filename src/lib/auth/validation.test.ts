@@ -8,6 +8,7 @@ import {
   rememberedSessionDurationSeconds,
   standardSessionDurationSeconds,
 } from "./session-policy.ts";
+import { addAuthNoticeToRedirectPath } from "./redirect-notice.ts";
 import {
   authBotProtectionFieldNames,
   getAuthBotProtectionError,
@@ -299,6 +300,13 @@ describe("auth redirect URLs", () => {
     assert.equal(
       getAuthRedirectUrl("https://elitegold.example", "https://evil.example"),
       "https://elitegold.example/dashboard",
+    );
+  });
+
+  it("adds auth notices to safe redirect paths without losing query values", () => {
+    assert.equal(
+      addAuthNoticeToRedirectPath("/dashboard/account?notice=verify_required#profile", "logged-in"),
+      "/dashboard/account?notice=verify_required&auth=logged-in#profile",
     );
   });
 });
