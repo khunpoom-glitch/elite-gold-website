@@ -159,8 +159,9 @@ function getMemberInitials(name: string, email: string) {
 }
 
 const memberMenuItemClass = 'flex min-h-8 items-center gap-2 rounded-lg px-2 text-[0.8125rem] font-medium leading-none tracking-normal text-white/74 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45 disabled:cursor-not-allowed disabled:text-white/32'
-const memberMenuDangerItemClass = 'flex min-h-8 w-full items-center gap-2 rounded-lg px-2 text-left text-[0.8125rem] font-medium leading-none tracking-normal text-white/74 transition hover:bg-red-500/10 hover:text-[#FF8A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45'
+const memberMenuDangerItemClass = 'flex min-h-8 w-full items-center gap-2 rounded-lg px-2 text-left text-[0.8125rem] font-medium leading-none tracking-normal text-[#FF6B6B] transition hover:bg-red-500/10 hover:text-[#FF8A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45'
 const memberMenuIconClass = 'size-3.5 text-[#91A0C5]'
+const memberMenuDangerIconClass = 'size-3.5 text-[#FF6B6B]'
 
 type HeroSectionProps = {
     publicSession: PublicSessionState
@@ -497,7 +498,7 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             role="menuitem"
                             type="button">
                             <Clipboard aria-hidden="true" className={memberMenuIconClass} />
-                            <span>{copyState === 'copied' ? 'Link copied' : copyState === 'error' ? 'Copy unavailable' : 'Copy Link'}</span>
+                            <span>{copyState === 'copied' ? 'Access link copied' : copyState === 'error' ? 'Copy not available' : 'Copy Access Link'}</span>
                         </button>
                         <Link
                             className={memberMenuItemClass}
@@ -505,14 +506,14 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             onClick={handleMenuLinkClick}
                             role="menuitem">
                             <Settings aria-hidden="true" className={memberMenuIconClass} />
-                            <span>Setting</span>
+                            <span>My Profile</span>
                         </Link>
                         <form action={logoutAction}>
                             <button
                                 className={memberMenuDangerItemClass}
                                 role="menuitem"
                                 type="submit">
-                                <LogOut aria-hidden="true" className={memberMenuIconClass} />
+                                <LogOut aria-hidden="true" className={memberMenuDangerIconClass} />
                                 <span>Sign Out</span>
                             </button>
                         </form>
