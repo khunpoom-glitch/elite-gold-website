@@ -4,6 +4,7 @@ import {
   FileClock,
   GraduationCap,
   LayoutDashboard,
+  LoaderCircle,
   LogOut,
   MessagesSquare,
   Settings,
@@ -13,6 +14,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useFormStatus } from "react-dom";
 import { logoutAction } from "@/app/auth/actions";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +31,27 @@ type NavItem = {
   label: string;
   status?: string;
 };
+
+function DashboardLogoutButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      aria-disabled={pending}
+      aria-label={pending ? "Signing out" : "Logout"}
+      className="grid size-11 place-items-center rounded-2xl border border-white/8 bg-white/[0.025] text-white/54 transition hover:border-[#E6C766]/24 hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50 disabled:cursor-wait disabled:opacity-75"
+      disabled={pending}
+      title={pending ? "Signing out..." : "Logout"}
+      type="submit"
+    >
+      {pending ? (
+        <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
+      ) : (
+        <LogOut aria-hidden="true" className="size-4" />
+      )}
+    </button>
+  );
+}
 
 const navigationItems: NavItem[] = [
   {
@@ -213,14 +236,7 @@ export function SessionNavBar({
             </div>
 
             <form action={logoutAction}>
-              <button
-                aria-label="Logout"
-                className="grid size-11 place-items-center rounded-2xl border border-white/8 bg-white/[0.025] text-white/54 transition hover:border-[#E6C766]/24 hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50"
-                title="Logout"
-                type="submit"
-              >
-                <LogOut aria-hidden="true" className="size-4" />
-              </button>
+              <DashboardLogoutButton />
             </form>
           </div>
         </div>
