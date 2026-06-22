@@ -53,7 +53,7 @@ jobs:
       - name: Deploy
         run: |
           set +e
-          deploy_output="$(vercel deploy --prebuilt ${{ steps.target.outputs.deploy_args }} --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1)"
+          deploy_output="$(vercel deploy --prebuilt --archive=tgz ${{ steps.target.outputs.deploy_args }} --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1)"
           deploy_status="$?"
           printf '%s\n' "$deploy_output"
           if [ "$deploy_status" -ne 0 ]; then
