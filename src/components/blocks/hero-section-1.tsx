@@ -21,7 +21,6 @@ import {
     X,
 } from 'lucide-react'
 import type { Variants } from 'framer-motion'
-import { useFormStatus } from 'react-dom'
 import { Button } from '@/components/blocks/hero-section-1-button'
 import { EliteGoldNavbarLogo as Logo } from '@/components/shared/elite-gold-navbar-logo'
 import { AnimatedGroup } from '@/components/ui/animated-group'
@@ -39,6 +38,7 @@ import {
     type AuthModalEventDetail,
     type AuthModalMode,
 } from '@/config/auth-modal'
+import { homeSignedOutNoticeEventName } from '@/components/sections/home-auth-notice'
 import type { PublicSessionState } from '@/lib/member/public-session'
 import { cn } from '@/lib/utils'
 
@@ -165,10 +165,21 @@ const memberMenuDangerItemClass = 'flex min-h-8 w-full items-center gap-2 rounde
 const memberMenuIconClass = 'size-3.5 text-[#91A0C5]'
 const memberMenuDangerIconClass = 'size-3.5 text-[#FF6B6B]'
 const memberMenuLabelClass = 'text-[0.8125rem] font-medium leading-none tracking-normal'
+const signedOutPublicSession: PublicSessionState = {
+    isAuthenticated: false,
+    memberName: '',
+    memberNickname: '',
+    memberEmail: '',
+    memberAccessCode: null,
+    memberAvatarUrl: null,
+    memberStatus: 'Guest',
+    primaryActionHref: '/signup',
+    primaryActionLabel: 'Sign Up',
+    secondaryActionHref: '/login',
+    secondaryActionLabel: 'Login',
+}
 
-function MemberLogoutMenuButton() {
-    const { pending } = useFormStatus()
-
+function MemberLogoutMenuButton({ pending }: { pending: boolean }) {
     return (
         <button
             aria-disabled={pending}
@@ -186,28 +197,16 @@ function MemberLogoutMenuButton() {
     )
 }
 
-function SigningOutOverlay() {
-    return (
-        <div
-            aria-live="polite"
-            className="fixed inset-0 z-[120] grid place-items-center bg-black/42 px-4 backdrop-blur-[2px]"
-            role="status">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/24 bg-[#050505]/92 px-4 py-2 text-[0.75rem] font-semibold leading-none text-[#F6E3A3] shadow-[0_16px_46px_rgba(0,0,0,0.45)]">
-                <LoaderCircle aria-hidden="true" className="size-3.5 animate-spin" />
-                <span>Signing out...</span>
-            </div>
-        </div>
-    )
-}
-
 type HeroSectionProps = {
     publicSession: PublicSessionState
 }
 
 export function HeroSection({ publicSession }: HeroSectionProps) {
+    const [visibleSession, setVisibleSession] = React.useState(publicSession)
+
     function handleCommunityClick() {
-        if (publicSession.isAuthenticated) {
-            window.location.assign(publicSession.primaryActionHref)
+        if (visibleSession.isAuthenticated) {
+            window.location.assign(visibleSession.primaryActionHref)
             return
         }
 
@@ -221,7 +220,10 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
 
     return (
         <>
-            <HeroHeader publicSession={publicSession} />
+            <HeroHeader
+                onLogout={() => setVisibleSession(signedOutPublicSession)}
+                publicSession={visibleSession}
+            />
             <main className="overflow-hidden">
                 <section className="border-b border-white/8" id="top">
                     <div className="relative flex min-h-[calc(100svh+4rem)] flex-col justify-center pb-20 pt-28 md:pt-32 lg:min-h-[calc(100svh+5rem)] lg:pb-24 lg:pt-32">
@@ -350,11 +352,12 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
 }
 
 type MemberProfileMenuProps = {
+    onLogout: () => void
     publicSession: PublicSessionState
     onNavigate: () => void
 }
 
-function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps) {
+function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfileMenuProps) {
     const [isOpen, setIsOpen] = React.useState(false)
     const [copyState, setCopyState] = React.useState<'idle' | 'copied' | 'error'>('idle')
     const [isSigningOut, setIsSigningOut] = React.useState(false)
@@ -425,15 +428,40 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
         onNavigate()
     }
 
-    function handleLogoutSubmit() {
+    async function handleLogoutSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+
+        if (isSigningOut) {
+            return
+        }
+
         setIsSigningOut(true)
         setIsOpen(false)
         onNavigate()
+        onLogout()
+
+        try {
+            const response = await fetch('/auth/logout', {
+                cache: 'no-store',
+                credentials: 'include',
+                headers: {
+                    'x-elite-logout': 'fetch',
+                },
+                method: 'POST',
+            })
+
+            if (!response.ok) {
+                throw new Error(`Logout failed with status ${response.status}`)
+            }
+
+            window.dispatchEvent(new CustomEvent(homeSignedOutNoticeEventName))
+        } catch {
+            window.location.assign('/?auth=signed-out')
+        }
     }
 
     return (
         <div ref={menuRef} className="relative flex w-full justify-end sm:w-auto">
-            {isSigningOut ? <SigningOutOverlay /> : null}
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
                 <span
                     aria-hidden="true"
@@ -555,8 +583,8 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
                             <Settings aria-hidden="true" className={memberMenuIconClass} />
                             <span className={memberMenuLabelClass}>My Profile</span>
                         </Link>
-                        <form action="/auth/logout" method="post" onSubmitCapture={handleLogoutSubmit}>
-                            <MemberLogoutMenuButton />
+                        <form action="/auth/logout" method="post" onSubmit={handleLogoutSubmit}>
+                            <MemberLogoutMenuButton pending={isSigningOut} />
                         </form>
                     </div>
                 </div>
@@ -565,7 +593,13 @@ function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps
     )
 }
 
-const HeroHeader = ({ publicSession }: { publicSession: PublicSessionState }) => {
+const HeroHeader = ({
+    onLogout,
+    publicSession,
+}: {
+    onLogout: () => void
+    publicSession: PublicSessionState
+}) => {
     const [menuState, setMenuState] = React.useState(false)
     const [isScrolled, setIsScrolled] = React.useState(false)
     const isSignedIn = publicSession.isAuthenticated
@@ -657,6 +691,7 @@ const HeroHeader = ({ publicSession }: { publicSession: PublicSessionState }) =>
                             </div>
                             {isSignedIn ? (
                                 <MemberProfileMenu
+                                    onLogout={onLogout}
                                     publicSession={publicSession}
                                     onNavigate={() => setMenuState(false)}
                                 />

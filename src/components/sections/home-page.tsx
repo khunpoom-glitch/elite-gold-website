@@ -38,13 +38,17 @@ export function HomePage({
   initialSection?: HomeSectionId;
   publicSession?: PublicSessionState;
 }) {
+  const publicSessionKey = publicSession.isAuthenticated
+    ? `member:${publicSession.memberEmail}:${publicSession.memberStatus}`
+    : "guest";
+
   return (
     <div
       className={`${prompt.variable} airova-reference-page dark min-h-screen bg-background font-[family-name:var(--font-airova-sans)] text-foreground`}
     >
       <HomeScrollController initialSection={initialSection} />
       <HomeAuthNotice notice={initialHomeNotice} />
-      <HeroSection publicSession={publicSession} />
+      <HeroSection key={publicSessionKey} publicSession={publicSession} />
       <AuthRouteModal
         accessCode={initialAccessCode}
         initialGoogleSignupProfile={initialGoogleSignupProfile}

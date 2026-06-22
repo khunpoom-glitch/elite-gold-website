@@ -8,6 +8,8 @@ type HomeAuthNoticeProps = {
   notice?: "signed_out";
 };
 
+export const homeSignedOutNoticeEventName = "elite-gold:signed-out";
+
 const noticeCopy = {
   signed_out: {
     title: "Signed out securely",
@@ -16,11 +18,25 @@ const noticeCopy = {
 } satisfies Record<NonNullable<HomeAuthNoticeProps["notice"]>, { title: string; message: string }>;
 
 export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
+  const [activeNotice, setActiveNotice] = useState<HomeAuthNoticeProps["notice"]>(notice);
   const [isDismissed, setIsDismissed] = useState(false);
-  const isVisible = Boolean(notice) && !isDismissed;
+  const isVisible = Boolean(activeNotice) && !isDismissed;
 
   useEffect(() => {
-    if (!notice) {
+    function handleSignedOutNotice() {
+      setActiveNotice("signed_out");
+      setIsDismissed(false);
+    }
+
+    window.addEventListener(homeSignedOutNoticeEventName, handleSignedOutNotice);
+
+    return () => {
+      window.removeEventListener(homeSignedOutNoticeEventName, handleSignedOutNotice);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!activeNotice) {
       return;
     }
 
@@ -32,13 +48,13 @@ export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
     }
 
     return () => window.clearTimeout(timer);
-  }, [notice]);
+  }, [activeNotice]);
 
-  if (!notice) {
+  if (!activeNotice) {
     return null;
   }
 
-  const copy = noticeCopy[notice];
+  const copy = noticeCopy[activeNotice];
 
   return (
     <AnimatePresence>
