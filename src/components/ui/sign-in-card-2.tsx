@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState, type MouseEvent } from "react";
+import { useActionState, useEffect, useState, type CSSProperties, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
@@ -8,6 +8,7 @@ import { ArrowRight, Check, Eye, EyeClosed, Lock, Mail, X } from "lucide-react";
 import { loginWithPasswordAction } from "@/app/auth/actions";
 import { AuthBotProtectionFields } from "@/components/auth/bot-protection-fields";
 import { GoogleLogo } from "@/components/ui/google-logo";
+import { ShinyButton } from "@/components/ui/shiny-button";
 import { initialAuthActionState } from "@/lib/auth/action-state";
 import { cn } from "@/lib/utils";
 
@@ -231,9 +232,20 @@ export function Component({
                 </div>
               ) : null}
 
-              <motion.button
-                className="group/button relative mt-2 h-11 overflow-hidden rounded-lg border border-white/10 bg-[#181818] font-semibold text-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition hover:border-white/18 hover:bg-[#202020] disabled:cursor-not-allowed disabled:opacity-70"
+              <ShinyButton
+                className="group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={isPending}
+                style={{
+                  "--shiny-button-border": "rgba(255, 255, 255, 0.18)",
+                  "--shiny-button-border-highlight": "rgba(255, 255, 255, 0.42)",
+                  "--shiny-button-border-muted": "rgba(255, 255, 255, 0.08)",
+                  "--shiny-button-foreground": "rgba(255, 255, 255, 0.92)",
+                  background: "#181818",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+                  fontSize: "0.875rem",
+                  fontWeight: 650,
+                  letterSpacing: 0,
+                } as CSSProperties}
                 type="submit"
                 whileHover={{ scale: 1.018 }}
                 whileTap={{ scale: 0.985 }}
@@ -248,6 +260,7 @@ export function Component({
                       exit={{ opacity: 0 }}
                     >
                       <span className="size-4 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
+                      Login
                     </motion.span>
                   ) : (
                     <motion.span
@@ -262,7 +275,7 @@ export function Component({
                     </motion.span>
                   )}
                 </AnimatePresence>
-              </motion.button>
+              </ShinyButton>
 
               <div className="flex items-center gap-3 py-1">
                 <span className="h-px flex-1 bg-white/8" />
