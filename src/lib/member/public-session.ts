@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { User } from "@supabase/supabase-js";
 import {
   getMemberProfileByUserId,
   getReadableMemberStatus,
@@ -10,6 +11,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export type PublicSessionState = {
   isAuthenticated: boolean;
   memberName: string;
+  memberNickname: string;
+  memberEmail: string;
+  memberAccessCode: string | null;
+  memberAvatarUrl: string | null;
   memberStatus: string;
   primaryActionHref: string;
   primaryActionLabel: string;
@@ -20,6 +25,10 @@ export type PublicSessionState = {
 export const guestPublicSession: PublicSessionState = {
   isAuthenticated: false,
   memberName: "",
+  memberNickname: "",
+  memberEmail: "",
+  memberAccessCode: null,
+  memberAvatarUrl: null,
   memberStatus: "Guest",
   primaryActionHref: "/signup",
   primaryActionLabel: "Sign Up",
@@ -29,6 +38,22 @@ export const guestPublicSession: PublicSessionState = {
 
 function getUserDisplayName(email?: string) {
   return email?.trim() || "Elite Gold Member";
+}
+
+function getUserMetadataString(user: User, keys: string[]) {
+  for (const key of keys) {
+    const value = user.user_metadata?.[key];
+
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
+function getUserAvatarUrl(user: User) {
+  return getUserMetadataString(user, ["avatar_url", "picture"]) || null;
 }
 
 export async function getPublicSessionState(): Promise<PublicSessionState> {
@@ -54,6 +79,10 @@ export async function getPublicSessionState(): Promise<PublicSessionState> {
       return {
         isAuthenticated: true,
         memberName: getUserDisplayName(user.email),
+        memberNickname: "",
+        memberEmail: user.email ?? "",
+        memberAccessCode: null,
+        memberAvatarUrl: getUserAvatarUrl(user),
         memberStatus: "Complete Sign Up",
         primaryActionHref: "/signup?auth=google&next=%2Fdashboard",
         primaryActionLabel: "Complete Sign Up",
@@ -67,10 +96,14 @@ export async function getPublicSessionState(): Promise<PublicSessionState> {
     return {
       isAuthenticated: true,
       memberName:
-        profile.nickname ||
-        profile.firstName ||
         profile.fullName ||
+        profile.firstName ||
+        profile.nickname ||
         getUserDisplayName(user.email),
+      memberNickname: profile.nickname,
+      memberEmail: profile.email || user.email || "",
+      memberAccessCode: profile.memberAccessCode,
+      memberAvatarUrl: profile.avatarUrl || getUserAvatarUrl(user),
       memberStatus: getReadableMemberStatus(profile.status),
       primaryActionHref: isMemberActive
         ? "/dashboard"
@@ -85,6 +118,10 @@ export async function getPublicSessionState(): Promise<PublicSessionState> {
     return {
       isAuthenticated: true,
       memberName: getUserDisplayName(user.email),
+      memberNickname: "",
+      memberEmail: user.email ?? "",
+      memberAccessCode: null,
+      memberAvatarUrl: getUserAvatarUrl(user),
       memberStatus: "Signed In",
       primaryActionHref: "/dashboard",
       primaryActionLabel: "Dashboard",

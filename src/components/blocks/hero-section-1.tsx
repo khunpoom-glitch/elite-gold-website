@@ -2,8 +2,25 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { ArrowRight, BarChart3, BookOpenCheck, Menu, NotebookPen, Sparkles, X } from 'lucide-react'
+import {
+    AlertCircle,
+    ArrowRight,
+    BarChart3,
+    Bell,
+    BookOpenCheck,
+    CheckCircle2,
+    ChevronDown,
+    Clipboard,
+    LayoutDashboard,
+    LogOut,
+    Menu,
+    NotebookPen,
+    Settings,
+    Sparkles,
+    X,
+} from 'lucide-react'
 import type { Variants } from 'framer-motion'
+import { logoutAction } from '@/app/auth/actions'
 import { Button } from '@/components/blocks/hero-section-1-button'
 import { EliteGoldNavbarLogo as Logo } from '@/components/shared/elite-gold-navbar-logo'
 import { AnimatedGroup } from '@/components/ui/animated-group'
@@ -124,6 +141,21 @@ function navigateToAuthModal(
     }
 
     window.dispatchEvent(new CustomEvent(AUTH_MODAL_EVENT_NAME, { detail }))
+}
+
+function getMemberInitials(name: string, email: string) {
+    const nameParts = name
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+
+    if (nameParts.length >= 2) {
+        return `${nameParts[0]?.[0] ?? ''}${nameParts[1]?.[0] ?? ''}`.toUpperCase()
+    }
+
+    const fallback = nameParts[0] ?? email
+
+    return (fallback.slice(0, 2) || 'EG').toUpperCase()
 }
 
 type HeroSectionProps = {
@@ -275,6 +307,208 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
     )
 }
 
+type MemberProfileMenuProps = {
+    publicSession: PublicSessionState
+    onNavigate: () => void
+}
+
+function MemberProfileMenu({ publicSession, onNavigate }: MemberProfileMenuProps) {
+    const [isOpen, setIsOpen] = React.useState(false)
+    const [copyState, setCopyState] = React.useState<'idle' | 'copied' | 'error'>('idle')
+    const menuRef = React.useRef<HTMLDivElement>(null)
+    const isActive = publicSession.memberStatus === 'Active'
+    const memberInitials = getMemberInitials(publicSession.memberName, publicSession.memberEmail)
+    const profileHref = publicSession.secondaryActionHref ?? '/dashboard/account'
+    const statusActionHref = publicSession.primaryActionHref
+    const accessCode = publicSession.memberAccessCode
+    const StatusIcon = isActive ? CheckCircle2 : AlertCircle
+
+    React.useEffect(() => {
+        function handlePointerDown(event: PointerEvent) {
+            if (!menuRef.current?.contains(event.target as Node)) {
+                setIsOpen(false)
+            }
+        }
+
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === 'Escape') {
+                setIsOpen(false)
+            }
+        }
+
+        document.addEventListener('pointerdown', handlePointerDown)
+        document.addEventListener('keydown', handleKeyDown)
+
+        return () => {
+            document.removeEventListener('pointerdown', handlePointerDown)
+            document.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [])
+
+    async function handleCopyAccessLink() {
+        if (!accessCode) {
+            return
+        }
+
+        const signupUrl = new URL('/signup', window.location.origin)
+        signupUrl.searchParams.set('accessCode', accessCode)
+
+        try {
+            if (!navigator.clipboard?.writeText) {
+                throw new Error('Clipboard API is not available')
+            }
+
+            await navigator.clipboard.writeText(signupUrl.toString())
+            setCopyState('copied')
+            window.setTimeout(() => setCopyState('idle'), 1800)
+        } catch {
+            setCopyState('error')
+            window.setTimeout(() => setCopyState('idle'), 1800)
+        }
+    }
+
+    function handleMenuLinkClick() {
+        setIsOpen(false)
+        onNavigate()
+    }
+
+    return (
+        <div ref={menuRef} className="relative flex w-full justify-end sm:w-auto">
+            <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
+                <span
+                    aria-hidden="true"
+                    className="hidden size-9 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-white/58 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:grid">
+                    <Bell className="size-4 stroke-[1.75]" />
+                </span>
+                <button
+                    aria-expanded={isOpen}
+                    aria-haspopup="menu"
+                    aria-label="Open member profile menu"
+                    className="flex h-10 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55"
+                    onClick={() => setIsOpen((current) => !current)}
+                    type="button">
+                    <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/24 bg-[#11131A] text-[0.68rem] font-extrabold text-[#F6E3A3]">
+                        {publicSession.memberAvatarUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                                alt={`${publicSession.memberName} profile`}
+                                className="h-full w-full object-cover"
+                                src={publicSession.memberAvatarUrl}
+                            />
+                        ) : (
+                            <span>{memberInitials}</span>
+                        )}
+                    </span>
+                    <ChevronDown
+                        aria-hidden="true"
+                        className={cn('size-4 shrink-0 text-white/48 transition-transform', isOpen && 'rotate-180 text-[#F6E3A3]')}
+                    />
+                </button>
+            </div>
+
+            {isOpen ? (
+                <div
+                    className="absolute right-0 top-[calc(100%+0.75rem)] z-50 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1.35rem] border border-white/10 bg-[#07080C]/95 text-left shadow-[0_24px_80px_rgba(0,0,0,0.56)] backdrop-blur-xl"
+                    role="menu">
+                    <div className="border-b border-white/8 p-5">
+                        <div className="flex min-w-0 items-start gap-3">
+                            <span className="relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/22 bg-[#11131A] text-sm font-extrabold text-[#F6E3A3]">
+                                {publicSession.memberAvatarUrl ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                        alt=""
+                                        className="h-full w-full object-cover"
+                                        src={publicSession.memberAvatarUrl}
+                                    />
+                                ) : (
+                                    <span>{memberInitials}</span>
+                                )}
+                            </span>
+                            <span className="min-w-0">
+                                <span className="block truncate text-base font-bold leading-6 text-white">
+                                    {publicSession.memberName}
+                                </span>
+                                <span className="block truncate text-sm font-medium leading-5 text-[#91A0C5]">
+                                    {publicSession.memberEmail || 'Email not set'}
+                                </span>
+                            </span>
+                        </div>
+
+                        <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.025] p-3">
+                            <div className="flex items-center justify-between gap-3">
+                                <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-white">
+                                    <StatusIcon
+                                        aria-hidden="true"
+                                        className={cn('size-4 shrink-0', isActive ? 'text-emerald-400' : 'text-[#F6A623]')}
+                                    />
+                                    <span className="truncate">{publicSession.memberStatus}</span>
+                                </span>
+                                <Link
+                                    className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-[#F6E3A3] transition hover:text-white"
+                                    href={statusActionHref}
+                                    onClick={handleMenuLinkClick}>
+                                    <span>{publicSession.primaryActionLabel}</span>
+                                    <ArrowRight aria-hidden="true" className="size-3.5" />
+                                </Link>
+                            </div>
+
+                            <div className="mt-3 grid gap-2 border-t border-white/8 pt-3 text-xs font-medium text-white/48">
+                                {publicSession.memberNickname ? (
+                                    <div className="flex items-center justify-between gap-3">
+                                        <span>Nickname</span>
+                                        <span className="truncate text-white/76">{publicSession.memberNickname}</span>
+                                    </div>
+                                ) : null}
+                                <div className="flex items-center justify-between gap-3">
+                                    <span>Access Code</span>
+                                    <span className="truncate font-bold text-[#F6E3A3]">{accessCode ?? 'Not set'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid p-2">
+                        <Link
+                            className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
+                            href="/dashboard"
+                            onClick={handleMenuLinkClick}
+                            role="menuitem">
+                            <LayoutDashboard aria-hidden="true" className="size-4 text-[#91A0C5]" />
+                            <span>Dashboard</span>
+                        </Link>
+                        <button
+                            className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-left text-sm font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45 disabled:cursor-not-allowed disabled:text-white/32"
+                            disabled={!accessCode}
+                            onClick={handleCopyAccessLink}
+                            role="menuitem"
+                            type="button">
+                            <Clipboard aria-hidden="true" className="size-4 text-[#91A0C5]" />
+                            <span>{copyState === 'copied' ? 'Access link copied' : copyState === 'error' ? 'Copy not available' : 'Copy Access Link'}</span>
+                        </button>
+                        <Link
+                            className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-semibold text-white/82 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45"
+                            href={profileHref}
+                            onClick={handleMenuLinkClick}
+                            role="menuitem">
+                            <Settings aria-hidden="true" className="size-4 text-[#91A0C5]" />
+                            <span>My Profile</span>
+                        </Link>
+                        <form action={logoutAction}>
+                            <button
+                                className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-semibold text-[#FF6B6B] transition hover:bg-red-500/10 hover:text-[#FF8A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45"
+                                role="menuitem"
+                                type="submit">
+                                <LogOut aria-hidden="true" className="size-4" />
+                                <span>Sign Out</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            ) : null}
+        </div>
+    )
+}
+
 const HeroHeader = ({ publicSession }: { publicSession: PublicSessionState }) => {
     const [menuState, setMenuState] = React.useState(false)
     const [isScrolled, setIsScrolled] = React.useState(false)
@@ -365,41 +599,48 @@ const HeroHeader = ({ publicSession }: { publicSession: PublicSessionState }) =>
                                     ))}
                                 </ul>
                             </div>
-                            <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                                {secondaryActionHref && secondaryActionLabel ? (
+                            {isSignedIn ? (
+                                <MemberProfileMenu
+                                    publicSession={publicSession}
+                                    onNavigate={() => setMenuState(false)}
+                                />
+                            ) : (
+                                <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
+                                    {secondaryActionHref && secondaryActionLabel ? (
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm"
+                                            className={cn('h-9 px-3 text-sm font-medium border-white/10 bg-transparent shadow-none hover:border-white/20 hover:bg-white/5 hover:text-foreground focus-visible:ring-white/20', isScrolled && 'lg:hidden')}>
+                                            <Link
+                                                href={secondaryActionHref}
+                                                onClick={handleSecondaryAction}>
+                                                <span>{secondaryActionLabel}</span>
+                                            </Link>
+                                        </Button>
+                                    ) : null}
                                     <Button
                                         asChild
-                                        variant="outline"
                                         size="sm"
-                                        className={cn('h-9 px-3 text-sm font-medium border-white/10 bg-transparent shadow-none hover:border-white/20 hover:bg-white/5 hover:text-foreground focus-visible:ring-white/20', isScrolled && 'lg:hidden')}>
+                                        className={cn('elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled && 'lg:hidden')}>
                                         <Link
-                                            href={secondaryActionHref}
-                                            onClick={handleSecondaryAction}>
-                                            <span>{secondaryActionLabel}</span>
+                                            href={primaryActionHref}
+                                            onClick={handlePrimaryAction}>
+                                            <span>{primaryActionLabel}</span>
                                         </Link>
                                     </Button>
-                                ) : null}
-                                <Button
-                                    asChild
-                                    size="sm"
-                                    className={cn('elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled && 'lg:hidden')}>
-                                    <Link
-                                        href={primaryActionHref}
-                                        onClick={handlePrimaryAction}>
-                                        <span>{primaryActionLabel}</span>
-                                    </Link>
-                                </Button>
-                                <Button
-                                    asChild
-                                    size="sm"
-                                    className={cn('elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled ? 'lg:inline-flex' : 'hidden')}>
-                                    <Link
-                                        href={primaryActionHref}
-                                        onClick={handlePrimaryAction}>
-                                        <span>{isSignedIn ? primaryActionLabel : 'Get Started'}</span>
-                                    </Link>
-                                </Button>
-                            </div>
+                                    <Button
+                                        asChild
+                                        size="sm"
+                                        className={cn('elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled ? 'lg:inline-flex' : 'hidden')}>
+                                        <Link
+                                            href={primaryActionHref}
+                                            onClick={handlePrimaryAction}>
+                                            <span>Get Started</span>
+                                        </Link>
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
