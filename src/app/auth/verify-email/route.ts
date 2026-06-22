@@ -3,8 +3,8 @@ import { hashEmailVerificationToken } from "@/lib/auth/email-verification";
 import { normalizeLocalOrigin } from "@/lib/auth/origin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-function getAccountRedirectUrl(origin: string, key: "verified" | "notice", value: string) {
-  const redirectUrl = new URL("/dashboard/account", origin);
+function getDashboardRedirectUrl(origin: string, key: "verified" | "notice", value: string) {
+  const redirectUrl = new URL("/dashboard", origin);
   redirectUrl.searchParams.set(key, value);
 
   return redirectUrl;
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   const token = requestUrl.searchParams.get("token");
 
   if (!token) {
-    return NextResponse.redirect(getAccountRedirectUrl(origin, "notice", "verification_invalid"));
+    return NextResponse.redirect(getDashboardRedirectUrl(origin, "notice", "verification_invalid"));
   }
 
   const supabase = await createSupabaseServerClient();
@@ -47,18 +47,18 @@ export async function GET(request: NextRequest) {
       message: error.message,
     });
 
-    return NextResponse.redirect(getAccountRedirectUrl(origin, "notice", "verification_invalid"));
+    return NextResponse.redirect(getDashboardRedirectUrl(origin, "notice", "verification_invalid"));
   }
 
   const result = getVerificationResult(data);
 
   if (result === "verified" || result === "already_verified") {
-    return NextResponse.redirect(getAccountRedirectUrl(origin, "verified", "email"));
+    return NextResponse.redirect(getDashboardRedirectUrl(origin, "verified", "email"));
   }
 
   if (result === "expired") {
-    return NextResponse.redirect(getAccountRedirectUrl(origin, "notice", "verification_expired"));
+    return NextResponse.redirect(getDashboardRedirectUrl(origin, "notice", "verification_expired"));
   }
 
-  return NextResponse.redirect(getAccountRedirectUrl(origin, "notice", "verification_invalid"));
+  return NextResponse.redirect(getDashboardRedirectUrl(origin, "notice", "verification_invalid"));
 }
