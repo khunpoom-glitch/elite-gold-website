@@ -2,7 +2,6 @@
 
 import {
   BadgeCheck,
-  ChevronDown,
   FileClock,
   GraduationCap,
   LayoutDashboard,
@@ -236,28 +235,25 @@ export function SessionNavBar({
         <div className="flex h-dvh w-full flex-col px-4 py-5">
           <Link
             aria-label="Elite Gold home"
-            className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition hover:bg-white/7"
+            className="group flex items-center gap-3 rounded-xl px-1 py-1.5 transition hover:bg-white/7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
             href="/"
           >
-            <span className="relative grid size-10 shrink-0 place-items-center rounded-lg bg-white text-black">
+            <span className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl border border-[#E6C766]/18 bg-black/20">
               <Image
                 alt=""
                 aria-hidden="true"
-                className="object-contain p-1.5 invert"
+                className="object-contain p-1"
                 fill
-                sizes="40px"
-                src="/brand/elite-gold-mark.png"
+                sizes="48px"
+                src="/brand/elite-gold-logo.png"
               />
             </span>
             <span className="min-w-0">
-              <span className="block truncate text-sm font-bold text-white">
+              <span className="block truncate text-base font-bold text-white transition group-hover:text-[#F6E3A3]">
                 Elite Gold
               </span>
-              <span className="block text-xs font-semibold text-white/42">
-                Back to Home
-              </span>
+              <span className="sr-only">Home</span>
             </span>
-            <ChevronDown aria-hidden="true" className="ml-auto size-4 text-white/28" />
           </Link>
 
           <div className="mt-8 flex h-10 items-center gap-3 rounded-xl px-3 text-white/36">
