@@ -530,8 +530,8 @@ textarea:-webkit-autofill:active {
 }
 
 .member-shell {
-  background:
-    linear-gradient(180deg, #000000 0%, #050505 48%, #000000 100%);
+  background: #1d1d1c;
+  overscroll-behavior: none;
 }
 
 .member-background-grid {

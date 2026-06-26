@@ -23,7 +23,7 @@ export default async function DashboardLayout({
   const { email, isMemberActive, memberName, memberStatus } = await getAuthenticatedMember();
 
   return (
-    <main className="member-shell airova-reference-page dark min-h-dvh bg-black text-foreground">
+    <main className="member-shell airova-reference-page dark min-h-dvh bg-[#1d1d1c] text-foreground">
       <HomeAuthNotice />
       <SessionNavBar
         memberEmail={email}
@@ -32,7 +32,7 @@ export default async function DashboardLayout({
         isMemberActive={isMemberActive}
       />
 
-      <div aria-hidden="true" className="member-background-grid member-background-enter pointer-events-none fixed inset-0" />
+      <div aria-hidden="true" className="member-background-enter pointer-events-none fixed inset-0 z-0 bg-[#1d1d1c] lg:left-72" />
 
       <div className="relative z-10 min-h-dvh lg:pl-72">
         <div className="member-page-enter grid w-full gap-5">
