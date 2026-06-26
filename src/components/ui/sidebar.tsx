@@ -234,7 +234,6 @@ export function SessionNavBar({
   const visibleNavigationItems = getNavigationItems(isMemberActive);
   const statusCopy = isMemberActive ? "Verified workspace" : "Verification required";
   const [collapsed, setCollapsed] = useState(false);
-  const [homePending, setHomePending] = useState(false);
 
   useEffect(() => {
     router.prefetch("/");
@@ -255,38 +254,8 @@ export function SessionNavBar({
     window.localStorage.setItem("elite-gold-sidebar-collapsed", String(collapsed));
   }, [collapsed]);
 
-  function handleHomeClick(event: React.MouseEvent<HTMLAnchorElement>) {
-    if (
-      event.defaultPrevented ||
-      event.button !== 0 ||
-      event.metaKey ||
-      event.altKey ||
-      event.ctrlKey ||
-      event.shiftKey
-    ) {
-      return;
-    }
-
-    event.preventDefault();
-    setHomePending(true);
-    router.push("/");
-  }
-
   return (
     <>
-      {homePending ? (
-        <div
-          aria-live="polite"
-          className="fixed inset-0 z-[80] grid place-items-center bg-black/42 backdrop-blur-[2px]"
-          role="status"
-        >
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#E6C766]/20 bg-black/78 px-4 py-2 text-sm font-semibold text-white/78 shadow-[0_18px_56px_rgba(0,0,0,0.42)]">
-            <LoaderCircle aria-hidden="true" className="size-4 animate-spin text-[#F6E3A3]" />
-            Opening home...
-          </div>
-        </div>
-      ) : null}
-
       <aside
         aria-label="Member navigation"
         className="member-sidebar-enter fixed inset-y-0 left-0 z-40 hidden w-[var(--member-sidebar-width,18rem)] border-r border-white/8 bg-[#171716] transition-[width] duration-200 ease-out lg:flex"
@@ -300,7 +269,6 @@ export function SessionNavBar({
                 collapsed ? "justify-center" : "mr-12",
               )}
               href="/"
-              onClick={handleHomeClick}
             >
                 <span className="relative grid h-12 w-9 shrink-0 place-items-center overflow-hidden">
                   <Image

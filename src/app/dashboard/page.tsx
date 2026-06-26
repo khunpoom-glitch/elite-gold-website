@@ -104,7 +104,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     redirect(noticeRedirect);
   }
 
-  const { email, isMemberActive, memberName, memberStatus, profile } = await getAuthenticatedMember("/dashboard");
+  const { email, isMemberActive, memberName, memberStatus, profile } = await getAuthenticatedMember();
 
   if (!isMemberActive) {
     const verifyRequiredPath = "/dashboard/account?notice=verify_required";

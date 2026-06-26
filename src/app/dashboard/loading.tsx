@@ -1,28 +1,18 @@
 export default function DashboardLoading() {
   return (
-    <section className="grid gap-6" aria-label="Loading member area">
-      <div className="member-surface p-5 sm:p-7">
-        <div className="h-7 w-40 animate-pulse rounded-full bg-white/10" />
-        <div className="mt-5 h-12 max-w-xl animate-pulse rounded-2xl bg-white/10" />
-        <div className="mt-4 h-4 max-w-2xl animate-pulse rounded-full bg-white/10" />
-        <div className="mt-8 grid gap-3 sm:grid-cols-3">
-          {[0, 1, 2].map((item) => (
-            <div className="border-t border-white/10 pt-3" key={item}>
-              <div className="h-3 w-20 animate-pulse rounded-full bg-white/10" />
-              <div className="mt-3 h-5 w-28 animate-pulse rounded-full bg-white/10" />
-            </div>
-          ))}
-        </div>
+    <section className="min-h-dvh w-full" aria-label="Loading member area">
+      <div className="sticky top-0 z-20 grid min-h-16 gap-3 border-b border-white/8 bg-[#1d1d1c]/96 px-4 py-3 backdrop-blur-xl sm:grid-cols-[minmax(0,1fr)_minmax(15rem,0.45fr)_auto] sm:items-center">
+        <div className="h-9 w-44 animate-pulse rounded-lg bg-white/8" />
+        <div className="hidden h-10 animate-pulse rounded-xl bg-white/8 sm:block" />
+        <div className="h-10 w-20 animate-pulse rounded-full bg-white/8" />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {[0, 1, 2].map((item) => (
-          <div className="member-surface-soft p-5" key={item}>
-            <div className="size-6 animate-pulse rounded-xl bg-white/10" />
-            <div className="mt-5 h-5 w-28 animate-pulse rounded-full bg-white/10" />
-            <div className="mt-3 h-4 w-full animate-pulse rounded-full bg-white/10" />
-          </div>
-        ))}
+      <div className="grid gap-5 p-4 sm:p-6">
+        <section className="grid gap-5 lg:grid-cols-2" aria-hidden="true">
+          <div className="min-h-40 animate-pulse rounded-2xl border border-white/7 bg-[#171716]" />
+          <div className="min-h-40 animate-pulse rounded-2xl border border-white/7 bg-[#171716]" />
+        </section>
+        <div className="min-h-80 animate-pulse rounded-2xl border border-white/7 bg-[#171716]" />
       </div>
     </section>
   );
