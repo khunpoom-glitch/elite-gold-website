@@ -303,7 +303,7 @@ export function SessionNavBar({
             </button>
           </div>
 
-          <nav className={cn("grid gap-1", collapsed ? "mx-3 mt-28" : "mx-4 mt-12")} aria-label="Dashboard sections">
+          <nav className={cn("grid gap-1", collapsed ? "mx-3 mt-24" : "mx-4 mt-7")} aria-label="Dashboard sections">
             <p className={cn("px-3 py-2 text-[0.68rem] font-bold uppercase text-white/24", collapsed && "sr-only")}>
               Workspace
             </p>
@@ -312,7 +312,7 @@ export function SessionNavBar({
             ))}
           </nav>
 
-          <div className={cn("mt-auto border-t border-white/8 pb-10 pt-4", collapsed ? "mx-2" : "mx-4")}>
+          <div className={cn("mt-auto border-t border-white/8 pb-6 pt-4", collapsed ? "mx-2" : "mx-4")}>
             <div className={cn("mb-2 flex items-center", collapsed ? "justify-center px-0" : "gap-3 px-3")}>
               {memberAvatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
