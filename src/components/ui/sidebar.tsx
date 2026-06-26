@@ -266,7 +266,7 @@ export function SessionNavBar({
 
       <aside
         aria-label="Member navigation"
-        className="member-sidebar-enter fixed inset-y-0 left-0 z-40 hidden w-72 bg-[#171716] shadow-[22px_0_70px_rgba(0,0,0,0.28)] lg:flex"
+        className="member-sidebar-enter fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-white/8 bg-[#171716] shadow-[22px_0_70px_rgba(0,0,0,0.28)] lg:flex"
       >
         <div className="flex h-dvh w-full flex-col">
           <div className="flex h-16 items-center px-4">
