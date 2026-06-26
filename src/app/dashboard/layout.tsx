@@ -34,32 +34,8 @@ export default async function DashboardLayout({
 
       <div aria-hidden="true" className="member-background-grid pointer-events-none fixed inset-0" />
 
-      <div className="relative z-10 min-h-dvh px-4 pb-28 pt-5 sm:px-6 md:pb-10 md:pr-8 md:pt-7 lg:pl-80">
+      <div className="relative z-10 min-h-dvh px-3 pb-24 pt-3 sm:px-5 md:pb-8 lg:pl-[19rem]">
         <div className="mx-auto grid w-full max-w-7xl gap-5">
-          <header className="member-surface-soft flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="elite-brand-type text-[0.7rem] font-semibold uppercase text-white/70">
-                Elite Gold Member Area
-              </p>
-              <p className="mt-1 text-xs text-white/42">
-                Account status, access identity, learning, journal, and member navigation
-              </p>
-            </div>
-
-            <div className="member-inset-panel flex min-w-0 items-center gap-3 px-3 py-2">
-              <span className="grid size-8 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-xs font-extrabold text-[#F6E3A3]">
-                {memberName.charAt(0).toUpperCase() || "E"}
-              </span>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-white">{memberName}</p>
-                <p className="truncate text-xs text-white/44">{email}</p>
-              </div>
-              <span className={isMemberActive ? "member-status-success rounded-full border px-2.5 py-1 text-[0.65rem] font-bold uppercase" : "member-status-warning rounded-full border px-2.5 py-1 text-[0.65rem] font-bold uppercase"}>
-                {memberStatus}
-              </span>
-            </div>
-          </header>
-
           {children}
         </div>
       </div>
