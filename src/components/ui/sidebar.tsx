@@ -293,13 +293,15 @@ export function SessionNavBar({
       >
         <div className="flex h-dvh w-full flex-col">
           <div className={cn("relative flex h-16 items-center px-4", collapsed && "justify-center px-0")}>
-            {!collapsed ? (
-              <Link
-                aria-label="Elite Gold Community home"
-                className="group mr-12 flex min-w-0 items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45"
-                href="/"
-                onClick={handleHomeClick}
-              >
+            <Link
+              aria-label="Elite Gold Community home"
+              className={cn(
+                "group flex min-w-0 items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45",
+                collapsed ? "justify-center" : "mr-12",
+              )}
+              href="/"
+              onClick={handleHomeClick}
+            >
                 <span className="relative grid h-12 w-9 shrink-0 place-items-center overflow-hidden">
                   <Image
                     alt=""
@@ -310,20 +312,21 @@ export function SessionNavBar({
                     src="/brand/elite-gold-logo.png"
                   />
                 </span>
+              {!collapsed ? (
                 <span className="min-w-0">
                   <span className="block truncate text-sm font-bold text-white transition group-hover:text-[#F6E3A3]">
                     Elite Gold Community
                   </span>
                   <span className="sr-only">Home</span>
                 </span>
-              </Link>
-            ) : null}
+              ) : null}
+            </Link>
             <button
               aria-label={collapsed ? "Show sidebar" : "Hide sidebar"}
               aria-pressed={collapsed}
               className={cn(
                 "grid size-9 place-items-center rounded-lg text-white/46 transition hover:bg-white/7 hover:text-white/82 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28",
-                collapsed ? "relative" : "absolute right-3",
+                collapsed ? "absolute top-[4.25rem]" : "absolute right-3",
               )}
               onClick={() => setCollapsed((value) => !value)}
               title={collapsed ? "Show sidebar" : "Hide sidebar"}
@@ -333,7 +336,7 @@ export function SessionNavBar({
             </button>
           </div>
 
-          <div className={cn("mt-8 flex h-10 items-center rounded-xl text-white/36", collapsed ? "mx-3 justify-center px-0" : "mx-4 gap-3 px-3")}>
+          <div className={cn("flex h-10 items-center rounded-xl text-white/36", collapsed ? "mx-3 mt-14 justify-center px-0" : "mx-4 mt-8 gap-3 px-3")}>
             <Search aria-hidden="true" className="size-4" />
             <span className={cn("text-sm font-semibold", collapsed && "sr-only")}>Search</span>
           </div>
