@@ -34,8 +34,8 @@ export default async function DashboardLayout({
 
       <div aria-hidden="true" className="member-background-grid member-background-enter pointer-events-none fixed inset-0" />
 
-      <div className="relative z-10 min-h-dvh px-3 pb-24 pt-3 sm:px-5 md:pb-8 lg:pl-[19rem]">
-        <div className="member-page-enter mx-auto grid w-full max-w-7xl gap-5">
+      <div className="relative z-10 min-h-dvh px-3 pb-24 pt-3 sm:px-5 md:pb-8 lg:pl-72">
+        <div className="member-page-enter grid w-full gap-5">
           {children}
         </div>
       </div>
