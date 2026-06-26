@@ -268,37 +268,39 @@ export function SessionNavBar({
         aria-label="Member navigation"
         className="member-sidebar-enter fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-white/8 bg-[#171716] shadow-[22px_0_70px_rgba(0,0,0,0.28)] lg:flex"
       >
-        <div className="flex h-dvh w-full flex-col px-4 py-5">
-          <Link
-            aria-label="Elite Gold Community home"
-            className="group mx-auto flex w-fit max-w-full items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45"
-            href="/"
-            onClick={handleHomeClick}
-          >
-            <span className="relative grid h-12 w-9 shrink-0 place-items-center overflow-hidden">
-              <Image
-                alt=""
-                aria-hidden="true"
-                className="object-contain p-0.5"
-                fill
-                sizes="48px"
-                src="/brand/elite-gold-logo.png"
-              />
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-bold text-white transition group-hover:text-[#F6E3A3]">
-                Elite Gold Community
+        <div className="flex h-dvh w-full flex-col">
+          <div className="flex min-h-16 items-center border-b border-white/8 px-4">
+            <Link
+              aria-label="Elite Gold Community home"
+              className="group mx-auto flex w-fit max-w-full items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45"
+              href="/"
+              onClick={handleHomeClick}
+            >
+              <span className="relative grid h-12 w-9 shrink-0 place-items-center overflow-hidden">
+                <Image
+                  alt=""
+                  aria-hidden="true"
+                  className="object-contain p-0.5"
+                  fill
+                  sizes="48px"
+                  src="/brand/elite-gold-logo.png"
+                />
               </span>
-              <span className="sr-only">Home</span>
-            </span>
-          </Link>
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-bold text-white transition group-hover:text-[#F6E3A3]">
+                  Elite Gold Community
+                </span>
+                <span className="sr-only">Home</span>
+              </span>
+            </Link>
+          </div>
 
-          <div className="mt-8 flex h-10 items-center gap-3 rounded-xl px-3 text-white/36">
+          <div className="mx-4 mt-8 flex h-10 items-center gap-3 rounded-xl px-3 text-white/36">
             <Search aria-hidden="true" className="size-4" />
             <span className="text-sm font-semibold">Search</span>
           </div>
 
-          <nav className="mt-2 grid gap-1" aria-label="Dashboard sections">
+          <nav className="mx-4 mt-2 grid gap-1" aria-label="Dashboard sections">
             <p className="px-3 py-2 text-[0.68rem] font-bold uppercase text-white/24">
               Workspace
             </p>
@@ -307,7 +309,7 @@ export function SessionNavBar({
             ))}
           </nav>
 
-          <div className="mt-auto border-t border-white/8 pt-5">
+          <div className="mx-4 mt-auto border-t border-white/8 pt-5">
             <div className="mb-3 flex items-center gap-3 px-3">
               <span
                 className="grid size-8 shrink-0 place-items-center rounded-full border border-white/10 bg-[#242423] text-xs font-bold text-white/62"
