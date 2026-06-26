@@ -226,6 +226,22 @@ export function SessionNavBar({
   const visibleNavigationItems = getNavigationItems(isMemberActive);
   const statusCopy = isMemberActive ? "Verified workspace" : "Verification required";
 
+  function handleHomeClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.shiftKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    window.location.assign("/");
+  }
+
   return (
     <>
       <aside
@@ -235,14 +251,15 @@ export function SessionNavBar({
         <div className="flex h-dvh w-full flex-col px-4 py-5">
           <Link
             aria-label="Elite Gold Community home"
-            className="group flex items-center gap-3 rounded-xl px-1 py-1.5 transition hover:bg-white/7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
+            className="group flex items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45"
             href="/"
+            onClick={handleHomeClick}
           >
-            <span className="relative grid h-12 w-10 shrink-0 place-items-center overflow-hidden">
+            <span className="relative grid h-12 w-9 shrink-0 place-items-center overflow-hidden">
               <Image
                 alt=""
                 aria-hidden="true"
-                className="object-contain p-1"
+                className="object-contain p-0.5"
                 fill
                 sizes="48px"
                 src="/brand/elite-gold-logo.png"
