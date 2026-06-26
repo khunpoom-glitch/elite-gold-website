@@ -32,10 +32,10 @@ export default async function DashboardLayout({
         isMemberActive={isMemberActive}
       />
 
-      <div aria-hidden="true" className="member-background-grid pointer-events-none fixed inset-0" />
+      <div aria-hidden="true" className="member-background-grid member-background-enter pointer-events-none fixed inset-0" />
 
       <div className="relative z-10 min-h-dvh px-3 pb-24 pt-3 sm:px-5 md:pb-8 lg:pl-[19rem]">
-        <div className="mx-auto grid w-full max-w-7xl gap-5">
+        <div className="member-page-enter mx-auto grid w-full max-w-7xl gap-5">
           {children}
         </div>
       </div>
