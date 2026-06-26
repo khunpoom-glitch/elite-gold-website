@@ -20,21 +20,22 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { email, isMemberActive, memberName, memberStatus } = await getAuthenticatedMember();
+  const { email, isMemberActive, memberName, memberStatus, profile } = await getAuthenticatedMember();
 
   return (
     <main className="member-shell airova-reference-page dark h-dvh overflow-hidden bg-[#1d1d1c] text-foreground">
       <HomeAuthNotice />
       <SessionNavBar
         memberEmail={email}
+        memberAvatarUrl={profile.avatarUrl}
         memberName={memberName}
         memberStatus={memberStatus}
         isMemberActive={isMemberActive}
       />
 
-      <div aria-hidden="true" className="member-background-enter pointer-events-none fixed inset-0 z-0 bg-[#1d1d1c] lg:left-72" />
+      <div aria-hidden="true" className="member-background-enter member-workspace-backdrop pointer-events-none fixed inset-0 z-0 bg-[#1d1d1c]" />
 
-      <div className="relative z-10 h-dvh overflow-y-auto overscroll-contain lg:pl-72">
+      <div className="member-workspace-scroll relative z-10 h-dvh overflow-y-auto overscroll-contain">
         <div className="member-page-enter grid min-h-dvh w-full gap-5">
           {children}
         </div>

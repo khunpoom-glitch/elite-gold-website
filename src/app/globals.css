@@ -534,6 +534,18 @@ textarea:-webkit-autofill:active {
   overscroll-behavior: none;
 }
 
+@media (min-width: 1024px) {
+  .member-workspace-backdrop {
+    left: var(--member-sidebar-width, 18rem);
+    transition: left 220ms ease;
+  }
+
+  .member-workspace-scroll {
+    padding-left: var(--member-sidebar-width, 18rem);
+    transition: padding-left 220ms ease;
+  }
+}
+
 .member-background-grid {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 18%, rgba(255, 255, 255, 0.018) 100%),

@@ -8,6 +8,8 @@ import {
   LoaderCircle,
   LogOut,
   MessagesSquare,
+  PanelLeftClose,
+  PanelLeftOpen,
   Search,
   Settings,
   UserCircle,
@@ -22,6 +24,7 @@ import { cn } from "@/lib/utils";
 
 type SessionNavBarProps = {
   isMemberActive: boolean;
+  memberAvatarUrl: string | null;
   memberEmail: string;
   memberName: string;
   memberStatus: string;
@@ -35,12 +38,15 @@ type NavItem = {
   status?: string;
 };
 
-function DashboardLogoutButton({ pending }: { pending: boolean }) {
+function DashboardLogoutButton({ collapsed, pending }: { collapsed: boolean; pending: boolean }) {
   return (
     <button
       aria-disabled={pending}
       aria-label={pending ? "Signing out" : "Logout"}
-      className="group flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-white/42 transition hover:bg-white/7 hover:text-white/72 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28 disabled:cursor-wait disabled:opacity-75"
+      className={cn(
+        "group flex h-10 w-full items-center rounded-xl text-left text-white/42 transition hover:bg-white/7 hover:text-white/72 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28 disabled:cursor-wait disabled:opacity-75",
+        collapsed ? "justify-center px-0" : "gap-3 px-3",
+      )}
       disabled={pending}
       title={pending ? "Signing out..." : "Logout"}
       type="submit"
@@ -50,14 +56,14 @@ function DashboardLogoutButton({ pending }: { pending: boolean }) {
       ) : (
         <LogOut aria-hidden="true" className="size-4" />
       )}
-      <span className="text-sm font-semibold">
+      <span className={cn("text-sm font-semibold", collapsed && "sr-only")}>
         {pending ? "Signing out..." : "Logout"}
       </span>
     </button>
   );
 }
 
-function DashboardLogoutForm() {
+function DashboardLogoutForm({ collapsed }: { collapsed: boolean }) {
   const [pending, setPending] = useState(false);
   const router = useRouter();
 
@@ -80,7 +86,7 @@ function DashboardLogoutForm() {
 
   return (
     <form action="/auth/logout" method="post" onSubmit={handleSubmit}>
-      <DashboardLogoutButton pending={pending} />
+      <DashboardLogoutButton collapsed={collapsed} pending={pending} />
     </form>
   );
 }
@@ -150,12 +156,13 @@ function isActivePath(pathname: string, href?: string) {
   return href === "/dashboard" ? pathname === href : pathname.startsWith(href);
 }
 
-function DesktopNavItem({ item, pathname }: { item: NavItem; pathname: string }) {
+function DesktopNavItem({ collapsed, item, pathname }: { collapsed: boolean; item: NavItem; pathname: string }) {
   const Icon = item.icon;
   const isActive = isActivePath(pathname, item.href);
   const label = item.status ? `${item.label} (${item.status})` : item.label;
   const className = cn(
-    "group flex h-10 items-center gap-3 rounded-xl px-3 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28",
+    "group flex h-10 items-center rounded-xl text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28",
+    collapsed ? "justify-center px-0" : "gap-3 px-3",
     isActive
       ? "bg-white/10 text-white"
       : "text-white/42 hover:bg-white/7 hover:text-white/72",
@@ -164,8 +171,8 @@ function DesktopNavItem({ item, pathname }: { item: NavItem; pathname: string })
   const content = (
     <>
       <Icon aria-hidden="true" className="size-4 shrink-0" />
-      <span className="min-w-0 flex-1 truncate text-sm font-semibold">{item.label}</span>
-      {item.status && item.status !== "Live" ? (
+      <span className={cn("min-w-0 flex-1 truncate text-sm font-semibold", collapsed && "sr-only")}>{item.label}</span>
+      {item.status && item.status !== "Live" && !collapsed ? (
         <span className="rounded-full bg-white/10 px-2 py-0.5 text-[0.62rem] font-bold text-white/46">
           {item.status}
         </span>
@@ -217,6 +224,7 @@ function MobileNavItem({ item, pathname }: { item: NavItem; pathname: string }) 
 
 export function SessionNavBar({
   isMemberActive,
+  memberAvatarUrl,
   memberEmail,
   memberName,
   memberStatus,
@@ -226,11 +234,27 @@ export function SessionNavBar({
   const memberInitial = getInitial(memberName || memberEmail);
   const visibleNavigationItems = getNavigationItems(isMemberActive);
   const statusCopy = isMemberActive ? "Verified workspace" : "Verification required";
+  const [collapsed, setCollapsed] = useState(false);
   const [homePending, setHomePending] = useState(false);
 
   useEffect(() => {
     router.prefetch("/");
   }, [router]);
+
+  useEffect(() => {
+    const storedState = window.localStorage.getItem("elite-gold-sidebar-collapsed");
+
+    if (storedState === "true") {
+      window.requestAnimationFrame(() => setCollapsed(true));
+    }
+  }, []);
+
+  useEffect(() => {
+    const sidebarWidth = collapsed ? "4.75rem" : "18rem";
+
+    document.documentElement.style.setProperty("--member-sidebar-width", sidebarWidth);
+    window.localStorage.setItem("elite-gold-sidebar-collapsed", String(collapsed));
+  }, [collapsed]);
 
   function handleHomeClick(event: React.MouseEvent<HTMLAnchorElement>) {
     if (
@@ -266,13 +290,16 @@ export function SessionNavBar({
 
       <aside
         aria-label="Member navigation"
-        className="member-sidebar-enter fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-white/8 bg-[#171716] lg:flex"
+        className="member-sidebar-enter fixed inset-y-0 left-0 z-40 hidden w-[var(--member-sidebar-width,18rem)] border-r border-white/8 bg-[#171716] transition-[width] duration-200 ease-out lg:flex"
       >
         <div className="flex h-dvh w-full flex-col">
-          <div className="flex h-16 items-center px-4">
+          <div className="relative flex h-16 items-center px-3">
             <Link
               aria-label="Elite Gold Community home"
-              className="group mx-auto flex w-fit max-w-full items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45"
+              className={cn(
+                "group flex w-fit max-w-full items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45",
+                collapsed ? "mx-auto" : "ml-8 mr-auto",
+              )}
               href="/"
               onClick={handleHomeClick}
             >
@@ -286,58 +313,82 @@ export function SessionNavBar({
                   src="/brand/elite-gold-logo.png"
                 />
               </span>
-              <span className="min-w-0">
+              <span className={cn("min-w-0 transition-opacity", collapsed && "sr-only")}>
                 <span className="block truncate text-sm font-bold text-white transition group-hover:text-[#F6E3A3]">
                   Elite Gold Community
                 </span>
                 <span className="sr-only">Home</span>
               </span>
             </Link>
+            <button
+              aria-label={collapsed ? "Show sidebar" : "Hide sidebar"}
+              aria-pressed={collapsed}
+              className="absolute right-3 grid size-8 place-items-center rounded-lg border border-white/8 bg-white/[0.025] text-white/42 transition hover:border-white/14 hover:bg-white/7 hover:text-white/78 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
+              onClick={() => setCollapsed((value) => !value)}
+              title={collapsed ? "Show sidebar" : "Hide sidebar"}
+              type="button"
+            >
+              {collapsed ? (
+                <PanelLeftOpen aria-hidden="true" className="size-4" />
+              ) : (
+                <PanelLeftClose aria-hidden="true" className="size-4" />
+              )}
+            </button>
           </div>
 
-          <div className="mx-4 mt-8 flex h-10 items-center gap-3 rounded-xl px-3 text-white/36">
+          <div className={cn("mt-8 flex h-10 items-center rounded-xl text-white/36", collapsed ? "mx-3 justify-center px-0" : "mx-4 gap-3 px-3")}>
             <Search aria-hidden="true" className="size-4" />
-            <span className="text-sm font-semibold">Search</span>
+            <span className={cn("text-sm font-semibold", collapsed && "sr-only")}>Search</span>
           </div>
 
-          <nav className="mx-4 mt-2 grid gap-1" aria-label="Dashboard sections">
-            <p className="px-3 py-2 text-[0.68rem] font-bold uppercase text-white/24">
+          <nav className={cn("mt-2 grid gap-1", collapsed ? "mx-3" : "mx-4")} aria-label="Dashboard sections">
+            <p className={cn("px-3 py-2 text-[0.68rem] font-bold uppercase text-white/24", collapsed && "sr-only")}>
               Workspace
             </p>
             {visibleNavigationItems.map((item) => (
-              <DesktopNavItem item={item} key={item.label} pathname={pathname} />
+              <DesktopNavItem collapsed={collapsed} item={item} key={item.label} pathname={pathname} />
             ))}
           </nav>
 
-          <div className="mx-4 mt-auto border-t border-white/8 pb-6 pt-5">
-            <div className="mb-3 flex items-center gap-3 px-3">
-              <span
-                className="grid size-8 shrink-0 place-items-center rounded-full border border-white/10 bg-[#242423] text-xs font-bold text-white/62"
-                title={`${memberName} - ${memberStatus}`}
-              >
-                {memberInitial}
-              </span>
-              <div className="min-w-0 flex-1">
+          <div className={cn("mt-auto border-t border-white/8 pb-6 pt-5", collapsed ? "mx-3" : "mx-4")}>
+            <div className={cn("mb-3 flex items-center px-3", collapsed ? "justify-center" : "gap-3")}>
+              {memberAvatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  alt={`${memberName} profile`}
+                  className="size-8 shrink-0 rounded-full border border-white/10 bg-[#242423] object-cover"
+                  referrerPolicy="no-referrer"
+                  src={memberAvatarUrl}
+                />
+              ) : (
+                <span
+                  className="grid size-8 shrink-0 place-items-center rounded-full border border-white/10 bg-[#242423] text-xs font-bold text-white/62"
+                  title={`${memberName} - ${memberStatus}`}
+                >
+                  {memberInitial}
+                </span>
+              )}
+              <div className={cn("min-w-0 flex-1", collapsed && "sr-only")}>
                 <p className="truncate text-sm font-semibold text-white/68">{memberName}</p>
                 <p className="truncate text-xs text-white/30">{memberEmail}</p>
               </div>
               <BadgeCheck
                 aria-label={statusCopy}
-                className={cn("size-4 shrink-0", isMemberActive ? "text-emerald-200/60" : "text-white/30")}
+                className={cn("size-4 shrink-0", collapsed && "sr-only", isMemberActive ? "text-emerald-200/60" : "text-white/30")}
               />
             </div>
             <button
               aria-disabled="true"
               aria-label="Settings (Phase 5)"
-              className="mb-1 flex h-10 w-full cursor-default items-center gap-3 rounded-xl px-3 text-left text-white/42"
+              className={cn("mb-1 flex h-10 w-full cursor-default items-center rounded-xl text-left text-white/42", collapsed ? "justify-center px-0" : "gap-3 px-3")}
               title="Settings (Phase 5)"
               type="button"
             >
               <Settings aria-hidden="true" className="size-4" />
-              <span className="text-sm font-semibold">Settings</span>
+              <span className={cn("text-sm font-semibold", collapsed && "sr-only")}>Settings</span>
             </button>
 
-            <DashboardLogoutForm />
+            <DashboardLogoutForm collapsed={collapsed} />
           </div>
         </div>
       </aside>
