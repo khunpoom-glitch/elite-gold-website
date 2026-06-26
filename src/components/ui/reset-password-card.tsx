@@ -1,57 +1,133 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, ArrowRight, Eye, EyeClosed, Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { AlertTriangle, Eye, EyeClosed, LoaderCircle, Lock } from "lucide-react";
 import { updatePasswordAction } from "@/app/auth/actions";
+import { ShinyButton } from "@/components/ui/shiny-button";
 import { initialAuthActionState, type AuthActionState } from "@/lib/auth/action-state";
+
+type ResetPasswordCardProps = {
+  usesGoogleSignIn?: boolean;
+};
+
+const PASSWORD_UPDATED_LOGIN_PATH = "/login?notice=password-updated";
+const PASSWORD_REDIRECT_DELAY_MS = 520;
 
 function getResetPasswordNoticeCopy(state: AuthActionState) {
   if (state.status !== "error") {
     return null;
   }
 
+  if (state.message.toLowerCase().includes("reset link expired")) {
+    return {
+      actionHref: "/forgot-password",
+      actionLabel: "Request a new reset link",
+      message: "Use the newest reset email, then set your password again.",
+      title: "Reset link expired",
+    };
+  }
+
   const fieldNames = Object.keys(state.fieldErrors ?? {});
 
   if (fieldNames.includes("password") || fieldNames.includes("confirmPassword")) {
     return {
+      actionHref: null,
+      actionLabel: null,
       title: "Check your new password",
-      message: "Please complete both password fields and make sure they match.",
+      message: state.message || "Please complete both password fields and make sure they match.",
     };
   }
 
   return {
+    actionHref: "/forgot-password",
+    actionLabel: "Request a new reset link",
     title: "Unable to update password",
-    message: "Please try again in a moment.",
+    message: state.message || "Please request a new reset link and try again.",
   };
 }
 
-export function ResetPasswordCard() {
+function getSafeClientRedirectPath(value?: string) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+    return null;
+  }
+
+  return value;
+}
+
+export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCardProps) {
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState(
     updatePasswordAction,
     initialAuthActionState,
   );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
   const noticeCopy = getResetPasswordNoticeCopy(state);
+  const redirectPath = getSafeClientRedirectPath(state.redirectTo);
+  const isRedirecting = state.status === "success" && Boolean(redirectPath);
 
   useEffect(() => {
-    if (state.status === "success" && state.redirectTo) {
-      window.location.assign(state.redirectTo);
+    router.prefetch(PASSWORD_UPDATED_LOGIN_PATH);
+  }, [router]);
+
+  useEffect(() => {
+    if (state.status !== "success" || !redirectPath) {
+      return;
     }
-  }, [state]);
+
+    router.prefetch(redirectPath);
+    const leaveFrame = window.requestAnimationFrame(() => {
+      setIsLeaving(true);
+    });
+    const redirectTimer = window.setTimeout(() => {
+      router.replace(redirectPath, { scroll: false });
+    }, PASSWORD_REDIRECT_DELAY_MS);
+
+    return () => {
+      window.cancelAnimationFrame(leaveFrame);
+      window.clearTimeout(redirectTimer);
+    };
+  }, [redirectPath, router, state.status]);
 
   return (
-    <motion.div
-      animate={{ scale: 1, y: 0 }}
-      className="relative w-full max-w-[26rem]"
-      initial={{ scale: 0.96, y: 18 }}
-      transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <div aria-hidden="true" className="elite-login-card-border-light" />
-      <div className="relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
+    <>
+      {isRedirecting ? (
+        <motion.div
+          aria-live="polite"
+          animate={{ opacity: isLeaving ? 1 : 0 }}
+          className="fixed inset-0 z-[95] grid place-items-center bg-black/96 px-6 text-center backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          role="status"
+          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <motion.div
+            animate={{ opacity: isLeaving ? 1 : 0, y: isLeaving ? 0 : 6, scale: isLeaving ? 1 : 0.985 }}
+            className="inline-flex items-center gap-3 rounded-full border border-white/12 bg-[#080808]/92 px-4 py-3 text-sm font-semibold text-white/86 shadow-[0_18px_55px_rgba(0,0,0,0.48)]"
+            initial={{ opacity: 0, y: 6, scale: 0.985 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <LoaderCircle aria-hidden="true" className="size-4 animate-spin text-[#F6E3A3]" />
+            <span>Opening login...</span>
+          </motion.div>
+        </motion.div>
+      ) : null}
+      <motion.div
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        className="relative mx-auto w-full max-w-[26rem]"
+        initial={{ opacity: 0, scale: 0.975, y: 10 }}
+        transition={{ duration: isLeaving ? 0.2 : 0.42, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div aria-hidden="true" className="elite-login-card-border-light" />
+        <div className="relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
         <div className="mb-5 text-center">
           <span className="elite-login-card-logo relative mx-auto grid place-items-center">
             <Image
@@ -69,9 +145,15 @@ export function ResetPasswordCard() {
           <p className="mt-2 text-xs font-light text-text-secondary">
             Create a new password for your Elite Gold account.
           </p>
+          {usesGoogleSignIn ? (
+            <p className="mx-auto mt-3 max-w-[17rem] rounded-xl border border-white/10 bg-white/[0.035] px-3.5 py-2 text-xs leading-5 text-white/56">
+              <span className="block">Google sign-in account.</span>
+              <span className="block">This password is only for Elite Gold login.</span>
+            </p>
+          ) : null}
         </div>
 
-        <form action={formAction} className="grid gap-3" noValidate>
+        <form action={formAction} aria-busy={isPending || isRedirecting} className="grid gap-3" noValidate>
           <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-white/80">
             New Password
             <span className="relative">
@@ -133,42 +215,46 @@ export function ResetPasswordCard() {
               <span className="min-w-0">
                 <span className="block text-xs font-semibold leading-4">{noticeCopy.title}</span>
                 <span className="mt-0.5 block text-xs leading-5 text-white/62">{noticeCopy.message}</span>
+                {noticeCopy.actionHref && noticeCopy.actionLabel ? (
+                  <Link
+                    className="mt-1.5 inline-flex text-xs font-semibold text-[#F6E3A3] transition hover:text-white"
+                    href={noticeCopy.actionHref}
+                  >
+                    {noticeCopy.actionLabel}
+                  </Link>
+                ) : null}
               </span>
             </div>
           ) : null}
 
-          <motion.button
-            className="group/button relative mt-2 h-11 overflow-hidden rounded-lg bg-white font-semibold text-black transition disabled:cursor-not-allowed disabled:opacity-70"
-            disabled={isPending}
+          <ShinyButton
+            className="group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
+            disabled={isPending || isRedirecting}
+            style={{
+              "--shiny-button-border": "rgba(255, 255, 255, 0.18)",
+              "--shiny-button-border-highlight": "rgba(255, 255, 255, 0.42)",
+              "--shiny-button-border-muted": "rgba(255, 255, 255, 0.08)",
+              "--shiny-button-foreground": "rgba(255, 255, 255, 0.92)",
+              background: "#181818",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+              fontSize: "0.875rem",
+              fontWeight: 650,
+              letterSpacing: 0,
+            } as CSSProperties}
             type="submit"
             whileHover={{ scale: 1.018 }}
-            whileTap={{ scale: 0.985 }}
           >
-            <AnimatePresence mode="wait">
-              {isPending ? (
-                <motion.span
-                  animate={{ opacity: 1 }}
-                  className="relative flex h-full items-center justify-center"
-                  exit={{ opacity: 0 }}
-                  initial={{ opacity: 0 }}
-                  key="loading"
-                >
-                  <span className="size-4 rounded-full border-2 border-black/70 border-t-transparent animate-spin" />
-                </motion.span>
-              ) : (
-                <motion.span
-                  animate={{ opacity: 1 }}
-                  className="relative flex h-full items-center justify-center gap-2 text-sm"
-                  exit={{ opacity: 0 }}
-                  initial={{ opacity: 0 }}
-                  key="text"
-                >
-                  Update Password
-                  <ArrowRight aria-hidden="true" className="size-4 transition group-hover/button:translate-x-1" />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
+            {isPending ? (
+              <span className="relative flex h-full items-center justify-center gap-2">
+                <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
+                Updating...
+              </span>
+            ) : (
+              <span className="relative flex h-full items-center justify-center gap-2 text-sm">
+                Update Password
+              </span>
+            )}
+          </ShinyButton>
 
           <p className="pt-1 text-center text-xs text-white/58">
             Back to{" "}
@@ -177,7 +263,8 @@ export function ResetPasswordCard() {
             </Link>
           </p>
         </form>
-      </div>
-    </motion.div>
+        </div>
+      </motion.div>
+    </>
   );
 }

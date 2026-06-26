@@ -2,6 +2,7 @@
 
 import type { User } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { sendEmailVerificationEmail, sendPasswordChangedEmail } from "@/lib/email/resend";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -14,8 +15,11 @@ import { getRequestOrigin } from "@/lib/auth/origin";
 import { clearLogoutCookiesOnServerAction } from "@/lib/auth/logout";
 import { addAuthNoticeToRedirectPath, loggedInAuthNoticeValue } from "@/lib/auth/redirect-notice";
 import { setServerAuthSessionPolicy } from "@/lib/auth/session-policy-server";
+import { verifyTurnstileToken } from "@/lib/auth/turnstile";
 import {
   getSafeRedirectPath,
+  normalizeAccessCode,
+  rootAccessCode,
   validateEmailChangeForm,
   validateForgotPasswordForm,
   validateLoginForm,
@@ -58,6 +62,22 @@ function getStringField(formData: FormData, name: string) {
   return typeof value === "string" ? value : "";
 }
 
+function getForwardedIp(headerStore: Awaited<ReturnType<typeof headers>>) {
+  return (
+    headerStore.get("cf-connecting-ip") ||
+    headerStore.get("x-real-ip") ||
+    headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    ""
+  );
+}
+
+async function getTurnstileErrorState(formData: FormData) {
+  const headerStore = await headers();
+  const verification = await verifyTurnstileToken(formData, getForwardedIp(headerStore));
+
+  return verification.ok ? null : errorState(verification.message);
+}
+
 function getUserMetadataString(user: User, keys: string[]) {
   for (const key of keys) {
     const value = user.user_metadata?.[key];
@@ -72,6 +92,121 @@ function getUserMetadataString(user: User, keys: string[]) {
 
 function getMemberDisplayName(fields: { firstName?: string; fullName?: string; nickname?: string }) {
   return fields.nickname || fields.firstName || fields.fullName || "Elite Gold Member";
+}
+
+function getRegionName(countryCode: string) {
+  const normalizedCountryCode = countryCode.trim().toUpperCase();
+
+  if (!/^[A-Z]{2}$/.test(normalizedCountryCode)) {
+    return "";
+  }
+
+  try {
+    return new Intl.DisplayNames(["en"], { type: "region" }).of(normalizedCountryCode) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function getBrowserName(userAgent: string) {
+  if (/edg\//i.test(userAgent)) {
+    return "Edge";
+  }
+
+  if (/opr\//i.test(userAgent)) {
+    return "Opera";
+  }
+
+  if (/crios/i.test(userAgent)) {
+    return "Chrome";
+  }
+
+  if (/chrome|chromium/i.test(userAgent)) {
+    return "Chrome";
+  }
+
+  if (/firefox/i.test(userAgent)) {
+    return "Firefox";
+  }
+
+  if (/safari/i.test(userAgent)) {
+    return "Safari";
+  }
+
+  return "Browser";
+}
+
+function getOperatingSystemName(userAgent: string) {
+  if (/iphone|ipad|ipod/i.test(userAgent)) {
+    return "iOS";
+  }
+
+  if (/android/i.test(userAgent)) {
+    return "Android";
+  }
+
+  if (/macintosh|mac os x/i.test(userAgent)) {
+    return "macOS";
+  }
+
+  if (/windows/i.test(userAgent)) {
+    return "Windows";
+  }
+
+  if (/linux/i.test(userAgent)) {
+    return "Linux";
+  }
+
+  return "Unknown device";
+}
+
+function formatBangkokTimestamp(date = new Date()) {
+  const formattedDate = new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    hour: "2-digit",
+    hourCycle: "h23",
+    minute: "2-digit",
+    month: "short",
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+  }).format(date);
+
+  return `${formattedDate} (GMT+7)`;
+}
+
+function decodeHeaderValue(value: string | null) {
+  if (!value) {
+    return "";
+  }
+
+  try {
+    return decodeURIComponent(value).trim();
+  } catch {
+    return value.trim();
+  }
+}
+
+async function getPasswordChangedSecurityDetails(resetUrl: string) {
+  const headerStore = await headers();
+  const userAgent = headerStore.get("user-agent") ?? "";
+  const city =
+    decodeHeaderValue(headerStore.get("x-vercel-ip-city")) ||
+    decodeHeaderValue(headerStore.get("cf-ipcity"));
+  const countryName =
+    getRegionName(headerStore.get("x-vercel-ip-country") ?? "") ||
+    getRegionName(headerStore.get("cf-ipcountry") ?? "");
+  const location =
+    city && countryName ? `${city}, ${countryName}` : city || countryName || "Unavailable";
+  const browser = userAgent ? getBrowserName(userAgent) : "Browser";
+  const os = userAgent ? getOperatingSystemName(userAgent) : "Unknown device";
+  const device = os === "Unknown device" ? browser : `${browser} on ${os}`;
+
+  return {
+    changedAt: formatBangkokTimestamp(),
+    device,
+    location,
+    resetUrl,
+  };
 }
 
 async function issueEmailVerificationEmail(
@@ -140,8 +275,8 @@ function getAccessCodeResolution(row: unknown) {
 function accessCodeErrorState(status: "missing" | "invalid") {
   const message =
     status === "missing"
-      ? "ไม่พบ Access Code สำหรับการสมัคร กรุณาตรวจสอบลิงก์สมัครอีกครั้ง"
-      : "Access Code นี้ไม่ถูกต้องหรือยังไม่เปิดใช้งาน กรุณาตรวจสอบอีกครั้ง";
+      ? "Access Code is required. Please use a valid signup link before continuing."
+      : "Access Code is invalid or not active. Please check the signup link and try again.";
 
   return errorState(message, {
     signupAccessCode: message,
@@ -155,9 +290,18 @@ async function resolveSignupAccessCode(
   | { ok: true; accessCode: string }
   | { ok: false; state: AuthActionState }
 > {
+  const normalizedAccessCode = normalizeAccessCode(accessCode);
+
+  if (!normalizedAccessCode) {
+    return {
+      ok: false,
+      state: accessCodeErrorState("missing"),
+    };
+  }
+
   const { data, error } = await supabase
     .rpc("resolve_elite_access_code", {
-      input_code: accessCode,
+      input_code: normalizedAccessCode,
     })
     .single();
 
@@ -181,6 +325,17 @@ async function resolveSignupAccessCode(
     return {
       ok: false,
       state: accessCodeErrorState(resolution.status),
+    };
+  }
+
+  if (
+    resolution.status === "bootstrap" &&
+    normalizedAccessCode !== rootAccessCode &&
+    normalizedAccessCode !== resolution.resolvedAccessCode
+  ) {
+    return {
+      ok: false,
+      state: accessCodeErrorState("invalid"),
     };
   }
 
@@ -213,11 +368,70 @@ function getReadableAuthError(message: string) {
     return "อีเมลนี้ถูกสมัครไว้แล้ว กรุณา Login หรือใช้ Forgot Password";
   }
 
+  if (
+    lowerMessage.includes("rate limit") ||
+    lowerMessage.includes("over_email_send_rate_limit") ||
+    lowerMessage.includes("security purposes") ||
+    lowerMessage.includes("request this after")
+  ) {
+    return "Too many reset requests. Please wait a minute before trying again.";
+  }
+
   if (lowerMessage.includes("password")) {
     return "รหัสผ่านไม่ตรงตามเงื่อนไขของระบบ";
   }
 
   return "ระบบสมาชิกยังไม่สามารถดำเนินการได้ในตอนนี้ กรุณาลองใหม่อีกครั้ง";
+}
+
+function getUpdatePasswordErrorState(message: string) {
+  const lowerMessage = message.toLowerCase();
+
+  if (
+    lowerMessage.includes("auth session missing") ||
+    lowerMessage.includes("session missing") ||
+    lowerMessage.includes("session not found") ||
+    lowerMessage.includes("not authenticated") ||
+    lowerMessage.includes("jwt") ||
+    lowerMessage.includes("invalid refresh") ||
+    lowerMessage.includes("invalid token") ||
+    lowerMessage.includes("token expired")
+  ) {
+    return errorState(
+      "Reset link expired. Please request a new reset link and use the newest email.",
+    );
+  }
+
+  if (
+    lowerMessage.includes("same password") ||
+    lowerMessage.includes("different password") ||
+    lowerMessage.includes("should be different")
+  ) {
+    return errorState(
+      "Use a different password from your current one.",
+      {
+        password: "Use a different password.",
+      },
+    );
+  }
+
+  if (
+    lowerMessage.includes("weak") ||
+    lowerMessage.includes("short") ||
+    lowerMessage.includes("characters") ||
+    lowerMessage.includes("password")
+  ) {
+    return errorState(
+      "Use a stronger password with at least 8 characters.",
+      {
+        password: "Use a stronger password.",
+      },
+    );
+  }
+
+  return errorState(
+    "Unable to update password. Please request a new reset link and try again.",
+  );
 }
 
 async function getConfiguredSupabaseClient(): Promise<
@@ -250,6 +464,12 @@ export async function loginWithPasswordAction(
 
   if (!validation.ok) {
     return errorState(validation.message, validation.fieldErrors);
+  }
+
+  const turnstileError = await getTurnstileErrorState(formData);
+
+  if (turnstileError) {
+    return turnstileError;
   }
 
   const client = await getConfiguredSupabaseClient();
@@ -285,6 +505,12 @@ export async function signupWithPasswordAction(
 
   if (!validation.ok) {
     return errorState(validation.message, validation.fieldErrors);
+  }
+
+  const turnstileError = await getTurnstileErrorState(formData);
+
+  if (turnstileError) {
+    return turnstileError;
   }
 
   const client = await getConfiguredSupabaseClient();
@@ -432,6 +658,12 @@ export async function completeGoogleSignupAction(
     return errorState(validation.message, validation.fieldErrors);
   }
 
+  const turnstileError = await getTurnstileErrorState(formData);
+
+  if (turnstileError) {
+    return turnstileError;
+  }
+
   const client = await getConfiguredSupabaseClient();
 
   if (!client.ok) {
@@ -533,6 +765,12 @@ export async function requestPasswordResetAction(
     return errorState(validation.message, validation.fieldErrors);
   }
 
+  const turnstileError = await getTurnstileErrorState(formData);
+
+  if (turnstileError) {
+    return turnstileError;
+  }
+
   const client = await getConfiguredSupabaseClient();
 
   if (!client.ok) {
@@ -547,7 +785,7 @@ export async function requestPasswordResetAction(
     return errorState(getReadableAuthError(error.message));
   }
 
-  return successState("ส่งลิงก์รีเซ็ตรหัสผ่านแล้ว กรุณาตรวจสอบอีเมลของคุณ");
+  return successState("Reset link sent. Please check your inbox.");
 }
 
 export async function updatePasswordAction(
@@ -571,7 +809,13 @@ export async function updatePasswordAction(
   });
 
   if (error) {
-    return errorState(getReadableAuthError(error.message));
+    console.warn("[auth] Failed to update password.", {
+      message: error.message,
+      name: error.name,
+      status: "status" in error ? error.status : undefined,
+    });
+
+    return getUpdatePasswordErrorState(error.message);
   }
 
   const updatedUser = data.user;
@@ -581,13 +825,14 @@ export async function updatePasswordAction(
   const notificationEmail = memberProfile?.email || updatedUser?.email;
 
   if (notificationEmail) {
-    const dashboardUrl = new URL("/dashboard/account", await getRequestOrigin()).toString();
+    const requestOrigin = await getRequestOrigin();
+    const resetUrl = new URL("/forgot-password", requestOrigin).toString();
     const fallbackName = updatedUser
       ? getUserMetadataString(updatedUser, ["nickname", "first_name", "full_name", "name"])
       : "";
     const emailResult = await sendPasswordChangedEmail({
-      dashboardUrl,
       name: getMemberDisplayName(memberProfile ?? { firstName: fallbackName }),
+      securityDetails: await getPasswordChangedSecurityDetails(resetUrl),
       to: notificationEmail,
     });
 
@@ -598,9 +843,21 @@ export async function updatePasswordAction(
     }
   }
 
+  const { error: signOutError } = await client.supabase.auth.signOut();
+
+  if (signOutError) {
+    console.warn("[auth] Password reset session was not revoked after update.", {
+      message: signOutError.message,
+    });
+  }
+
+  await clearLogoutCookiesOnServerAction();
   revalidatePath("/", "layout");
 
-  return successState("ตั้งรหัสผ่านใหม่เรียบร้อย", "/dashboard");
+  return successState(
+    "Password updated. Please login with your new password.",
+    "/login?notice=password-updated",
+  );
 }
 
 export async function requestEmailChangeAction(

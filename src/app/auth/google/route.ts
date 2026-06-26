@@ -17,23 +17,19 @@ export async function GET(request: NextRequest) {
       requestUrl.searchParams.get("referralCode"),
   );
 
+  if (intent === "signup" && !accessCode) {
+    const signupUrl = new URL("/signup", origin);
+
+    signupUrl.searchParams.set("next", nextPath);
+    signupUrl.searchParams.set("notice", "access_code_required");
+
+    return NextResponse.redirect(signupUrl);
+  }
+
   const supabase = await createSupabaseServerClient();
 
   if (!supabase) {
     return NextResponse.redirect(new URL("/login", origin));
-  }
-
-  if (intent === "signup") {
-    const { error: discardDraftError } = await supabase.rpc(
-      "discard_elite_google_signup_draft",
-    );
-
-    if (discardDraftError) {
-      console.warn("[auth] Failed to discard stale Google signup draft.", {
-        code: discardDraftError.code,
-        message: discardDraftError.message,
-      });
-    }
   }
 
   const { data, error } = await supabase.auth.signInWithOAuth({

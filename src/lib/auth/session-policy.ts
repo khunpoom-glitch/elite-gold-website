@@ -11,7 +11,7 @@ export type AuthSessionPolicyStatus =
     };
 
 export const authSessionPolicyCookieName = "elite-gold-session";
-export const standardSessionDurationSeconds = 4 * 60 * 60;
+export const standardSessionDurationSeconds = 8 * 60 * 60;
 export const rememberedSessionDurationSeconds = 30 * 24 * 60 * 60;
 
 export function getAuthSessionDurationSeconds(mode: AuthSessionPolicyMode) {
@@ -64,12 +64,10 @@ export function getAuthSessionCookieOptions(
 ) {
   return {
     httpOnly: true,
+    maxAge: getAuthSessionDurationSeconds(mode),
     path: "/",
     sameSite: "lax" as const,
     secure,
-    ...(mode === "remembered"
-      ? { maxAge: rememberedSessionDurationSeconds }
-      : {}),
   };
 }
 

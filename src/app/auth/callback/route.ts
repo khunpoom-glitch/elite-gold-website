@@ -75,6 +75,12 @@ export async function GET(request: NextRequest) {
     return redirectAndClearOAuthState(new URL("/login", origin));
   }
 
+  if (intent === "signup" && !accessCode) {
+    return redirectAndClearOAuthState(
+      getGoogleSignupUrl(origin, nextPath, "", "access_code_required"),
+    );
+  }
+
   const supabase = await createSupabaseServerClient();
 
   if (!supabase) {

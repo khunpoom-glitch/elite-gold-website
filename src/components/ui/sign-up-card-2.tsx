@@ -1,12 +1,12 @@
 "use client";
 
-import { useActionState, useCallback, useEffect, useMemo, useState, type CSSProperties, type FocusEvent, type KeyboardEvent, type MouseEvent } from "react";
+import { useActionState, useCallback, useEffect, useMemo, useState, type CSSProperties, type FocusEvent, type FormEvent, type KeyboardEvent, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import {
   AlertTriangle,
-  ArrowRight,
   CheckCircle2,
   ChevronDown,
   Eye,
@@ -25,6 +25,7 @@ import {
   signupWithPasswordAction,
 } from "@/app/auth/actions";
 import { AuthBotProtectionFields } from "@/components/auth/bot-protection-fields";
+import { AuthNoticePopup } from "@/components/ui/auth-notice-popup";
 import { GoogleLogo } from "@/components/ui/google-logo";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { initialAuthActionState } from "@/lib/auth/action-state";
@@ -67,6 +68,12 @@ type SignupFormValues = {
   email: string;
   password: string;
   confirmPassword: string;
+};
+
+type ValidationNotice = {
+  key: string;
+  title: string;
+  message: string;
 };
 
 const countryDisplayNames = new Intl.DisplayNames(["en"], { type: "region" });
@@ -607,6 +614,18 @@ function getReadableNotice(notice?: string) {
   return null;
 }
 
+function getAccessCodeRequiredNotice(): ValidationNotice {
+  return {
+    key: "access-code-required",
+    title: "Access Code required",
+    message: "Please use a valid signup link before continuing.",
+  };
+}
+
+function getInitialValidationNotice(notice?: string) {
+  return notice === "access_code_required" ? getAccessCodeRequiredNotice() : null;
+}
+
 function getInitialSignupFormValues(googleSignupProfile?: GoogleSignupProfile): SignupFormValues {
   return {
     firstName: googleSignupProfile?.firstName ?? "",
@@ -644,6 +663,10 @@ export function Component({
   );
   const [isRedirectingAfterVerification, setIsRedirectingAfterVerification] = useState(false);
   const [dismissedValidationErrorKey, setDismissedValidationErrorKey] = useState<string | null>(null);
+  const [clientValidationNotice, setClientValidationNotice] = useState<ValidationNotice | null>(
+    () => getInitialValidationNotice(notice),
+  );
+  const [clientMissingFields, setClientMissingFields] = useState<string[]>([]);
   const [formValues, setFormValues] = useState<SignupFormValues>(
     () => getInitialSignupFormValues(googleSignupProfile),
   );
@@ -658,10 +681,11 @@ export function Component({
   const nationalityProfile = getCountryProfile(selectedNationality);
   const phoneCountryProfile = getPhoneCountryProfile(selectedPhoneCountry);
   const readableNotice = getReadableNotice(notice);
-  const validationPopupKey =
+  const serverValidationPopupKey =
     state.status === "error" && state.fieldErrors && Object.keys(state.fieldErrors).length > 0
       ? `${state.message}:${Object.keys(state.fieldErrors).sort().join("|")}`
       : null;
+  const validationPopupKey = clientValidationNotice?.key ?? serverValidationPopupKey;
   const isValidationPopupVisible = Boolean(
     validationPopupKey && dismissedValidationErrorKey !== validationPopupKey,
   );
@@ -670,13 +694,16 @@ export function Component({
       !state.redirectTo &&
       state.message,
   );
-  const hasAccessCodeError = Boolean(state.fieldErrors?.signupAccessCode);
-  const validationPopupTitle = hasAccessCodeError
+  const serverValidationFields = state.fieldErrors ? Object.keys(state.fieldErrors) : [];
+  const hasOnlyAccessCodeError =
+    serverValidationFields.length === 1 && serverValidationFields[0] === "signupAccessCode";
+  const validationPopupTitle = clientValidationNotice?.title ?? (hasOnlyAccessCodeError
     ? "Access Code required"
-    : "Some required fields are missing";
-  const validationPopupMessage = hasAccessCodeError
+    : "Some required fields are missing");
+  const validationPopupMessage = clientValidationNotice?.message ?? (hasOnlyAccessCodeError
     ? "Please use a valid signup link before continuing."
-    : "Please complete the highlighted fields before continuing.";
+    : "Please complete the highlighted fields before continuing.");
+  const validationPopupPortalTarget = typeof document === "undefined" ? null : document.body;
   const requestGoogleSignupDraftDiscard = useCallback((useBeacon = false) => {
     if (!isGoogleSignup || isSignupComplete || isPending) {
       return;
@@ -696,6 +723,21 @@ export function Component({
       method: "POST",
     }).catch(() => undefined);
   }, [isGoogleSignup, isPending, isSignupComplete]);
+
+  useEffect(() => {
+    if (!isValidationPopupVisible || !validationPopupKey) {
+      return;
+    }
+
+    const activeValidationPopupKey = validationPopupKey;
+    const timer = window.setTimeout(() => {
+      setDismissedValidationErrorKey(activeValidationPopupKey);
+    }, 5000);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [isValidationPopupVisible, validationPopupKey]);
 
   useEffect(() => {
     if (!googleSignupProfile?.email) {
@@ -842,7 +884,7 @@ export function Component({
   }
 
   function getFieldError(name: string) {
-    return state.fieldErrors?.[name];
+    return clientMissingFields.includes(name) ? "Required" : state.fieldErrors?.[name];
   }
 
   function getInputClassName(name: string, extraClassName?: string) {
@@ -854,6 +896,7 @@ export function Component({
   }
 
   function updateFormValue(name: keyof SignupFormValues, value: string) {
+    setClientMissingFields((current) => current.filter((fieldName) => fieldName !== name));
     setFormValues((current) => (
       current[name] === value
         ? current
@@ -864,8 +907,62 @@ export function Component({
     ));
   }
 
+  function validateClientRequiredFields() {
+    const missingFields: string[] = [];
+
+    if (!formValues.firstName.trim()) missingFields.push("firstName");
+    if (!formValues.lastName.trim()) missingFields.push("lastName");
+    if (!formValues.nickname.trim()) missingFields.push("nickname");
+    if (!formValues.phone.trim()) missingFields.push("phone");
+    if (!formValues.email.trim()) missingFields.push("email");
+
+    if (!isGoogleSignup) {
+      if (!formValues.password.trim()) missingFields.push("password");
+      if (!formValues.confirmPassword.trim()) missingFields.push("confirmPassword");
+    }
+
+    if (!autoAccessCode) {
+      missingFields.push("signupAccessCode");
+    }
+
+    return missingFields;
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const missingFields = validateClientRequiredFields();
+
+    if (missingFields.length > 0) {
+      event.preventDefault();
+      setClientMissingFields(missingFields);
+      setDismissedValidationErrorKey(null);
+
+      const hasOnlyAccessCode = missingFields.length === 1 && missingFields[0] === "signupAccessCode";
+      setClientValidationNotice(
+        hasOnlyAccessCode
+          ? getAccessCodeRequiredNotice()
+          : {
+              key: `missing-required:${missingFields.sort().join("|")}`,
+              title: "Some required fields are missing",
+              message: "Please complete the highlighted fields before continuing.",
+            },
+      );
+      return;
+    }
+
+    setClientMissingFields([]);
+    setClientValidationNotice(null);
+    setDismissedValidationErrorKey(null);
+  }
+
   function handleGoogleSignup() {
+    if (!autoAccessCode) {
+      setClientValidationNotice(getAccessCodeRequiredNotice());
+      setDismissedValidationErrorKey(null);
+      return;
+    }
+
     requestGoogleSignupDraftDiscard();
+    setClientValidationNotice(null);
     setIsGoogleRedirecting(true);
 
     const searchParams = new URLSearchParams({
@@ -877,9 +974,9 @@ export function Component({
       searchParams.set("accessCode", autoAccessCode);
     }
 
-    window.setTimeout(() => {
+    window.requestAnimationFrame(() => {
       window.location.assign(`/auth/google?${searchParams.toString()}`);
-    }, 120);
+    });
   }
 
   function handleCloseClick() {
@@ -932,38 +1029,23 @@ export function Component({
           ) : null}
 
           <div className="relative z-10">
-            <AnimatePresence>
-              {isValidationPopupVisible && state.status === "error" && state.fieldErrors ? (
-                <motion.div
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+4.75rem)] z-[100] flex justify-center px-4 sm:top-[5.5rem] lg:top-[5.75rem]"
-                  exit={{ opacity: 0, y: -10, scale: 0.98 }}
-                  initial={{ opacity: 0, y: -10, scale: 0.98 }}
-                  role="alert"
-                  transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <div className="pointer-events-auto relative w-full max-w-[22rem] rounded-2xl border border-[#D4AF37]/35 bg-[#070707]/95 px-3.5 py-3 pr-11 text-white shadow-[0_18px_54px_rgba(0,0,0,0.48),0_0_28px_rgba(212,175,55,0.16)] backdrop-blur-xl">
-                    <div className="flex min-h-[3.5rem] items-center gap-2.5">
-                      <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/12 text-[#F6E3A3]">
-                        <AlertTriangle aria-hidden="true" className="size-3.5" />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[0.82rem] font-semibold leading-5 text-[#F6E3A3]">{validationPopupTitle}</p>
-                        <p className="mt-0.5 text-[0.72rem] leading-5 text-white/68">{validationPopupMessage}</p>
-                      </div>
-                    </div>
-                    <button
-                      aria-label="Close validation notice"
-                      className="absolute right-2.5 top-2.5 inline-flex size-7 shrink-0 items-center justify-center rounded-full text-white/46 transition hover:bg-white/8 hover:text-white"
-                      onClick={() => setDismissedValidationErrorKey(validationPopupKey)}
-                      type="button"
-                    >
-                      <X aria-hidden="true" className="size-3.5" />
-                    </button>
-                  </div>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
+            {validationPopupPortalTarget
+              ? createPortal(
+                  <AnimatePresence>
+                    {isValidationPopupVisible ? (
+                      <AuthNoticePopup
+                        key={validationPopupKey}
+                        icon={AlertTriangle}
+                        message={validationPopupMessage}
+                        onClose={() => setDismissedValidationErrorKey(validationPopupKey)}
+                        title={validationPopupTitle}
+                        tone="warning"
+                      />
+                    ) : null}
+                  </AnimatePresence>,
+                  validationPopupPortalTarget,
+                )
+              : null}
 
             {isSignupComplete && state.status === "success" ? (
               <motion.div
@@ -974,10 +1056,10 @@ export function Component({
                 transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="mx-auto w-full max-w-[18.5rem]">
-                  <span className="mx-auto inline-flex size-10 items-center justify-center rounded-full border border-[#D4AF37]/38 bg-[#D4AF37]/10 text-[#F6E3A3] shadow-[0_0_22px_rgba(212,175,55,0.14)]">
+                  <span className="mx-auto inline-flex size-10 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-400/10 text-emerald-200 shadow-[0_0_24px_rgba(16,185,129,0.12)]">
                     <CheckCircle2 aria-hidden="true" className="size-5" />
                   </span>
-                  <h2 className="elite-display-type mt-4 text-lg font-extrabold tracking-normal text-[#F6E3A3] sm:text-xl" id={titleId}>
+                  <h2 className="elite-display-type mt-4 text-lg font-extrabold tracking-normal text-white sm:text-xl" id={titleId}>
                     Signup Successful
                   </h2>
                   <p className="mt-2.5 text-xs leading-5 text-white/68 sm:text-[0.8rem]">{state.message}</p>
@@ -1001,12 +1083,12 @@ export function Component({
                     </motion.div>
                   ) : (
                     <>
-                      <div className="mt-5 rounded-xl border border-[#D4AF37]/22 bg-[#D4AF37]/10 px-3 py-2.5 text-[0.72rem] leading-5 text-white/62 sm:text-xs">
-                        Your registration form is saved. Open your inbox and press <span className="font-semibold text-[#F6E3A3]">Verify Email</span> before using member features.
+                      <div className="mt-5 rounded-xl border border-[#D4AF37]/16 bg-[#D4AF37]/[0.045] px-3 py-2.5 text-[0.72rem] leading-5 text-white/64 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] sm:text-xs">
+                        Check your inbox and click <span className="font-semibold text-[#F6E3A3]">Verify Email</span> to activate member access.
                       </div>
                       {onClose ? (
                         <button
-                          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
+                          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-lg border border-white/12 bg-white/[0.045] text-sm font-semibold text-white/86 transition hover:border-white/20 hover:bg-white/[0.075]"
                           onClick={onClose}
                           type="button"
                         >
@@ -1014,7 +1096,7 @@ export function Component({
                         </button>
                       ) : (
                         <Link
-                          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/12 text-sm font-semibold text-[#F6E3A3] transition hover:border-[#D4AF37]/55 hover:bg-[#D4AF37]/18"
+                          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-lg border border-white/12 bg-white/[0.045] text-sm font-semibold text-white/86 transition hover:border-white/20 hover:bg-white/[0.075]"
                           href="/"
                         >
                           Back to Home
@@ -1100,7 +1182,7 @@ export function Component({
                         key="google-loading"
                       >
                         <span className="size-4 rounded-full border-2 border-[#F6E3A3]/80 border-t-transparent animate-spin" />
-                        Connecting Google...
+                        Connecting to Google...
                       </motion.span>
                     ) : (
                       <motion.span
@@ -1129,9 +1211,7 @@ export function Component({
               action={formAction}
               className="grid gap-3"
               noValidate
-              onSubmit={() => {
-                setDismissedValidationErrorKey(null);
-              }}
+              onSubmit={handleSubmit}
             >
               <input name="next" type="hidden" value={nextPath} />
               <input name="signupProvider" type="hidden" value={isGoogleSignup ? "google" : "email"} />
@@ -1382,7 +1462,6 @@ export function Component({
                       key="text"
                     >
                       Sign Up
-                      <ArrowRight aria-hidden="true" className="size-4 transition group-hover/button:translate-x-1" />
                     </motion.span>
                   )}
                 </AnimatePresence>

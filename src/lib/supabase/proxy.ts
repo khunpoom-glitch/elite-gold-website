@@ -2,8 +2,11 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import {
   authSessionPolicyCookieName,
+  createAuthSessionPolicyValue,
+  getAuthSessionCookieOptions,
   getAuthSessionPolicyStatus,
   getClearAuthSessionCookieOptions,
+  type AuthSessionPolicyMode,
 } from "@/lib/auth/session-policy";
 import { isSupabaseConfigured, supabasePublishableKey, supabaseUrl } from "./config";
 
@@ -48,6 +51,19 @@ function clearAuthCookies(response: NextResponse, request: NextRequest) {
       });
     }
   });
+}
+
+function setAuthSessionPolicyCookie(
+  response: NextResponse,
+  request: NextRequest,
+  mode: AuthSessionPolicyMode,
+) {
+  const secure = request.nextUrl.protocol === "https:";
+  const value = createAuthSessionPolicyValue(mode);
+  const options = getAuthSessionCookieOptions(mode, secure);
+
+  request.cookies.set(authSessionPolicyCookieName, value);
+  response.cookies.set(authSessionPolicyCookieName, value, options);
 }
 
 export async function updateSession(request: NextRequest) {
@@ -99,12 +115,22 @@ export async function updateSession(request: NextRequest) {
     request.cookies.get(authSessionPolicyCookieName)?.value,
   );
 
+  if (sessionPolicy.state === "missing") {
+    setAuthSessionPolicyCookie(supabaseResponse, request, "standard");
+
+    return supabaseResponse;
+  }
+
   if (sessionPolicy.state !== "active") {
     const response = NextResponse.redirect(getSessionExpiredRedirect(request));
 
     clearAuthCookies(response, request);
 
     return response;
+  }
+
+  if (sessionPolicy.mode === "standard") {
+    setAuthSessionPolicyCookie(supabaseResponse, request, "standard");
   }
 
   return supabaseResponse;

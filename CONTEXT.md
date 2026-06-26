@@ -22,7 +22,7 @@ Implemented:
 - One-page public sections for Home, About Community, Trading Education, Membership, and FAQ.
 - Section URLs redirect back to `/`; `/home` also redirects to `/`.
 - `/login` and `/signup` open the public home experience with the auth modal active.
-- `/signup?ref=EG000` style Access Code handling is live.
+- `/signup?accessCode=EG000` style Access Code handling is live.
 - `/dashboard`, `/dashboard/account`, `/dashboard/education`, `/dashboard/journal`, and `/dashboard/community` are live as Phase 3 authenticated shells.
 - Supabase Auth supports email/password, Google OAuth callback completion with preserved OAuth state, member profile creation, and app-managed email verification status.
 - Real login/signup testing has driven hardening around form-value preservation, validation alerts, Google signup return animation, fixed OAuth callback handling, and auth bot-protection fields.
@@ -47,6 +47,18 @@ Still needed before Phase 3 is considered complete:
 Recommended before launch changes:
 
 - Re-run lint, build, route checks, desktop/mobile visual QA, and a real signup test after final membership copy or dashboard changes.
+
+## Auth Regression QA Checklist
+
+Use this checklist after auth, email, redirect, modal, session, or profile changes. Prefer the exact user-reported path first, then adjacent paths that can diverge.
+
+- Signup: `accessCode` is required, missing fields show the global validation popup, Google signup preserves the Access Code, and no profile is saved until the Sign Up button is pressed.
+- Verification: Verify Email redirects to the main dashboard path consistently, updates member status, and the signup success state resolves cleanly.
+- Login: email/password, Google login, Remember me, and non-Remember me sessions behave as expected on both production domains.
+- Forgot password: test both `/forgot-password` direct route and the Login modal Forgot password link; confirm reset email delivery and visible success state.
+- Reset password: reset link opens the reset flow, password update succeeds, and the password-changed notification email is sent.
+- Logout/session: profile dropdown Sign Out and dashboard Sign Out clear the session, return to guest home state, and session-expired handling appears when expected.
+- Domains: confirm `https://elitegoldcommunity.com` and `https://www.elitegoldcommunity.com` do not create divergent auth or redirect behavior.
 
 ## Routes
 

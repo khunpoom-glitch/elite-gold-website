@@ -172,7 +172,9 @@ export function validateLoginForm(
   }
 
   if (!validateEmail(email)) {
-    return invalid("กรุณากรอกอีเมลให้ถูกต้อง");
+    return invalid("กรุณากรอกอีเมลให้ถูกต้อง", {
+      email: "กรุณากรอกอีเมลให้ถูกต้อง",
+    });
   }
 
   return {
@@ -215,6 +217,7 @@ export function validateSignupProfileForm(
     ["phoneCountry", "Phone Country", phoneCountry],
     ["phone", "Phone Number", phone],
     ["email", "Email", email],
+    ["signupAccessCode", "Access Code", signupAccessCode],
   ]);
 
   if (missingMessage) {
@@ -245,14 +248,26 @@ export function validateSignupProfileForm(
 export function validateSignupForm(
   formData: FormData,
 ): AuthValidationResult<SignupCredentials> {
+  const password = getStringField(formData, "password");
+  const confirmPassword = getStringField(formData, "confirmPassword");
   const profileValidation = validateSignupProfileForm(formData);
 
   if (!profileValidation.ok) {
+    const passwordMissingMessage = requireFields([
+      ["password", "Password", password],
+      ["confirmPassword", "Confirm Password", confirmPassword],
+    ]);
+
+    if (profileValidation.fieldErrors && passwordMissingMessage) {
+      return invalid(profileValidation.message, {
+        ...profileValidation.fieldErrors,
+        ...passwordMissingMessage.fieldErrors,
+      });
+    }
+
     return profileValidation;
   }
 
-  const password = getStringField(formData, "password");
-  const confirmPassword = getStringField(formData, "confirmPassword");
   const missingMessage = requireFields([
     ["password", "Password", password],
     ["confirmPassword", "Confirm Password", confirmPassword],
@@ -297,11 +312,15 @@ export function validateForgotPasswordForm(
   const email = normalizeEmail(getStringField(formData, "email"));
 
   if (!email) {
-    return invalid("กรุณากรอกอีเมลสำหรับรีเซ็ตรหัสผ่าน");
+    return invalid("Please enter your member email to continue.", {
+      email: "Please enter your member email.",
+    });
   }
 
   if (!validateEmail(email)) {
-    return invalid("กรุณากรอกอีเมลให้ถูกต้อง");
+    return invalid("Please enter a valid member email to continue.", {
+      email: "Please enter a valid member email.",
+    });
   }
 
   return {
@@ -317,18 +336,29 @@ export function validateUpdatePasswordForm(
 ): AuthValidationResult<UpdatePasswordCredentials> {
   const password = getStringField(formData, "password");
   const confirmPassword = getStringField(formData, "confirmPassword");
-  const passwordMessage = validatePassword(password, "รหัสผ่านใหม่");
 
-  if (passwordMessage) {
-    return invalid(passwordMessage);
+  if (!password) {
+    return invalid("Please enter your new password.", {
+      password: "Please enter your new password.",
+    });
+  }
+
+  if (password.length < 8) {
+    return invalid("Use at least 8 characters for your new password.", {
+      password: "Use at least 8 characters.",
+    });
   }
 
   if (!confirmPassword) {
-    return invalid("กรุณายืนยันรหัสผ่านใหม่");
+    return invalid("Please confirm your new password.", {
+      confirmPassword: "Please confirm your new password.",
+    });
   }
 
   if (password !== confirmPassword) {
-    return invalid("รหัสผ่านใหม่และการยืนยันรหัสผ่านต้องตรงกัน");
+    return invalid("Passwords do not match.", {
+      confirmPassword: "Passwords do not match.",
+    });
   }
 
   return {

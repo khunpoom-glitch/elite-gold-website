@@ -2,6 +2,7 @@ import {
   canonicalizeProductionSiteUrl,
   productionCanonicalSiteUrl,
 } from "@/config/site-url";
+import { randomUUID } from "node:crypto";
 
 type SendEmailInput = {
   headers?: Record<string, string>;
@@ -14,6 +15,13 @@ type SendEmailInput = {
 type SendEmailResult =
   | { ok: true; id?: string }
   | { ok: false; reason: "missing-config" | "resend-error" | "network-error" };
+
+type PasswordChangedSecurityDetails = {
+  changedAt: string;
+  device: string;
+  location: string;
+  resetUrl: string;
+};
 
 const resendApiUrl = "https://api.resend.com/emails";
 const fallbackSiteUrl = productionCanonicalSiteUrl;
@@ -66,6 +74,10 @@ function getMemberIdFromAccessCode(accessCode: string) {
   const memberId = normalizedAccessCode.match(/^EG(\d+)$/)?.[1];
 
   return memberId || normalizedAccessCode || "Pending";
+}
+
+function getEmailRequestId() {
+  return randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase();
 }
 
 function getWelcomeTitle(name: string) {
@@ -267,24 +279,107 @@ export async function sendEmailVerificationEmail({
   });
 }
 
-export function buildPasswordChangedEmail({
-  dashboardUrl,
-  name,
+export function buildPasswordResetEmail({
+  requestId = getEmailRequestId(),
+  resetUrl,
 }: {
-  dashboardUrl: string;
-  name: string;
+  requestId?: string;
+  resetUrl: string;
 }) {
-  const safeDashboardUrl = escapeHtml(dashboardUrl);
-  const safeName = escapeHtml(name || "Elite Gold Member");
+  const safeResetUrl = escapeHtml(resetUrl);
   const html = getEmailShell(
-    "Your password was changed",
+    "Reset your password",
+    `<p style="margin:0 0 13px;color:#CFCFCF;">We received a request to reset your Elite Gold password.</p>
+     <p style="margin:0 0 20px;color:#CFCFCF;">Tap the button below to choose a new password.</p>
+     ${getButtonHtml(safeResetUrl, "Reset Password")}
+     <p style="margin:16px 0 0;color:#8A8A8A;font-size:10.5px;line-height:1.6;text-align:center;">Need a plain link? <a href="${safeResetUrl}" style="color:#9EA7C6;text-decoration:underline;">Open secure reset link</a></p>
+     <p style="margin:16px 0 0;color:#8A8A8A;font-size:11px;line-height:1.6;">If you did not request this, you can safely ignore this email.</p>`,
+  );
+  const text = `We received a request to reset your Elite Gold password.\n\nChoose a new password: ${resetUrl}\n\nIf you did not request this, you can safely ignore this email.`;
+
+  return {
+    headers: {
+      "X-Entity-Ref-ID": `elite-password-reset-${requestId}`,
+    },
+    html,
+    subject: `Reset your Elite Gold password · ${requestId}`,
+    text,
+  };
+}
+
+export async function sendPasswordResetEmail({
+  resetUrl,
+  to,
+}: {
+  resetUrl: string;
+  to: string;
+}) {
+  const email = buildPasswordResetEmail({
+    resetUrl,
+  });
+
+  return sendTransactionalEmail({
+    headers: email.headers,
+    html: email.html,
+    subject: email.subject,
+    text: email.text,
+    to,
+  });
+}
+
+export function buildPasswordChangedEmail({
+  name,
+  securityDetails,
+}: {
+  name: string;
+  securityDetails: PasswordChangedSecurityDetails;
+}) {
+  const safeName = escapeHtml(name || "Elite Gold Member");
+  const safeChangedAt = escapeHtml(securityDetails.changedAt);
+  const safeDevice = escapeHtml(securityDetails.device);
+  const safeLocation = escapeHtml(securityDetails.location);
+  const safeResetUrl = escapeHtml(securityDetails.resetUrl);
+  const html = getEmailShell(
+    "Password changed",
     `<p style="margin:0 0 14px;">Hi ${safeName},</p>
-     <p style="margin:0 0 13px;color:#CFCFCF;">The password for your Elite Gold account was changed successfully.</p>
-     <p style="margin:0 0 20px;color:#CFCFCF;">If this was you, no action is required. If you did not make this change, please reset your password immediately.</p>
-     ${getButtonHtml(safeDashboardUrl, "Open Account")}`,
+     <p style="margin:0 0 18px;color:#CFCFCF;">Your Elite Gold password was changed successfully.</p>
+     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#242424" style="width:100%;margin:0 0 20px;border-collapse:separate;border-spacing:0;background-color:#242424;border-radius:18px;">
+       <tr>
+         <td bgcolor="#242424" style="padding:1px;background-color:#242424;border-radius:18px;">
+           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#0B0B0B" style="width:100%;border-collapse:separate;border-spacing:0;background-color:#0B0B0B;border-radius:17px;">
+             <tr>
+               <td style="padding:14px 16px;color:#8A8A8A;font-size:11px;line-height:1.45;text-transform:uppercase;letter-spacing:0.10em;">Security details</td>
+             </tr>
+             <tr>
+               <td bgcolor="#1D1D1D" style="height:1px;background-color:#1D1D1D;font-size:0;line-height:0;">&nbsp;</td>
+             </tr>
+             <tr>
+               <td style="padding:13px 16px;color:#CFCFCF;font-size:12.5px;line-height:1.75;">
+                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;">
+                   <tr>
+                     <td width="72" valign="top" style="padding:0 10px 7px 0;color:#8A8A8A;">Time</td>
+                     <td valign="top" style="padding:0 0 7px;color:#FFFFFF;">${safeChangedAt}</td>
+                   </tr>
+                   <tr>
+                     <td width="72" valign="top" style="padding:0 10px 7px 0;color:#8A8A8A;">Device</td>
+                     <td valign="top" style="padding:0 0 7px;color:#FFFFFF;">${safeDevice}</td>
+                   </tr>
+                   <tr>
+                     <td width="72" valign="top" style="padding:0 10px 0 0;color:#8A8A8A;">Location</td>
+                     <td valign="top" style="padding:0;color:#FFFFFF;">${safeLocation}</td>
+                   </tr>
+                 </table>
+               </td>
+             </tr>
+           </table>
+         </td>
+       </tr>
+     </table>
+     <p style="margin:0 0 20px;color:#CFCFCF;">If this wasn't you, reset your password immediately.</p>
+     ${getButtonHtml(safeResetUrl, "Reset Password")}`,
     "This is an automated security email from Elite Gold Community.<br>If you did not change your password, reset it immediately.",
   );
-  const text = `Hi ${name || "Elite Gold Member"},\n\nThe password for your Elite Gold account was changed successfully.\n\nIf this was you, no action is required. If you did not make this change, please reset your password immediately.\n\nOpen Account: ${dashboardUrl}`;
+  const text = `Hi ${name || "Elite Gold Member"},\n\nYour Elite Gold password was changed successfully.\n\nTime: ${securityDetails.changedAt}\nDevice: ${securityDetails.device}\nLocation: ${securityDetails.location}\n\nIf this wasn't you, reset your password immediately.\n\nReset Password: ${securityDetails.resetUrl}`;
 
   return {
     headers: {
@@ -297,17 +392,17 @@ export function buildPasswordChangedEmail({
 }
 
 export async function sendPasswordChangedEmail({
-  dashboardUrl,
   name,
+  securityDetails,
   to,
 }: {
-  dashboardUrl: string;
   name: string;
+  securityDetails: PasswordChangedSecurityDetails;
   to: string;
 }) {
   const email = buildPasswordChangedEmail({
-    dashboardUrl,
     name,
+    securityDetails,
   });
 
   return sendTransactionalEmail({

@@ -3,6 +3,7 @@ export type AuthActionState = {
   message: string;
   redirectTo?: string;
   fieldErrors?: Record<string, string>;
+  retryAfterSeconds?: number;
 };
 
 export const initialAuthActionState: AuthActionState = {

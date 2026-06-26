@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import type { User } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
 import { ResetPasswordCard } from "@/components/ui/reset-password-card";
 
 export const metadata: Metadata = {
@@ -13,12 +15,51 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ResetPasswordPage() {
+function userUsesGoogleSignIn(user: User | null) {
+  const providers = user?.app_metadata.providers ?? [];
+  const hasGoogleProvider = providers.includes("google");
+  const hasGoogleIdentity =
+    user?.identities?.some((identity) => identity.provider === "google") ?? false;
+
+  return hasGoogleProvider || hasGoogleIdentity;
+}
+
+async function hasSupabaseAuthSessionCookie() {
+  const cookieStore = await cookies();
+
+  return cookieStore
+    .getAll()
+    .some(({ name }) => name.startsWith("sb-") && name.includes("auth-token"));
+}
+
+async function getUsesGoogleSignIn() {
+  if (!(await hasSupabaseAuthSessionCookie())) {
+    return false;
+  }
+
+  const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+  const supabase = await createSupabaseServerClient();
+
+  if (!supabase) {
+    return false;
+  }
+
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    return false;
+  }
+
+  return userUsesGoogleSignIn(data.user);
+}
+
+export default async function ResetPasswordPage() {
+  const usesGoogleSignIn = await getUsesGoogleSignIn();
+
   return (
-    <main className="airova-reference-page dark grid min-h-screen place-items-center overflow-hidden bg-background px-4 py-10 text-foreground">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.16),transparent_42%),linear-gradient(180deg,rgba(0,0,0,0.2),#000_82%)]" />
-      <div className="relative z-10 w-full">
-        <ResetPasswordCard />
+    <main className="airova-reference-page dark relative isolate grid min-h-dvh place-items-center overflow-hidden bg-black px-4 py-10 text-foreground">
+      <div className="relative z-10 flex w-full justify-center">
+        <ResetPasswordCard usesGoogleSignIn={usesGoogleSignIn} />
       </div>
     </main>
   );

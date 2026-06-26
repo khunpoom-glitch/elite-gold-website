@@ -23,6 +23,14 @@ Use this skill as compact procedural memory for web work in this repo. `AGENTS.m
 5. Run relevant project scripts. For visual work, verify desktop and mobile rendering when practical.
 6. Commit only when requested or when the task is explicitly a publish workflow.
 
+## Debugging Workflow
+
+- Reproduce first: use the same entry point, domain, auth state, viewport, and interaction sequence the user reported when practical.
+- Compare a working path with the broken path before editing. For example, direct route versus modal route, `www` versus apex domain, manual auth versus OAuth, and server action versus API route.
+- Name the root cause in concrete terms before calling the fix done. If the root cause is still uncertain, treat the change as a hypothesis and verify it directly.
+- Verify the exact failing flow after the patch. For auth/email/session work, include the network response, visible UI state, redirect target, cookie/session behavior, and final page state.
+- Keep a short verification matrix in the final response: local checks, browser paths tested, production domains tested, and any remaining risk.
+
 ## Stack Judgment
 
 - HTML: semantic elements, valid nesting, useful alt text, labels, heading order, keyboard access.
@@ -44,4 +52,5 @@ Use this skill as compact procedural memory for web work in this repo. `AGENTS.m
 
 - Use project scripts first: `npm run lint`, `npm run build`, and focused tests when present.
 - For visual changes, check at least one desktop and one mobile viewport when practical.
+- For production-first auth/UI fixes, deploy only after local checks pass, then verify the actual production flow on both configured domains when the change can affect both.
 - Report commands honestly. If verification cannot run, name the blocker and remaining risk.

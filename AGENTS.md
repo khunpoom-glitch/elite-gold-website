@@ -22,6 +22,14 @@ This project uses a modern Next.js version whose APIs may differ from model memo
 5. Run the narrowest relevant checks from project scripts, usually `npm run lint` and/or `npm run build`.
 6. Commit only when the user asks or the task is explicitly a publish workflow.
 
+## Bugfix And Verification Discipline
+
+- For bugs or regressions, reproduce the exact user-reported path before editing when practical, and state expected versus actual behavior.
+- Identify the likely root cause at the relevant boundary before patching: UI state, routing, server action/API route, auth/session, database, email provider, or deployment/domain behavior.
+- Verify the original failing path after the fix, not only a nearby direct route or unit-level check.
+- For auth, email, modal, redirect, or session fixes, also check adjacent entry points that can diverge, such as direct route versus modal route, `elitegoldcommunity.com` versus `www.elitegoldcommunity.com`, logged-in versus logged-out state, and desktop versus mobile when practical.
+- Do not call a bug fixed until local checks pass and the production or browser flow that failed has been exercised successfully, or clearly explain why that verification could not be completed.
+
 ## Production-First Workflow
 
 - The user has approved production-first testing while the site is not public. For routine, non-destructive web/UI/auth fixes, deploy to production after local lint/build checks pass, then verify on `https://elitegoldcommunity.com` and `https://www.elitegoldcommunity.com`.
@@ -38,7 +46,7 @@ This project uses a modern Next.js version whose APIs may differ from model memo
 ## Elite Gold Scope
 
 - Current workspace: Next.js App Router public website foundation for Elite Gold Community.
-- Current phase: Phase 1 of 6. Phase 1 is the public website foundation, not the final member dashboard, payment system, live Trading Journal backend, or full course platform.
+- Current phase and detailed scope live in `CONTEXT.md`; check it before phase-sensitive work.
 - Reference source: `https://github.com/khunpoom-glitch/elite-gold-website` at commit `3d58f630d01b50576338a481693b6463e25b83fd`.
 - Reference stack differs from this workspace. Treat it as design/product guidance unless the user explicitly approves a destructive stack replacement.
 

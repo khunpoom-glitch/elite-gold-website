@@ -34,7 +34,7 @@ export default async function DashboardLayout({
 
       <div aria-hidden="true" className="member-background-grid pointer-events-none fixed inset-0" />
 
-      <div className="relative z-10 min-h-dvh px-4 pb-28 pt-5 sm:px-6 md:pb-10 md:pl-24 md:pr-8 md:pt-7">
+      <div className="relative z-10 min-h-dvh px-4 pb-28 pt-5 sm:px-6 md:pb-10 md:pr-8 md:pt-7 lg:pl-80">
         <div className="mx-auto grid w-full max-w-7xl gap-5">
           <header className="member-surface-soft flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -42,7 +42,7 @@ export default async function DashboardLayout({
                 Elite Gold Member Area
               </p>
               <p className="mt-1 text-xs text-white/42">
-                Phase 3 workspace for account status, access, and member navigation
+                Account status, access identity, learning, journal, and member navigation
               </p>
             </div>
 

@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   createAuthSessionPolicyValue,
   getAuthSessionDurationSeconds,
+  getAuthSessionCookieOptions,
   getAuthSessionPolicyStatus,
   rememberedSessionDurationSeconds,
   standardSessionDurationSeconds,
@@ -88,6 +89,32 @@ describe("auth form validation", () => {
     }
   });
 
+  it("reports required login fields when the form is blank", () => {
+    const result = validateLoginForm(formDataFromEntries({}));
+
+    assert.equal(result.ok, false);
+
+    if (!result.ok) {
+      assert.equal(result.fieldErrors?.email, "กรุณากรอก Email");
+      assert.equal(result.fieldErrors?.password, "กรุณากรอก Password");
+    }
+  });
+
+  it("reports invalid login email as an email field error", () => {
+    const result = validateLoginForm(
+      formDataFromEntries({
+        email: "not-an-email",
+        password: "secret-password",
+      }),
+    );
+
+    assert.equal(result.ok, false);
+
+    if (!result.ok) {
+      assert.equal(result.fieldErrors?.email, "กรุณากรอกอีเมลให้ถูกต้อง");
+    }
+  });
+
   it("rejects signup when passwords do not match", () => {
     const result = validateSignupForm(
       formDataFromEntries({
@@ -144,7 +171,7 @@ describe("auth form validation", () => {
     }
   });
 
-  it("leaves blank signup access code for server-side bootstrap resolution", () => {
+  it("rejects signup without an access code", () => {
     const result = validateSignupForm(
       formDataFromEntries({
         nationality: "TH",
@@ -159,10 +186,27 @@ describe("auth form validation", () => {
       }),
     );
 
-    assert.equal(result.ok, true);
+    assert.equal(result.ok, false);
 
-    if (result.ok) {
-      assert.equal(result.data.signupAccessCode, "");
+    if (!result.ok) {
+      assert.equal(
+        result.fieldErrors?.signupAccessCode,
+        "กรุณากรอก Access Code",
+      );
+    }
+  });
+
+  it("reports all required signup fields when the form is blank", () => {
+    const result = validateSignupForm(formDataFromEntries({}));
+
+    assert.equal(result.ok, false);
+
+    if (!result.ok) {
+      assert.equal(result.fieldErrors?.firstName, "กรุณากรอก First Name");
+      assert.equal(result.fieldErrors?.email, "กรุณากรอก Email");
+      assert.equal(result.fieldErrors?.password, "กรุณากรอก Password");
+      assert.equal(result.fieldErrors?.confirmPassword, "กรุณากรอก Confirm Password");
+      assert.equal(result.fieldErrors?.signupAccessCode, "กรุณากรอก Access Code");
     }
   });
 
@@ -174,6 +218,20 @@ describe("auth form validation", () => {
     );
 
     assert.equal(result.ok, false);
+
+    if (!result.ok) {
+      assert.equal(result.fieldErrors?.email, "Please enter a valid member email.");
+    }
+  });
+
+  it("reports required forgot-password email fields", () => {
+    const result = validateForgotPasswordForm(formDataFromEntries({}));
+
+    assert.equal(result.ok, false);
+
+    if (!result.ok) {
+      assert.equal(result.fieldErrors?.email, "Please enter your member email.");
+    }
   });
 
   it("accepts a matching replacement password", () => {
@@ -190,6 +248,50 @@ describe("auth form validation", () => {
       assert.deepEqual(result.data, {
         password: "new-secret-password",
       });
+    }
+  });
+
+  it("reports required replacement password fields", () => {
+    const result = validateUpdatePasswordForm(
+      formDataFromEntries({
+        confirmPassword: "new-secret-password",
+      }),
+    );
+
+    assert.equal(result.ok, false);
+
+    if (!result.ok) {
+      assert.equal(result.fieldErrors?.password, "Please enter your new password.");
+    }
+  });
+
+  it("reports required replacement password confirmation", () => {
+    const result = validateUpdatePasswordForm(
+      formDataFromEntries({
+        password: "new-secret-password",
+      }),
+    );
+
+    assert.equal(result.ok, false);
+
+    if (!result.ok) {
+      assert.equal(result.fieldErrors?.confirmPassword, "Please confirm your new password.");
+    }
+  });
+
+  it("reports replacement password mismatches", () => {
+    const result = validateUpdatePasswordForm(
+      formDataFromEntries({
+        password: "new-secret-password",
+        confirmPassword: "different-secret-password",
+      }),
+    );
+
+    assert.equal(result.ok, false);
+
+    if (!result.ok) {
+      assert.equal(result.message, "Passwords do not match.");
+      assert.equal(result.fieldErrors?.confirmPassword, "Passwords do not match.");
     }
   });
 
@@ -270,10 +372,10 @@ describe("auth form validation", () => {
 });
 
 describe("auth session policy", () => {
-  it("uses 4 hours for standard sessions and 30 days for remembered sessions", () => {
+  it("uses 8 hours for standard sessions and 30 days for remembered sessions", () => {
     assert.equal(getAuthSessionDurationSeconds("standard"), standardSessionDurationSeconds);
     assert.equal(getAuthSessionDurationSeconds("remembered"), rememberedSessionDurationSeconds);
-    assert.equal(standardSessionDurationSeconds, 4 * 60 * 60);
+    assert.equal(standardSessionDurationSeconds, 8 * 60 * 60);
     assert.equal(rememberedSessionDurationSeconds, 30 * 24 * 60 * 60);
   });
 
@@ -285,6 +387,17 @@ describe("auth session policy", () => {
 
     assert.equal(active.state, "active");
     assert.equal(expired.state, "expired");
+  });
+
+  it("sets explicit max age for standard and remembered session cookies", () => {
+    assert.equal(
+      getAuthSessionCookieOptions("standard", true).maxAge,
+      standardSessionDurationSeconds,
+    );
+    assert.equal(
+      getAuthSessionCookieOptions("remembered", true).maxAge,
+      rememberedSessionDurationSeconds,
+    );
   });
 });
 

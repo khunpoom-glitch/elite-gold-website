@@ -16,6 +16,7 @@ export const metadata: Metadata = {
 
 type LoginPageProps = {
   searchParams: Promise<{
+    notice?: string | string[];
     session?: string | string[];
   }>;
 };
@@ -26,16 +27,21 @@ function getFirstSearchParam(value?: string | string[]) {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
+  const passwordNotice =
+    getFirstSearchParam(params.notice) === "password-updated"
+      ? "password_updated"
+      : undefined;
   const sessionNotice =
     getFirstSearchParam(params.session) === "expired"
       ? "session_expired"
       : undefined;
+  const authNotice = sessionNotice ?? passwordNotice;
   const publicSession = await getPublicSessionState();
 
   return (
     <HomePage
       initialAuthMode="login"
-      initialAuthNotice={sessionNotice}
+      initialAuthNotice={authNotice}
       publicSession={publicSession}
     />
   );

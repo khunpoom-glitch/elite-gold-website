@@ -4,9 +4,10 @@ import { useActionState, useEffect, useState, type CSSProperties, type FormEvent
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
-import { AlertTriangle, ArrowRight, Check, Eye, EyeClosed, LoaderCircle, Lock, Mail, X } from "lucide-react";
+import { AlertTriangle, Check, Eye, EyeClosed, LoaderCircle, Lock, Mail, X } from "lucide-react";
 import { loginWithPasswordAction } from "@/app/auth/actions";
 import { AuthBotProtectionFields } from "@/components/auth/bot-protection-fields";
+import { AuthNoticePopup } from "@/components/ui/auth-notice-popup";
 import { GoogleLogo } from "@/components/ui/google-logo";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { initialAuthActionState } from "@/lib/auth/action-state";
@@ -34,8 +35,19 @@ type LoginNotice = {
   message: string;
 };
 
+type LoginFieldName = "email" | "password";
+type LoginFieldErrors = Partial<Record<LoginFieldName, string>>;
+
 function getReadableLoginNotice(message: string, fieldErrors?: Record<string, string>): LoginNotice | null {
   if (fieldErrors && Object.keys(fieldErrors).length > 0) {
+    if (fieldErrors.email && Object.keys(fieldErrors).length === 1 && message.includes("ถูกต้อง")) {
+      return {
+        key: "invalid-email",
+        title: "Invalid email",
+        message: "Please enter a valid email address.",
+      };
+    }
+
     const fields = Object.keys(fieldErrors).map((field) =>
       field === "email" ? "Email" : field === "password" ? "Password" : field,
     );
@@ -84,43 +96,6 @@ function getReadableLoginNotice(message: string, fieldErrors?: Record<string, st
   };
 }
 
-function LoginValidationPopup({
-  notice,
-  onClose,
-}: {
-  notice: LoginNotice;
-  onClose: () => void;
-}) {
-  return (
-    <motion.div
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      className="absolute bottom-[calc(100%+0.7rem)] left-0 right-0 z-30 mx-auto w-[min(24rem,calc(100vw-2rem))] rounded-2xl border border-[#D4AF37]/32 bg-[#080808]/96 px-4 py-3 pr-11 text-left shadow-[0_20px_58px_rgba(0,0,0,0.5)] ring-1 ring-white/[0.04] backdrop-blur-xl"
-      exit={{ opacity: 0, y: 8, scale: 0.98 }}
-      initial={{ opacity: 0, y: 8, scale: 0.98 }}
-      role="alert"
-      transition={{ duration: 0.18, ease: "easeOut" }}
-    >
-      <div className="flex min-h-[3.5rem] items-center gap-3">
-        <span className="grid size-8 shrink-0 place-items-center rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 text-[#F6E3A3]">
-          <AlertTriangle aria-hidden="true" className="size-4" />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold leading-5 text-[#F6E3A3]">{notice.title}</span>
-          <span className="mt-0.5 block text-xs leading-5 text-white/64">{notice.message}</span>
-        </span>
-      </div>
-      <button
-        aria-label="Close login notice"
-        className="absolute right-3 top-3 grid size-7 shrink-0 place-items-center rounded-full text-white/42 transition hover:bg-white/[0.06] hover:text-white"
-        onClick={onClose}
-        type="button"
-      >
-        <X aria-hidden="true" className="size-4" />
-      </button>
-    </motion.div>
-  );
-}
-
 function getInitialNextPath() {
   if (typeof window === "undefined") {
     return "/dashboard";
@@ -146,6 +121,7 @@ export function Component({
   const [rememberMe, setRememberMe] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [loginNotice, setLoginNotice] = useState<LoginNotice | null>(null);
+  const [clientFieldErrors, setClientFieldErrors] = useState<LoginFieldErrors>({});
   const [dismissedNoticeKey, setDismissedNoticeKey] = useState<string | null>(null);
   const [focusedInput, setFocusedInput] = useState<"email" | "password" | null>(null);
   const [nextPath] = useState(getInitialNextPath);
@@ -153,6 +129,7 @@ export function Component({
     state.status === "error" ? getReadableLoginNotice(state.message, state.fieldErrors) : null;
   const visibleLoginNotice =
     loginNotice ?? (serverLoginNotice?.key === dismissedNoticeKey ? null : serverLoginNotice);
+  const visibleLoginNoticeKey = visibleLoginNotice?.key ?? null;
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const rotateX = useTransform(mouseY, [-260, 260], [8, -8]);
@@ -163,6 +140,24 @@ export function Component({
       window.location.assign(state.redirectTo);
     }
   }, [state]);
+
+  useEffect(() => {
+    if (!visibleLoginNoticeKey) {
+      return;
+    }
+
+    const activeNoticeKey = visibleLoginNoticeKey;
+    const timer = window.setTimeout(() => {
+      setLoginNotice((currentNotice) => (
+        currentNotice?.key === activeNoticeKey ? null : currentNotice
+      ));
+      setDismissedNoticeKey(activeNoticeKey);
+    }, 5200);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [visibleLoginNoticeKey]);
 
   function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -191,16 +186,51 @@ export function Component({
     }, 350);
   }
 
+  function getFieldError(name: LoginFieldName) {
+    return clientFieldErrors[name] ?? state.fieldErrors?.[name];
+  }
+
+  function getInputClassName(name: LoginFieldName, extraClassName: string) {
+    return cn(
+      "elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#050505] text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-[#D4AF37]/60 focus:bg-[#050505] focus:ring-2 focus:ring-[#D4AF37]/18",
+      extraClassName,
+      getFieldError(name) ? "border-[#F6E3A3]/70 ring-2 ring-[#D4AF37]/20" : null,
+    );
+  }
+
+  function clearClientFieldError(name: LoginFieldName) {
+    setClientFieldErrors((currentErrors) => {
+      if (!currentErrors[name]) {
+        return currentErrors;
+      }
+
+      const nextErrors = { ...currentErrors };
+      delete nextErrors[name];
+
+      return nextErrors;
+    });
+  }
+
   function validateLoginFormElement(form: HTMLFormElement) {
     const formData = new FormData(form);
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "");
-    const missingFields = [
-      !email ? "Email" : null,
-      !password ? "Password" : null,
-    ].filter(Boolean) as string[];
+    const fieldErrors: LoginFieldErrors = {};
+
+    if (!email) {
+      fieldErrors.email = "Email is required";
+    }
+
+    if (!password) {
+      fieldErrors.password = "Password is required";
+    }
+
+    const missingFields = Object.keys(fieldErrors).map((field) =>
+      field === "email" ? "Email" : "Password",
+    );
 
     if (missingFields.length > 0) {
+      setClientFieldErrors(fieldErrors);
       setLoginNotice({
         key: `client-missing-${missingFields.join("-")}`,
         title: "Complete required fields",
@@ -211,6 +241,7 @@ export function Component({
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setClientFieldErrors({ email: "Please enter a valid email address." });
       setLoginNotice({
         key: "client-invalid-email",
         title: "Invalid email",
@@ -220,6 +251,7 @@ export function Component({
       return false;
     }
 
+    setClientFieldErrors({});
     setLoginNotice(null);
     setDismissedNoticeKey(null);
     return true;
@@ -249,13 +281,17 @@ export function Component({
     >
       <AnimatePresence>
         {visibleLoginNotice ? (
-          <LoginValidationPopup
+          <AuthNoticePopup
             key={visibleLoginNotice.key}
-            notice={visibleLoginNotice}
+            icon={AlertTriangle}
+            message={visibleLoginNotice.message}
             onClose={() => {
               setLoginNotice(null);
               setDismissedNoticeKey(visibleLoginNotice.key);
             }}
+            placement="card"
+            title={visibleLoginNotice.title}
+            tone="warning"
           />
         ) : null}
       </AnimatePresence>
@@ -312,10 +348,12 @@ export function Component({
                     )}
                   />
                   <input
+                    aria-invalid={Boolean(getFieldError("email"))}
                     autoComplete="email"
-                    className="elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#050505] pl-10 pr-3 text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-[#D4AF37]/60 focus:bg-[#050505] focus:ring-2 focus:ring-[#D4AF37]/18"
+                    className={getInputClassName("email", "pl-10 pr-3")}
                     name="email"
                     onBlur={() => setFocusedInput(null)}
+                    onChange={() => clearClientFieldError("email")}
                     onFocus={() => setFocusedInput("email")}
                     placeholder="member@elitegold.com"
                     required
@@ -335,10 +373,12 @@ export function Component({
                     )}
                   />
                   <input
+                    aria-invalid={Boolean(getFieldError("password"))}
                     autoComplete="current-password"
-                    className="elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#050505] pl-10 pr-11 text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-[#D4AF37]/60 focus:bg-[#050505] focus:ring-2 focus:ring-[#D4AF37]/18"
+                    className={getInputClassName("password", "pl-10 pr-11")}
                     name="password"
                     onBlur={() => setFocusedInput(null)}
+                    onChange={() => clearClientFieldError("password")}
                     onFocus={() => setFocusedInput("password")}
                     placeholder="Password"
                     required
@@ -433,7 +473,6 @@ export function Component({
                       exit={{ opacity: 0 }}
                     >
                       Login
-                      <ArrowRight aria-hidden="true" className="size-4 transition group-hover/button:translate-x-1" />
                     </motion.span>
                   )}
                 </AnimatePresence>

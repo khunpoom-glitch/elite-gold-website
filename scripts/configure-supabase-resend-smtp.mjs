@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 
 const envFiles = [".env.local", ".env"];
 const automatedFooterHtml =
-  "This is an automated email from Elite Gold Community.<br>If you did not create this account, you can safely ignore this email.";
+  "This is an automated email from Elite Gold Community.<br>If this action was not requested by you, you can safely ignore this email.";
 
 function parseEnvLine(line) {
   const trimmedLine = line.trim();
@@ -96,8 +96,8 @@ function getPublicAssetUrl(path) {
 function getButtonHtml(url, label) {
   return `<table role="presentation" cellspacing="0" cellpadding="0" align="center" style="border-collapse:separate;margin:0 auto;">
     <tr>
-      <td align="center" bgcolor="#D4AF37" style="border:1px solid #E6C85C;border-radius:999px;background:#D4AF37;box-shadow:0 10px 24px rgba(212,175,55,0.18);">
-        <a class="elite-button" href="${url}" style="display:inline-block;min-width:180px;border-radius:999px;background:#D4AF37;color:#050505;font-size:15px;font-weight:800;line-height:1.2;text-align:center;text-decoration:none;padding:15px 30px;">${escapeHtml(label)}</a>
+      <td align="center" bgcolor="#D4AF37" style="border:1px solid #E6C85C;border-radius:999px;background:#D4AF37;box-shadow:0 7px 18px rgba(212,175,55,0.16);">
+        <a class="elite-button" href="${url}" style="display:inline-block;min-width:154px;border-radius:999px;background:#D4AF37;color:#050505;font-size:13.5px;font-weight:800;line-height:1.2;text-align:center;text-decoration:none;padding:12px 24px;">${escapeHtml(label)}</a>
       </td>
     </tr>
   </table>`;
@@ -109,7 +109,7 @@ function getCodeBlockHtml(token) {
   </div>`;
 }
 
-function getAuthEmailShell(title, body) {
+function getAuthEmailShell(title, body, footerHtml = automatedFooterHtml) {
   const logoUrl = escapeHtml(getPublicAssetUrl("/brand/elite-gold-email-logo.png"));
   const safeTitle = escapeHtml(title);
 
@@ -133,35 +133,34 @@ function getAuthEmailShell(title, body) {
         .elite-card, .elite-card td { background-color: #080808 !important; }
       }
       @media screen and (max-width: 600px) {
-        .elite-email-wrap { padding: 24px 12px !important; }
-        .elite-card-header { padding: 30px 22px 22px !important; }
-        .elite-card-body { padding: 28px 22px 30px !important; }
-        .elite-logo { width: 48px !important; max-width: 48px !important; height: 62px !important; max-height: 62px !important; }
-        .elite-title { font-size: 25px !important; line-height: 1.25 !important; }
-        .elite-button { box-sizing: border-box !important; min-width: 200px !important; padding: 16px 28px !important; }
+        .elite-email-wrap { padding: 22px 12px !important; }
+        .elite-card-header { padding: 24px 20px 19px !important; }
+        .elite-card-body { padding: 24px 22px 27px !important; }
+        .elite-logo { width: 38px !important; max-width: 38px !important; height: 49px !important; max-height: 49px !important; }
+        .elite-title { font-size: 21px !important; line-height: 1.25 !important; }
+        .elite-button { box-sizing: border-box !important; min-width: 168px !important; padding: 13px 24px !important; }
       }
     </style>
   </head>
   <body bgcolor="#050505" style="margin:0;padding:0;background-color:#050505 !important;color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;">
     <table class="elite-bg" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#050505" style="min-width:100%;width:100%;background-color:#050505 !important;">
       <tr>
-        <td class="elite-bg elite-email-wrap" align="center" bgcolor="#050505" style="background-color:#050505 !important;padding:46px 16px;">
-          <table class="elite-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#080808" style="border-collapse:separate;width:100%;max-width:600px;border:1px solid rgba(212,175,55,0.35);border-radius:24px;background-color:#080808 !important;box-shadow:0 24px 70px rgba(212,175,55,0.10),0 30px 90px rgba(0,0,0,0.55);overflow:hidden;">
+        <td class="elite-bg elite-email-wrap" align="center" bgcolor="#050505" style="background-color:#050505 !important;padding:34px 14px;">
+          <table class="elite-card" role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#080808" style="border-collapse:separate;width:100%;max-width:460px;border:1px solid rgba(212,175,55,0.30);border-radius:22px;background-color:#080808 !important;box-shadow:0 18px 52px rgba(212,175,55,0.08),0 24px 70px rgba(0,0,0,0.56);overflow:hidden;">
             <tr>
-              <td class="elite-card-header" align="center" bgcolor="#080808" style="padding:34px 30px 24px;border-bottom:1px solid rgba(255,255,255,0.08);background-color:#080808 !important;text-align:center;">
-                <img class="elite-logo" alt="Elite Gold" src="${logoUrl}" width="48" height="62" style="display:block;width:48px;max-width:48px;height:62px;max-height:62px;margin:0 auto 18px;border:0;outline:none;text-decoration:none;">
-                <p style="margin:0 0 12px;color:#D4AF37;font-size:12px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;">Elite Gold Community</p>
-                <h1 class="elite-title" style="margin:0;color:#FFFFFF;font-size:28px;line-height:1.25;font-weight:800;">${safeTitle}</h1>
+              <td class="elite-card-header" align="center" bgcolor="#080808" style="padding:24px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.08);background-color:#080808 !important;text-align:center;">
+                <img class="elite-logo" alt="Elite Gold" src="${logoUrl}" width="40" height="52" style="display:block;width:40px;max-width:40px;height:52px;max-height:52px;margin:0 auto 15px;border:0;outline:none;text-decoration:none;">
+                <h1 class="elite-title" style="margin:0;color:#FFFFFF;font-size:22px;line-height:1.25;font-weight:800;">${safeTitle}</h1>
               </td>
             </tr>
             <tr>
-              <td class="elite-card-body" bgcolor="#080808" style="padding:32px 34px 36px;color:#CFCFCF;font-size:15px;line-height:1.75;background-color:#080808 !important;">
+              <td class="elite-card-body" bgcolor="#080808" style="padding:24px 28px 28px;color:#CFCFCF;font-size:13.5px;line-height:1.68;background-color:#080808 !important;">
                 ${body}
               </td>
             </tr>
             <tr>
-              <td bgcolor="#080808" style="padding:20px 30px;border-top:1px solid rgba(255,255,255,0.08);color:#8A8A8A;font-size:12px;line-height:1.65;background-color:#080808 !important;text-align:center;">
-                ${automatedFooterHtml}
+              <td bgcolor="#080808" style="padding:15px 22px;border-top:1px solid rgba(255,255,255,0.08);color:#8A8A8A;font-size:11px;line-height:1.6;background-color:#080808 !important;text-align:center;">
+                ${footerHtml}
               </td>
             </tr>
           </table>
@@ -188,7 +187,7 @@ if (!/^\d+$/.test(smtpPort)) {
 
 const authEmailConfig = {
   mailer_notifications_email_changed_enabled: true,
-  mailer_notifications_password_changed_enabled: true,
+  mailer_notifications_password_changed_enabled: false,
   mailer_secure_email_change_enabled: true,
   mailer_subjects_confirmation: "Verify your Elite Gold email",
   mailer_subjects_email_change: "Verify your new Elite Gold email",
@@ -204,7 +203,7 @@ const authEmailConfig = {
      <p style="margin:0 0 16px;color:#CFCFCF;">Your Elite Gold account has been successfully created.</p>
      <p style="margin:0 0 24px;color:#CFCFCF;">Please verify your email address to activate your account and access all member features.</p>
      ${getButtonHtml("{{ .ConfirmationURL }}", "Verify Email")}
-     <p style="margin:22px 0 0;color:#8f8f99;font-size:12px;line-height:1.6;">If the button does not work, copy and paste this link into your browser:<br>{{ .ConfirmationURL }}</p>`,
+     <p style="margin:18px 0 0;color:#8f8f99;font-size:11px;line-height:1.6;">If the button does not work, copy and paste this link into your browser:<br><a href="{{ .ConfirmationURL }}" style="color:#8BA7FF;text-decoration:underline;word-break:break-all;">{{ .ConfirmationURL }}</a></p>`,
   ),
   mailer_templates_email_change_content: getAuthEmailShell(
     "Verify your new email",
@@ -245,7 +244,8 @@ const authEmailConfig = {
     `<p style="margin:0 0 16px;">We received a request to reset your Elite Gold password.</p>
      <p style="margin:0 0 22px;">Tap the button below to choose a new password.</p>
      ${getButtonHtml("{{ .ConfirmationURL }}", "Reset Password")}
-     <p style="margin:22px 0 0;color:#8f8f99;font-size:12px;line-height:1.6;">If you did not request this, you can safely ignore this email.</p>`,
+     <p style="margin:18px 0 0;color:#8f8f99;font-size:11px;line-height:1.6;">If the button does not work, copy and paste this link into your browser:<br><a href="{{ .ConfirmationURL }}" style="color:#8BA7FF;text-decoration:underline;word-break:break-all;">{{ .ConfirmationURL }}</a></p>`,
+    "This is an automated email from Elite Gold Community.<br>If you did not request a password reset, you can safely ignore this email.",
   ),
 };
 
