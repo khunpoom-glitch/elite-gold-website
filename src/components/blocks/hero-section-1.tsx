@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
     AlertCircle,
     ArrowRight,
@@ -47,8 +48,8 @@ const transitionVariants: { item: Variants } = {
     item: {
         hidden: {
             opacity: 0,
-            filter: 'blur(5px)',
-            y: 6,
+            filter: 'blur(12px)',
+            y: 12,
         },
         visible: {
             opacity: 1,
@@ -56,8 +57,8 @@ const transitionVariants: { item: Variants } = {
             y: 0,
             transition: {
                 type: 'spring',
-                bounce: 0.18,
-                duration: 0.58,
+                bounce: 0.3,
+                duration: 1.5,
             },
         },
     },
@@ -166,7 +167,6 @@ const memberMenuDangerItemClass = 'flex min-h-8 w-full items-center gap-2 rounde
 const memberMenuIconClass = 'size-3.5 text-[#91A0C5]'
 const memberMenuDangerIconClass = 'size-3.5 text-[#FF6B6B]'
 const memberMenuLabelClass = 'text-[0.8125rem] font-medium leading-none tracking-normal'
-const sessionActionSkeletonClass = 'h-9 animate-pulse rounded-lg border border-white/8 bg-white/[0.035]'
 const signedOutPublicSession: PublicSessionState = {
     isAuthenticated: false,
     memberName: '',
@@ -205,50 +205,8 @@ type HeroSectionProps = {
 
 export function HeroSection({ publicSession }: HeroSectionProps) {
     const [visibleSession, setVisibleSession] = React.useState(publicSession)
-    const [isSessionReady, setIsSessionReady] = React.useState(publicSession.isAuthenticated)
-
-    React.useEffect(() => {
-        const controller = new AbortController()
-
-        async function hydratePublicSession() {
-            try {
-                const response = await fetch('/api/member/public-session', {
-                    cache: 'no-store',
-                    signal: controller.signal,
-                })
-
-                if (!response.ok) {
-                    if (!controller.signal.aborted) {
-                        setIsSessionReady(true)
-                    }
-
-                    return
-                }
-
-                const session = (await response.json()) as PublicSessionState
-
-                if (!controller.signal.aborted) {
-                    setVisibleSession(session)
-                    setIsSessionReady(true)
-                }
-            } catch (error) {
-                if (!controller.signal.aborted) {
-                    console.warn('[home] Failed to hydrate public session.', error)
-                    setIsSessionReady(true)
-                }
-            }
-        }
-
-        hydratePublicSession()
-
-        return () => controller.abort()
-    }, [])
 
     function handleCommunityClick() {
-        if (!isSessionReady) {
-            return
-        }
-
         if (visibleSession.isAuthenticated) {
             window.location.assign(visibleSession.primaryActionHref)
             return
@@ -265,11 +223,7 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
     return (
         <>
             <HeroHeader
-                isSessionReady={isSessionReady}
-                onLogout={() => {
-                    setVisibleSession(signedOutPublicSession)
-                    setIsSessionReady(true)
-                }}
+                onLogout={() => setVisibleSession(signedOutPublicSession)}
                 publicSession={visibleSession}
             />
             <main className="overflow-hidden">
@@ -301,7 +255,7 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                             visible: {
                                                 transition: {
                                                     staggerChildren: 0.05,
-                                                    delayChildren: 0.18,
+                                                    delayChildren: 0.75,
                                                 },
                                             },
                                         },
@@ -309,7 +263,6 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                     }}
                                     className="mt-10 flex flex-col items-center justify-center gap-4 md:flex-row">
                                     <ShinyButton
-                                        disabled={!isSessionReady}
                                         key={1}
                                         onClick={handleCommunityClick}
                                         type="button"
@@ -360,8 +313,8 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         container: {
                                             visible: {
                                                 transition: {
-                                                    staggerChildren: 0.045,
-                                                    delayChildren: 0.28,
+                                                    staggerChildren: 0.08,
+                                                    delayChildren: 0.95,
                                                 },
                                             },
                                         },
@@ -411,6 +364,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
     const [copyState, setCopyState] = React.useState<'idle' | 'copied' | 'error'>('idle')
     const [isSigningOut, setIsSigningOut] = React.useState(false)
     const menuRef = React.useRef<HTMLDivElement>(null)
+    const router = useRouter()
     const isActive = publicSession.memberStatus === 'Active'
     const memberInitials = getMemberInitials(publicSession.memberName, publicSession.memberEmail)
     const profileHref = publicSession.secondaryActionHref ?? '/dashboard/account'
@@ -493,6 +447,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
             setIsOpen(false)
             onNavigate()
             window.dispatchEvent(new CustomEvent(homeSignedOutNoticeEventName))
+            router.refresh()
         } catch {
             window.location.assign('/?auth=signed-out')
         }
@@ -632,11 +587,9 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
 }
 
 const HeroHeader = ({
-    isSessionReady,
     onLogout,
     publicSession,
 }: {
-    isSessionReady: boolean
     onLogout: () => void
     publicSession: PublicSessionState
 }) => {
@@ -729,16 +682,7 @@ const HeroHeader = ({
                                     ))}
                                 </ul>
                             </div>
-                            {!isSessionReady ? (
-                                <div
-                                    aria-label="Checking member session"
-                                    aria-live="polite"
-                                    className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit"
-                                    role="status">
-                                    <span className={cn(sessionActionSkeletonClass, 'w-full sm:w-20')} />
-                                    <span className={cn(sessionActionSkeletonClass, 'w-full sm:w-24')} />
-                                </div>
-                            ) : isSignedIn ? (
+                            {isSignedIn ? (
                                 <MemberProfileMenu
                                     onLogout={onLogout}
                                     publicSession={publicSession}

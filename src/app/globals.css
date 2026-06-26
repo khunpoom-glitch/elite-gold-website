@@ -556,15 +556,15 @@ textarea:-webkit-autofill:active {
 }
 
 .member-background-enter {
-  animation: memberBackgroundFadeIn 220ms ease-out both;
+  animation: memberBackgroundFadeIn 360ms ease-out both;
 }
 
 .member-sidebar-enter {
-  animation: memberSidebarFadeIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: memberSidebarFadeIn 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .member-page-enter {
-  animation: memberPageFadeIn 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: memberPageFadeIn 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes memberBackgroundFadeIn {
@@ -580,7 +580,7 @@ textarea:-webkit-autofill:active {
 @keyframes memberSidebarFadeIn {
   from {
     opacity: 0;
-    transform: translateX(-0.25rem);
+    transform: translateX(-0.65rem);
   }
 
   to {
@@ -592,7 +592,7 @@ textarea:-webkit-autofill:active {
 @keyframes memberPageFadeIn {
   from {
     opacity: 0;
-    transform: translateY(0.2rem);
+    transform: translateY(0.55rem);
   }
 
   to {

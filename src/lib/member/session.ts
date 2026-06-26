@@ -33,22 +33,22 @@ export const getAuthenticatedMember = cache(async (nextPath = "/dashboard") => {
     redirect(getLoginRedirectPath(nextPath));
   }
 
-  const { data, error: claimsError } = await supabase.auth.getClaims();
-  const claims = data?.claims;
-  const userId = typeof claims?.sub === "string" ? claims.sub : "";
-  const userEmail = typeof claims?.email === "string" ? claims.email : "";
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  if (claimsError || !userId) {
+  if (userError || !user) {
     redirect(getLoginRedirectPath(nextPath));
   }
 
-  const profile = await getMemberProfileByUserId(supabase, userId);
+  const profile = await getMemberProfileByUserId(supabase, user.id);
 
   if (!profile) {
     redirect(`/signup?auth=google&next=${encodeURIComponent(nextPath)}`);
   }
 
-  const email = profile.email || userEmail || "Elite Gold Member";
+  const email = profile.email || user.email || "Elite Gold Member";
   const memberName = profile.nickname || profile.firstName || profile.fullName || "Elite Gold Member";
   const memberStatus = getReadableMemberStatus(profile.status);
   const isMemberActive = isActiveMemberStatus(profile.status);
@@ -59,6 +59,7 @@ export const getAuthenticatedMember = cache(async (nextPath = "/dashboard") => {
     memberName,
     memberStatus,
     profile,
+    user,
   };
 });
 
