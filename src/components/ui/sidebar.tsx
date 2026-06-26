@@ -9,7 +9,6 @@ import {
   LogOut,
   Menu,
   MessagesSquare,
-  Search,
   Settings,
   UserCircle,
   type LucideIcon,
@@ -41,13 +40,13 @@ function DashboardLogoutButton({ collapsed, pending }: { collapsed: boolean; pen
   return (
     <button
       aria-disabled={pending}
-      aria-label={pending ? "Signing out" : "Logout"}
+      aria-label={pending ? "Signing out" : "Sign Out"}
       className={cn(
         "group flex h-10 w-full items-center rounded-xl text-left text-white/42 transition hover:bg-white/7 hover:text-white/72 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28 disabled:cursor-wait disabled:opacity-75",
         collapsed ? "justify-center px-0" : "gap-3 px-3",
       )}
       disabled={pending}
-      title={pending ? "Signing out..." : "Logout"}
+      title={pending ? "Signing out..." : "Sign Out"}
       type="submit"
     >
       {pending ? (
@@ -56,7 +55,7 @@ function DashboardLogoutButton({ collapsed, pending }: { collapsed: boolean; pen
         <LogOut aria-hidden="true" className="size-4" />
       )}
       <span className={cn("text-sm font-semibold", collapsed && "sr-only")}>
-        {pending ? "Signing out..." : "Logout"}
+        {pending ? "Signing out..." : "Sign Out"}
       </span>
     </button>
   );
@@ -304,12 +303,7 @@ export function SessionNavBar({
             </button>
           </div>
 
-          <div className={cn("flex h-10 items-center rounded-xl text-white/36", collapsed ? "mx-3 mt-14 justify-center px-0" : "mx-4 mt-8 gap-3 px-3")}>
-            <Search aria-hidden="true" className="size-4" />
-            <span className={cn("text-sm font-semibold", collapsed && "sr-only")}>Search</span>
-          </div>
-
-          <nav className={cn("mt-2 grid gap-1", collapsed ? "mx-3" : "mx-4")} aria-label="Dashboard sections">
+          <nav className={cn("grid gap-1", collapsed ? "mx-3 mt-28" : "mx-4 mt-12")} aria-label="Dashboard sections">
             <p className={cn("px-3 py-2 text-[0.68rem] font-bold uppercase text-white/24", collapsed && "sr-only")}>
               Workspace
             </p>
@@ -318,8 +312,8 @@ export function SessionNavBar({
             ))}
           </nav>
 
-          <div className={cn("mt-auto border-t border-white/8 pb-6 pt-5", collapsed ? "mx-2" : "mx-4")}>
-            <div className={cn("mb-3 flex items-center", collapsed ? "justify-center px-0" : "gap-3 px-3")}>
+          <div className={cn("mt-auto border-t border-white/8 pb-10 pt-4", collapsed ? "mx-2" : "mx-4")}>
+            <div className={cn("mb-2 flex items-center", collapsed ? "justify-center px-0" : "gap-3 px-3")}>
               {memberAvatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -348,7 +342,7 @@ export function SessionNavBar({
             <button
               aria-disabled="true"
               aria-label="Settings (Phase 5)"
-              className={cn("mb-1 flex h-10 w-full cursor-default items-center rounded-xl text-left text-white/42", collapsed ? "justify-center px-0" : "gap-3 px-3")}
+              className={cn("flex h-10 w-full cursor-default items-center rounded-xl text-left text-white/42", collapsed ? "justify-center px-0" : "gap-3 px-3")}
               title="Settings (Phase 5)"
               type="button"
             >
