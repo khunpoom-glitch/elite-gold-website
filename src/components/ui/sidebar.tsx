@@ -235,9 +235,9 @@ export function SessionNavBar({
       >
         <div className="flex h-dvh w-full flex-col px-4 py-5">
           <Link
-            aria-label="Elite Gold dashboard"
+            aria-label="Elite Gold home"
             className="flex items-center gap-3 rounded-xl px-2 py-1.5 transition hover:bg-white/7"
-            href="/dashboard"
+            href="/"
           >
             <span className="relative grid size-10 shrink-0 place-items-center rounded-lg bg-white text-black">
               <Image
@@ -254,7 +254,7 @@ export function SessionNavBar({
                 Elite Gold
               </span>
               <span className="block text-xs font-semibold text-white/42">
-                Member Plan
+                Back to Home
               </span>
             </span>
             <ChevronDown aria-hidden="true" className="ml-auto size-4 text-white/28" />
