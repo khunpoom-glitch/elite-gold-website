@@ -234,11 +234,11 @@ export function SessionNavBar({
       >
         <div className="flex h-dvh w-full flex-col px-4 py-5">
           <Link
-            aria-label="Elite Gold home"
+            aria-label="Elite Gold Community home"
             className="group flex items-center gap-3 rounded-xl px-1 py-1.5 transition hover:bg-white/7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
             href="/"
           >
-            <span className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-xl border border-[#E6C766]/18 bg-black/20">
+            <span className="relative grid h-12 w-10 shrink-0 place-items-center overflow-hidden">
               <Image
                 alt=""
                 aria-hidden="true"
@@ -249,8 +249,8 @@ export function SessionNavBar({
               />
             </span>
             <span className="min-w-0">
-              <span className="block truncate text-base font-bold text-white transition group-hover:text-[#F6E3A3]">
-                Elite Gold
+              <span className="block truncate text-sm font-bold text-white transition group-hover:text-[#F6E3A3]">
+                Elite Gold Community
               </span>
               <span className="sr-only">Home</span>
             </span>
