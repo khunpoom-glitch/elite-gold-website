@@ -119,7 +119,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const accessSignupLink = getAccessSignupLink(profile.memberAccessCode);
 
   return (
-    <section className="min-h-[calc(100dvh-1.5rem)] w-full overflow-hidden bg-[#1d1d1c]">
+    <section className="min-h-dvh w-full overflow-hidden bg-[#1d1d1c]">
       <header className="grid min-h-16 gap-3 border-b border-white/8 bg-[#181817] px-4 py-3 sm:grid-cols-[minmax(0,1fr)_minmax(15rem,0.45fr)_auto] sm:items-center">
         <div className="flex min-w-0 items-center gap-3">
           <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.035] text-white/54">
