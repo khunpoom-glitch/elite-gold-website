@@ -2,7 +2,6 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import {
     AlertCircle,
     ArrowRight,
@@ -48,8 +47,8 @@ const transitionVariants: { item: Variants } = {
     item: {
         hidden: {
             opacity: 0,
-            filter: 'blur(12px)',
-            y: 12,
+            filter: 'blur(5px)',
+            y: 6,
         },
         visible: {
             opacity: 1,
@@ -57,8 +56,8 @@ const transitionVariants: { item: Variants } = {
             y: 0,
             transition: {
                 type: 'spring',
-                bounce: 0.3,
-                duration: 1.5,
+                bounce: 0.18,
+                duration: 0.58,
             },
         },
     },
@@ -206,6 +205,37 @@ type HeroSectionProps = {
 export function HeroSection({ publicSession }: HeroSectionProps) {
     const [visibleSession, setVisibleSession] = React.useState(publicSession)
 
+    React.useEffect(() => {
+        const controller = new AbortController()
+
+        async function hydratePublicSession() {
+            try {
+                const response = await fetch('/api/member/public-session', {
+                    cache: 'no-store',
+                    signal: controller.signal,
+                })
+
+                if (!response.ok) {
+                    return
+                }
+
+                const session = (await response.json()) as PublicSessionState
+
+                if (!controller.signal.aborted) {
+                    setVisibleSession(session)
+                }
+            } catch (error) {
+                if (!controller.signal.aborted) {
+                    console.warn('[home] Failed to hydrate public session.', error)
+                }
+            }
+        }
+
+        hydratePublicSession()
+
+        return () => controller.abort()
+    }, [])
+
     function handleCommunityClick() {
         if (visibleSession.isAuthenticated) {
             window.location.assign(visibleSession.primaryActionHref)
@@ -255,7 +285,7 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                             visible: {
                                                 transition: {
                                                     staggerChildren: 0.05,
-                                                    delayChildren: 0.75,
+                                                    delayChildren: 0.18,
                                                 },
                                             },
                                         },
@@ -313,8 +343,8 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         container: {
                                             visible: {
                                                 transition: {
-                                                    staggerChildren: 0.08,
-                                                    delayChildren: 0.95,
+                                                    staggerChildren: 0.045,
+                                                    delayChildren: 0.28,
                                                 },
                                             },
                                         },
@@ -364,7 +394,6 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
     const [copyState, setCopyState] = React.useState<'idle' | 'copied' | 'error'>('idle')
     const [isSigningOut, setIsSigningOut] = React.useState(false)
     const menuRef = React.useRef<HTMLDivElement>(null)
-    const router = useRouter()
     const isActive = publicSession.memberStatus === 'Active'
     const memberInitials = getMemberInitials(publicSession.memberName, publicSession.memberEmail)
     const profileHref = publicSession.secondaryActionHref ?? '/dashboard/account'
@@ -447,7 +476,6 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
             setIsOpen(false)
             onNavigate()
             window.dispatchEvent(new CustomEvent(homeSignedOutNoticeEventName))
-            router.refresh()
         } catch {
             window.location.assign('/?auth=signed-out')
         }
