@@ -309,7 +309,7 @@ export function SessionNavBar({
             ))}
           </nav>
 
-          <div className="mx-4 mt-auto border-t border-white/8 pt-5">
+          <div className="mx-4 mt-auto border-t border-white/8 pb-6 pt-5">
             <div className="mb-3 flex items-center gap-3 px-3">
               <span
                 className="grid size-8 shrink-0 place-items-center rounded-full border border-white/10 bg-[#242423] text-xs font-bold text-white/62"
