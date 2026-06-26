@@ -271,7 +271,7 @@ export function SessionNavBar({
         <div className="flex h-dvh w-full flex-col px-4 py-5">
           <Link
             aria-label="Elite Gold Community home"
-            className="group flex items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45"
+            className="group mx-auto flex w-fit max-w-full items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45"
             href="/"
             onClick={handleHomeClick}
           >
