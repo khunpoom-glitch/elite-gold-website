@@ -16,7 +16,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { clearClientAuthSession, waitForLogoutFeedback } from "@/lib/auth/client-logout";
 import { cn } from "@/lib/utils";
 
@@ -222,9 +222,15 @@ export function SessionNavBar({
   memberStatus,
 }: SessionNavBarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const memberInitial = getInitial(memberName || memberEmail);
   const visibleNavigationItems = getNavigationItems(isMemberActive);
   const statusCopy = isMemberActive ? "Verified workspace" : "Verification required";
+  const [homePending, setHomePending] = useState(false);
+
+  useEffect(() => {
+    router.prefetch("/");
+  }, [router]);
 
   function handleHomeClick(event: React.MouseEvent<HTMLAnchorElement>) {
     if (
@@ -239,11 +245,25 @@ export function SessionNavBar({
     }
 
     event.preventDefault();
-    window.location.assign("/");
+    setHomePending(true);
+    router.push("/");
   }
 
   return (
     <>
+      {homePending ? (
+        <div
+          aria-live="polite"
+          className="fixed inset-0 z-[80] grid place-items-center bg-black/42 backdrop-blur-[2px]"
+          role="status"
+        >
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#E6C766]/20 bg-black/78 px-4 py-2 text-sm font-semibold text-white/78 shadow-[0_18px_56px_rgba(0,0,0,0.42)]">
+            <LoaderCircle aria-hidden="true" className="size-4 animate-spin text-[#F6E3A3]" />
+            Opening home...
+          </div>
+        </div>
+      ) : null}
+
       <aside
         aria-label="Member navigation"
         className="fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-white/8 bg-[#171716] shadow-[22px_0_70px_rgba(0,0,0,0.28)] lg:flex"
