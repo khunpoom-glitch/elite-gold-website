@@ -166,6 +166,7 @@ const memberMenuDangerItemClass = 'flex min-h-8 w-full items-center gap-2 rounde
 const memberMenuIconClass = 'size-3.5 text-[#91A0C5]'
 const memberMenuDangerIconClass = 'size-3.5 text-[#FF6B6B]'
 const memberMenuLabelClass = 'text-[0.8125rem] font-medium leading-none tracking-normal'
+const sessionActionSkeletonClass = 'h-9 animate-pulse rounded-lg border border-white/8 bg-white/[0.035]'
 const signedOutPublicSession: PublicSessionState = {
     isAuthenticated: false,
     memberName: '',
@@ -204,6 +205,7 @@ type HeroSectionProps = {
 
 export function HeroSection({ publicSession }: HeroSectionProps) {
     const [visibleSession, setVisibleSession] = React.useState(publicSession)
+    const [isSessionReady, setIsSessionReady] = React.useState(publicSession.isAuthenticated)
 
     React.useEffect(() => {
         const controller = new AbortController()
@@ -216,6 +218,10 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                 })
 
                 if (!response.ok) {
+                    if (!controller.signal.aborted) {
+                        setIsSessionReady(true)
+                    }
+
                     return
                 }
 
@@ -223,10 +229,12 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
 
                 if (!controller.signal.aborted) {
                     setVisibleSession(session)
+                    setIsSessionReady(true)
                 }
             } catch (error) {
                 if (!controller.signal.aborted) {
                     console.warn('[home] Failed to hydrate public session.', error)
+                    setIsSessionReady(true)
                 }
             }
         }
@@ -237,6 +245,10 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
     }, [])
 
     function handleCommunityClick() {
+        if (!isSessionReady) {
+            return
+        }
+
         if (visibleSession.isAuthenticated) {
             window.location.assign(visibleSession.primaryActionHref)
             return
@@ -253,7 +265,11 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
     return (
         <>
             <HeroHeader
-                onLogout={() => setVisibleSession(signedOutPublicSession)}
+                isSessionReady={isSessionReady}
+                onLogout={() => {
+                    setVisibleSession(signedOutPublicSession)
+                    setIsSessionReady(true)
+                }}
                 publicSession={visibleSession}
             />
             <main className="overflow-hidden">
@@ -293,6 +309,7 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                     }}
                                     className="mt-10 flex flex-col items-center justify-center gap-4 md:flex-row">
                                     <ShinyButton
+                                        disabled={!isSessionReady}
                                         key={1}
                                         onClick={handleCommunityClick}
                                         type="button"
@@ -615,9 +632,11 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
 }
 
 const HeroHeader = ({
+    isSessionReady,
     onLogout,
     publicSession,
 }: {
+    isSessionReady: boolean
     onLogout: () => void
     publicSession: PublicSessionState
 }) => {
@@ -710,7 +729,16 @@ const HeroHeader = ({
                                     ))}
                                 </ul>
                             </div>
-                            {isSignedIn ? (
+                            {!isSessionReady ? (
+                                <div
+                                    aria-label="Checking member session"
+                                    aria-live="polite"
+                                    className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit"
+                                    role="status">
+                                    <span className={cn(sessionActionSkeletonClass, 'w-full sm:w-20')} />
+                                    <span className={cn(sessionActionSkeletonClass, 'w-full sm:w-24')} />
+                                </div>
+                            ) : isSignedIn ? (
                                 <MemberProfileMenu
                                     onLogout={onLogout}
                                     publicSession={publicSession}
