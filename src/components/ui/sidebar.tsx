@@ -7,9 +7,8 @@ import {
   LayoutDashboard,
   LoaderCircle,
   LogOut,
+  Menu,
   MessagesSquare,
-  PanelLeftClose,
-  PanelLeftOpen,
   Search,
   Settings,
   UserCircle,
@@ -293,46 +292,44 @@ export function SessionNavBar({
         className="member-sidebar-enter fixed inset-y-0 left-0 z-40 hidden w-[var(--member-sidebar-width,18rem)] border-r border-white/8 bg-[#171716] transition-[width] duration-200 ease-out lg:flex"
       >
         <div className="flex h-dvh w-full flex-col">
-          <div className="relative flex h-16 items-center px-3">
-            <Link
-              aria-label="Elite Gold Community home"
-              className={cn(
-                "group flex w-fit max-w-full items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45",
-                collapsed ? "mx-auto" : "ml-8 mr-auto",
-              )}
-              href="/"
-              onClick={handleHomeClick}
-            >
-              <span className="relative grid h-12 w-9 shrink-0 place-items-center overflow-hidden">
-                <Image
-                  alt=""
-                  aria-hidden="true"
-                  className="object-contain p-0.5"
-                  fill
-                  sizes="48px"
-                  src="/brand/elite-gold-logo.png"
-                />
-              </span>
-              <span className={cn("min-w-0 transition-opacity", collapsed && "sr-only")}>
-                <span className="block truncate text-sm font-bold text-white transition group-hover:text-[#F6E3A3]">
-                  Elite Gold Community
+          <div className={cn("relative flex h-16 items-center px-4", collapsed && "justify-center px-0")}>
+            {!collapsed ? (
+              <Link
+                aria-label="Elite Gold Community home"
+                className="group mr-12 flex min-w-0 items-center gap-1.5 py-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6E3A3]/45"
+                href="/"
+                onClick={handleHomeClick}
+              >
+                <span className="relative grid h-12 w-9 shrink-0 place-items-center overflow-hidden">
+                  <Image
+                    alt=""
+                    aria-hidden="true"
+                    className="object-contain p-0.5"
+                    fill
+                    sizes="48px"
+                    src="/brand/elite-gold-logo.png"
+                  />
                 </span>
-                <span className="sr-only">Home</span>
-              </span>
-            </Link>
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-bold text-white transition group-hover:text-[#F6E3A3]">
+                    Elite Gold Community
+                  </span>
+                  <span className="sr-only">Home</span>
+                </span>
+              </Link>
+            ) : null}
             <button
               aria-label={collapsed ? "Show sidebar" : "Hide sidebar"}
               aria-pressed={collapsed}
-              className="absolute right-3 grid size-8 place-items-center rounded-lg border border-white/8 bg-white/[0.025] text-white/42 transition hover:border-white/14 hover:bg-white/7 hover:text-white/78 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
+              className={cn(
+                "grid size-9 place-items-center rounded-lg text-white/46 transition hover:bg-white/7 hover:text-white/82 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28",
+                collapsed ? "relative" : "absolute right-3",
+              )}
               onClick={() => setCollapsed((value) => !value)}
               title={collapsed ? "Show sidebar" : "Hide sidebar"}
               type="button"
             >
-              {collapsed ? (
-                <PanelLeftOpen aria-hidden="true" className="size-4" />
-              ) : (
-                <PanelLeftClose aria-hidden="true" className="size-4" />
-              )}
+              <Menu aria-hidden="true" className="size-5" />
             </button>
           </div>
 
@@ -350,8 +347,8 @@ export function SessionNavBar({
             ))}
           </nav>
 
-          <div className={cn("mt-auto border-t border-white/8 pb-6 pt-5", collapsed ? "mx-3" : "mx-4")}>
-            <div className={cn("mb-3 flex items-center px-3", collapsed ? "justify-center" : "gap-3")}>
+          <div className={cn("mt-auto border-t border-white/8 pb-6 pt-5", collapsed ? "mx-2" : "mx-4")}>
+            <div className={cn("mb-3 flex items-center", collapsed ? "justify-center px-0" : "gap-3 px-3")}>
               {memberAvatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
