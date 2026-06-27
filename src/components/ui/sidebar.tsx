@@ -36,6 +36,8 @@ type NavItem = {
   status?: string;
 };
 
+const sidebarMenuLabelClass = "min-w-0 flex-1 truncate text-sm font-semibold";
+
 function DashboardLogoutButton({ collapsed, pending }: { collapsed: boolean; pending: boolean }) {
   return (
     <button
@@ -54,7 +56,7 @@ function DashboardLogoutButton({ collapsed, pending }: { collapsed: boolean; pen
       ) : (
         <LogOut aria-hidden="true" className="size-4" />
       )}
-      <span className={cn("text-sm font-semibold", collapsed && "sr-only")}>
+      <span className={cn(sidebarMenuLabelClass, collapsed && "sr-only")}>
         {pending ? "Signing out..." : "Logout"}
       </span>
     </button>
@@ -169,7 +171,7 @@ function DesktopNavItem({ collapsed, item, pathname }: { collapsed: boolean; ite
   const content = (
     <>
       <Icon aria-hidden="true" className="size-4 shrink-0" />
-      <span className={cn("min-w-0 flex-1 truncate text-sm font-semibold", collapsed && "sr-only")}>{item.label}</span>
+      <span className={cn(sidebarMenuLabelClass, collapsed && "sr-only")}>{item.label}</span>
       {item.status && item.status !== "Live" && !collapsed ? (
         <span className="rounded-full bg-white/10 px-2 py-0.5 text-[0.62rem] font-bold text-white/46">
           {item.status}
@@ -347,7 +349,7 @@ export function SessionNavBar({
               type="button"
             >
               <Settings aria-hidden="true" className="size-4" />
-              <span className={cn("text-sm font-semibold", collapsed && "sr-only")}>Settings</span>
+              <span className={cn(sidebarMenuLabelClass, collapsed && "sr-only")}>Settings</span>
             </button>
 
             <DashboardLogoutForm collapsed={collapsed} />
