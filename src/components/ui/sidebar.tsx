@@ -312,7 +312,7 @@ export function SessionNavBar({
             ))}
           </nav>
 
-          <div className={cn("mt-auto border-t border-white/8 pb-6 pt-4", collapsed ? "mx-2" : "mx-4")}>
+          <div className={cn("mt-auto border-t border-white/8 pb-3 pt-4", collapsed ? "mx-2" : "mx-4")}>
             <div className={cn("mb-2 flex items-center", collapsed ? "justify-center px-0" : "gap-3 px-3")}>
               {memberAvatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
