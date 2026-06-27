@@ -4,11 +4,7 @@ import { redirect } from "next/navigation";
 import {
   ArrowRight,
   BadgeCheck,
-  ChevronRight,
-  Copy,
-  LayoutDashboard,
   Link2,
-  Search,
   UserRound,
 } from "lucide-react";
 import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
@@ -30,19 +26,19 @@ type DashboardPageProps = {
 
 const nextSteps = [
   {
-    description: "Profile, verification, Access Code, and account security",
+    description: "Profile, verification, and access details",
     href: "/dashboard/account",
-    label: "Review My Account",
+    label: "My Account",
     state: "Live",
   },
   {
-    description: "Structured learning area prepared for the next phase",
+    description: "Structured learning area",
     href: "/dashboard/education",
     label: "Education",
     state: "Preview",
   },
   {
-    description: "Trading review and discipline workspace",
+    description: "Trading review workspace",
     href: "/dashboard/journal",
     label: "Trading Journal",
     state: "Preview",
@@ -104,7 +100,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     redirect(noticeRedirect);
   }
 
-  const { email, isMemberActive, memberName, memberStatus, profile } = await getAuthenticatedMember();
+  const { isMemberActive, memberName, memberStatus, profile } = await getAuthenticatedMember();
 
   if (!isMemberActive) {
     const verifyRequiredPath = "/dashboard/account?notice=verify_required";
@@ -120,30 +116,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   return (
     <section className="min-h-dvh w-full">
-      <header className="sticky top-0 z-20 grid min-h-16 gap-3 border-b border-white/8 bg-[#1d1d1c]/96 px-4 py-3 backdrop-blur-xl sm:grid-cols-[minmax(0,1fr)_minmax(15rem,0.45fr)_auto] sm:items-center">
-        <div className="flex min-w-0 items-center gap-3">
-          <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.035] text-white/54">
-            <LayoutDashboard aria-hidden="true" className="size-4" />
-          </span>
-          <div className="flex min-w-0 items-center gap-2 text-sm font-semibold text-white/78">
-            <span className="truncate">Elite Gold</span>
-            <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-white/28" />
-            <span className="truncate text-white">Home</span>
-          </div>
-        </div>
-
-        <div className="hidden h-10 items-center gap-2 rounded-xl border border-white/7 bg-[#242423] px-3 text-sm text-white/28 sm:flex">
-          <Search aria-hidden="true" className="size-4" />
-          <span>Search workspace</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="hidden rounded-xl border border-white/7 bg-[#242423] px-3 py-2 text-xs font-semibold text-white/50 sm:inline-flex">
-            {memberStatus}
-          </span>
-          <span className="grid size-10 shrink-0 place-items-center rounded-full border border-white/12 bg-[#2a2a29] text-sm font-bold text-white/72">
-            {memberName.trim().charAt(0).toUpperCase() || "E"}
-          </span>
+      <header className="sticky top-0 z-20 flex min-h-16 items-center border-b border-white/8 bg-[#1d1d1c]/96 px-4 py-3 backdrop-blur-xl sm:px-6">
+        <div className="min-w-0">
+          <p className="text-[0.68rem] font-bold uppercase text-white/32">Member Area</p>
+          <h1 className="mt-1 truncate text-lg font-semibold text-white">Dashboard</h1>
         </div>
       </header>
 
@@ -157,10 +133,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
               <BadgeCheck aria-hidden="true" className="size-5 shrink-0 text-emerald-200/75" />
             </div>
-            <p className="mt-4 max-w-xl text-sm leading-7 text-white/46">
-              Your member workspace is ready. Keep this screen calm and use each section only when needed.
-            </p>
-            <p className="mt-5 truncate text-xs text-white/34">{email}</p>
+            <p className="mt-4 max-w-xl text-sm leading-7 text-white/46">{memberStatus}</p>
           </article>
 
           <article className="min-h-40 rounded-2xl border border-white/7 bg-[#171716] p-5">
@@ -171,7 +144,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
               <Link2 aria-hidden="true" className="size-5 shrink-0 text-[#F6E3A3]/48" />
             </div>
-            <p className="mt-4 break-all text-xs leading-5 text-white/38">{accessSignupLink}</p>
             <AccessCodeCopyButton
               className="mt-5 h-10 rounded-xl px-4"
               label="Copy Access Link"
@@ -183,10 +155,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         <section className="rounded-2xl border border-white/7 bg-[#171716] p-5" aria-label="Next actions">
           <div className="mb-5 flex items-center justify-between gap-3">
             <div>
-              <p className="text-[0.68rem] font-bold uppercase text-white/34">Focus</p>
-              <h2 className="mt-1 text-lg font-semibold text-white">Next actions</h2>
+              <h2 className="text-lg font-semibold text-white">Quick actions</h2>
             </div>
-            <Copy aria-hidden="true" className="size-4 text-white/24" />
           </div>
 
           <div className="grid gap-3">
