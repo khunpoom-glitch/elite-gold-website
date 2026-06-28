@@ -834,13 +834,13 @@ textarea:-webkit-autofill:active {
 
 .elite-home-nav-frame {
   border: 1px solid transparent;
-  border-radius: 1.75rem;
+  border-radius: 1rem;
   background: transparent;
 }
 
 .elite-home-nav-frame-scrolled {
   border-color: rgba(255, 255, 255, 0.075) !important;
-  border-radius: 1.65rem !important;
+  border-radius: 1rem !important;
   background:
     radial-gradient(ellipse at 18% 0%, rgba(255, 255, 255, 0.048), transparent 17rem),
     linear-gradient(180deg, rgba(18, 18, 19, 0.82), rgba(12, 12, 13, 0.78)) !important;
@@ -886,9 +886,9 @@ textarea:-webkit-autofill:active {
   isolation: isolate;
   width: auto;
   min-width: max-content;
-  gap: 0.2rem !important;
+  gap: 0.35rem !important;
   border: 1px solid var(--eg-hairline);
-  border-radius: 999px;
+  border-radius: 1.35rem;
   background:
     radial-gradient(ellipse at 18% 0%, rgba(255, 255, 255, 0.06), transparent 8rem),
     linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.018)),
@@ -899,17 +899,6 @@ textarea:-webkit-autofill:active {
     0 14px 38px rgba(0, 0, 0, 0.28);
   padding: 0.2rem;
   backdrop-filter: blur(16px) saturate(1.08);
-}
-
-.elite-profile-cluster::before {
-  content: "";
-  position: absolute;
-  inset: 0.22rem auto 0.22rem 2.6rem;
-  display: none;
-  width: 1px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  pointer-events: none;
 }
 
 .elite-profile-bell {
@@ -951,12 +940,6 @@ textarea:-webkit-autofill:active {
 .elite-profile-bell:focus-visible {
   outline: 2px solid rgba(246, 227, 163, 0.45);
   outline-offset: 2px;
-}
-
-@media (min-width: 640px) {
-  .elite-profile-cluster::before {
-    display: block;
-  }
 }
 
 .elite-home-hero {
