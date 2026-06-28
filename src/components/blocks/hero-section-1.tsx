@@ -227,7 +227,7 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                 publicSession={visibleSession}
             />
             <main className="overflow-hidden">
-                <section className="elite-home-hero border-b border-white/8" id="top">
+                <section className="elite-home-hero" id="top">
                     <div className="relative flex min-h-[calc(100svh+4rem)] flex-col justify-center pb-20 pt-28 md:pt-32 lg:min-h-[calc(100svh+5rem)] lg:pb-24 lg:pt-32">
                         <div className="relative z-10 mx-auto w-full max-w-7xl -translate-y-6 px-6 lg:-translate-y-8 2xl:-translate-y-12">
                             <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">

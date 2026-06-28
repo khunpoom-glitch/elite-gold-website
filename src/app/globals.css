@@ -766,7 +766,7 @@ textarea:-webkit-autofill:active {
 .elite-home-hero {
   position: relative;
   isolation: isolate;
-  border-bottom-color: transparent;
+  border-bottom: 0;
   background:
     radial-gradient(circle at 50% 7rem, rgba(246, 227, 163, 0.05), transparent 22rem),
     linear-gradient(180deg, rgba(29, 29, 28, 0.72), rgba(17, 17, 16, 0.68) 62%, rgba(23, 23, 22, 0.88));
@@ -813,8 +813,8 @@ textarea:-webkit-autofill:active {
     radial-gradient(ellipse at 14% -6%, rgba(255, 255, 255, 0.05), transparent 24rem),
     radial-gradient(circle at 88% 20%, rgba(246, 227, 163, 0.026), transparent 28rem),
     linear-gradient(180deg, rgba(23, 23, 22, 0.92), rgba(10, 10, 9, 0.96));
-  border-top-color: transparent;
-  border-bottom-color: transparent;
+  border-top: 0;
+  border-bottom: 0;
   box-shadow: none;
 }
 
@@ -851,6 +851,10 @@ textarea:-webkit-autofill:active {
     radial-gradient(ellipse at 20% 12%, rgba(255, 255, 255, 0.038), transparent 26rem),
     radial-gradient(ellipse at 76% 72%, rgba(246, 227, 163, 0.024), transparent 24rem),
     linear-gradient(180deg, rgba(20, 20, 19, 0.96), rgba(6, 6, 6, 0.99) 72%);
+}
+
+#about-community.elite-home-section::after {
+  content: none;
 }
 
 .elite-home-section::before {

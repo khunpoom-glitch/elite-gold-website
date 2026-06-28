@@ -78,7 +78,7 @@ function HomeSection({
   return (
     <section
       className={cn(
-        "elite-home-section relative overflow-hidden border-t border-white/8 py-20",
+        "elite-home-section relative overflow-hidden py-20",
         className,
       )}
       {...props}
