@@ -122,12 +122,12 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
           scale: 1,
           y: 0,
         }}
-        className="elite-auth-card relative mx-auto w-full max-w-[26rem]"
+        className="relative mx-auto w-full max-w-[26rem]"
         initial={{ opacity: 0, scale: 0.975, y: 10 }}
         transition={{ duration: isLeaving ? 0.2 : 0.42, ease: [0.22, 1, 0.36, 1] }}
       >
         <div aria-hidden="true" className="elite-login-card-border-light" />
-        <div className="elite-auth-card-surface relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
+        <div className="relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
         <div className="mb-5 text-center">
           <span className="elite-login-card-logo relative mx-auto grid place-items-center">
             <Image
@@ -228,7 +228,7 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
           ) : null}
 
           <ShinyButton
-            className="auth-submit-button group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
+            className="group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
             disabled={isPending || isRedirecting}
             style={{
               "--shiny-button-border": "rgba(255, 255, 255, 0.18)",

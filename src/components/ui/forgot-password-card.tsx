@@ -293,7 +293,7 @@ export function Component({
   return (
     <motion.div
       animate={{ scale: 1, y: 0 }}
-      className={cn("elite-auth-card relative w-full", isSuccess ? "max-w-[24rem]" : "max-w-[26rem]", className)}
+      className={cn("relative w-full", isSuccess ? "max-w-[24rem]" : "max-w-[26rem]", className)}
       initial={{ scale: 0.96, y: 18 }}
       transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
     >
@@ -318,7 +318,7 @@ export function Component({
       <div aria-hidden="true" className="elite-login-card-border-light" />
       <div
         className={cn(
-          "elite-auth-card-surface relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
+          "relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
           isSuccess ? "p-5" : "p-6",
         )}
       >
@@ -392,7 +392,7 @@ export function Component({
               </motion.div>
               {onLoginClick ? (
                 <ShinyButton
-                  className="auth-submit-button group/button h-10 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90"
+                  className="group/button h-10 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90"
                   onClick={onLoginClick}
                   style={{
                     "--shiny-button-border": "rgba(255, 255, 255, 0.18)",
@@ -459,7 +459,7 @@ export function Component({
               </label>
 
               <ShinyButton
-                className="auth-submit-button group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
+                className="group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={isPending || isCoolingDown}
                 style={{
                   "--shiny-button-border": "rgba(255, 255, 255, 0.18)",

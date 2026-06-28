@@ -116,7 +116,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   return (
     <section className="min-h-dvh w-full">
-      <header className="member-topbar sticky top-0 z-20 flex min-h-16 items-center border-b border-white/8 bg-[#1d1d1c]/96 px-4 py-3 backdrop-blur-xl sm:px-6">
+      <header className="sticky top-0 z-20 flex min-h-16 items-center border-b border-white/8 bg-[#1d1d1c]/96 px-4 py-3 backdrop-blur-xl sm:px-6">
         <div className="min-w-0">
           <h1 className="truncate text-lg font-semibold text-white">Dashboard</h1>
         </div>
@@ -124,7 +124,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       <div className="grid gap-5 p-4 sm:p-6">
         <section className="grid gap-5 lg:grid-cols-2" aria-label="Dashboard summary">
-          <article className="member-surface-soft min-h-40 p-5">
+          <article className="min-h-40 rounded-2xl border border-white/7 bg-[#171716] p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[0.68rem] font-bold uppercase text-white/34">Member Status</p>
@@ -135,7 +135,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <p className="mt-4 max-w-xl text-sm leading-7 text-white/46">{memberStatus}</p>
           </article>
 
-          <article className="member-surface-soft min-h-40 p-5">
+          <article className="min-h-40 rounded-2xl border border-white/7 bg-[#171716] p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[0.68rem] font-bold uppercase text-white/34">Access Code</p>
@@ -151,7 +151,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </article>
         </section>
 
-        <section className="member-surface p-5" aria-label="Next actions">
+        <section className="rounded-2xl border border-white/7 bg-[#171716] p-5" aria-label="Next actions">
           <div className="mb-5 flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-white">Quick actions</h2>
@@ -161,7 +161,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <div className="grid gap-3">
             {nextSteps.map((step) => (
               <Link
-                className="member-dashboard-link group flex min-h-14 items-center gap-3 rounded-xl border border-white/6 bg-[#242423] px-4 py-3 transition hover:border-white/12 hover:bg-[#2a2a29] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
+                className="group flex min-h-14 items-center gap-3 rounded-xl border border-white/6 bg-[#242423] px-4 py-3 transition hover:border-white/12 hover:bg-[#2a2a29] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
                 href={step.href}
                 key={step.label}
               >
