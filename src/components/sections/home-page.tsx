@@ -44,7 +44,7 @@ export function HomePage({
 
   return (
     <div
-      className={`${prompt.variable} airova-reference-page dark min-h-screen bg-background font-[family-name:var(--font-airova-sans)] text-foreground`}
+      className={`${prompt.variable} elite-home-shell airova-reference-page dark min-h-screen bg-[#1d1d1c] font-[family-name:var(--font-airova-sans)] text-foreground`}
     >
       <HomeScrollController initialSection={initialSection} />
       <HomeAuthNotice notice={initialHomeNotice} />

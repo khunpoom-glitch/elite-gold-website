@@ -78,7 +78,7 @@ function HomeSection({
   return (
     <section
       className={cn(
-        "relative overflow-hidden border-t border-white/8 py-20",
+        "elite-home-section relative overflow-hidden border-t border-white/8 py-20",
         className,
       )}
       {...props}
@@ -119,7 +119,7 @@ function HomeCard({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-md border border-white/10 bg-black/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_20px_64px_rgba(0,0,0,0.34)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-soft-gold/35 hover:bg-[#050505] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.09),0_0_34px_rgba(212,175,55,0.1),0_24px_76px_rgba(0,0,0,0.42)]",
+        "elite-home-card group relative overflow-hidden rounded-md border border-white/10 bg-[#171716]/82 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_20px_64px_rgba(0,0,0,0.34)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-soft-gold/35 hover:bg-[#1d1d1c] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.09),0_0_34px_rgba(212,175,55,0.1),0_24px_76px_rgba(0,0,0,0.42)]",
         className,
       )}
       {...props}
@@ -388,7 +388,7 @@ export function HomeContentSections() {
               <div className="mt-6 grid gap-3">
                 {faqItems.map((item) => (
                   <details
-                    className="group rounded-md border border-white/10 bg-black/80 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_54px_rgba(0,0,0,0.3)] open:border-soft-gold/35"
+                    className="elite-home-card group rounded-md border border-white/10 bg-[#171716]/82 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_54px_rgba(0,0,0,0.3)] open:border-soft-gold/35"
                     key={item.question}
                   >
                     <summary className="cursor-pointer list-none text-base font-semibold text-white marker:hidden">

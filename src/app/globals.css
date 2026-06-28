@@ -712,6 +712,136 @@ textarea:-webkit-autofill:active {
   color: rgba(246, 227, 163, 0.92);
 }
 
+.elite-home-shell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 4.5rem, rgba(246, 227, 163, 0.085), transparent 25rem),
+    radial-gradient(circle at 88% 18rem, rgba(255, 255, 255, 0.045), transparent 28rem),
+    linear-gradient(180deg, #1d1d1c 0%, #171716 28rem, #111110 54rem, #050505 100%);
+}
+
+.elite-home-shell::before,
+.elite-home-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.elite-home-shell::before {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 16%, rgba(255, 255, 255, 0.014) 100%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 100% 100%, 4.5rem 4.5rem, 4.5rem 4.5rem;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.84), rgba(0, 0, 0, 0.42) 50%, transparent 100%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.84), rgba(0, 0, 0, 0.42) 50%, transparent 100%);
+  opacity: 0.72;
+}
+
+.elite-home-shell::after {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(246, 227, 163, 0.055), transparent 30rem),
+    radial-gradient(ellipse at 50% 34rem, rgba(0, 0, 0, 0.5), transparent 36rem),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.68), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.7));
+}
+
+.elite-home-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+.elite-home-hero {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 50% 7rem, rgba(246, 227, 163, 0.05), transparent 22rem),
+    linear-gradient(180deg, rgba(29, 29, 28, 0.72), rgba(17, 17, 16, 0.68) 62%, rgba(23, 23, 22, 0.88));
+}
+
+.elite-home-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 5rem 5rem;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 24%, rgba(0, 0, 0, 0.56), transparent 68%);
+  mask-image: radial-gradient(ellipse at 50% 24%, rgba(0, 0, 0, 0.56), transparent 68%);
+}
+
+.elite-home-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.elite-home-kicker {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.018)),
+    rgba(23, 23, 22, 0.74);
+}
+
+.elite-home-preview-grid {
+  width: min(100%, calc(100vw - 3rem));
+  max-width: min(58rem, calc(100vw - 3rem));
+}
+
+.elite-home-preview-grid > * {
+  min-width: 0;
+}
+
+.elite-home-section {
+  background:
+    radial-gradient(circle at 14% 0%, rgba(246, 227, 163, 0.035), transparent 21rem),
+    linear-gradient(180deg, rgba(23, 23, 22, 0.92), rgba(10, 10, 9, 0.96));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.026);
+}
+
+.elite-home-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px);
+  background-size: 4.5rem 4.5rem;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 62%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 62%);
+  opacity: 0.56;
+}
+
+.elite-home-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.elite-home-card {
+  background:
+    linear-gradient(145deg, rgba(28, 28, 28, 0.78), rgba(7, 7, 7, 0.94) 64%),
+    #171716;
+  border-color: rgba(255, 255, 255, 0.085);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.075),
+    0 24px 74px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(18px);
+}
+
+.elite-home-card:hover {
+  background:
+    linear-gradient(145deg, rgba(35, 35, 34, 0.82), rgba(8, 8, 7, 0.96) 64%),
+    #1d1d1c;
+}
+
 .member-market-visual {
   position: relative;
   isolation: isolate;

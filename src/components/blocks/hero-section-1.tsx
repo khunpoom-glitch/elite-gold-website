@@ -227,20 +227,21 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                 publicSession={visibleSession}
             />
             <main className="overflow-hidden">
-                <section className="border-b border-white/8" id="top">
+                <section className="elite-home-hero border-b border-white/8" id="top">
                     <div className="relative flex min-h-[calc(100svh+4rem)] flex-col justify-center pb-20 pt-28 md:pt-32 lg:min-h-[calc(100svh+5rem)] lg:pb-24 lg:pt-32">
                         <div className="relative z-10 mx-auto w-full max-w-7xl -translate-y-6 px-6 lg:-translate-y-8 2xl:-translate-y-12">
                             <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                                 <AnimatedGroup variants={transitionVariants}>
                                     <div
-                                        className="mx-auto mt-6 inline-flex max-w-full items-center rounded-full border border-white/10 bg-black/60 px-5 py-2 text-[0.62rem] font-semibold uppercase text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-md sm:px-7 sm:py-2.5 sm:text-sm lg:mt-8"
+                                        className="elite-home-kicker mx-auto mt-6 inline-flex max-w-full items-center rounded-full border border-white/10 bg-[#171716]/72 px-5 py-2 text-[0.62rem] font-semibold uppercase text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-md sm:px-7 sm:py-2.5 sm:text-sm lg:mt-8"
                                         style={{ letterSpacing: 'clamp(0.1em, 0.55vw, 0.22em)' }}>
                                         <span aria-hidden="true" className="mr-3 text-soft-gold">●</span>
                                         <span className="text-nowrap">DISCIPLINE · STRATEGY · CONSISTENCY</span>
                                     </div>
                                     <h1
-                                        className="mx-auto mt-7 max-w-5xl text-balance text-5xl font-bold leading-[1.08] tracking-[-0.025em] md:text-7xl xl:text-[5.5rem]">
-                                        ELITE GOLD COMMUNITY
+                                        className="mx-auto mt-7 max-w-5xl text-balance text-[2.6rem] font-bold leading-[1.08] tracking-normal sm:text-5xl md:text-7xl xl:text-[5.5rem]">
+                                        <span className="block">ELITE GOLD</span>
+                                        <span className="block">COMMUNITY</span>
                                     </h1>
                                     <p
                                         className="mx-auto mt-7 max-w-[18rem] text-balance text-lg font-light leading-8 text-muted-foreground sm:max-w-3xl sm:text-xl">
@@ -286,9 +287,9 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         asChild
                                         size="lg"
                                         variant="ghost"
-                                        className="h-11 min-w-[10.75rem] cursor-pointer rounded-lg border border-white/10 bg-black px-6 py-2 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_16px_34px_rgba(0,0,0,0.36)] hover:border-white/20 hover:bg-white/5 hover:text-white"
+                                        className="h-11 min-w-[10.75rem] cursor-pointer rounded-lg border border-white/10 bg-[#171716] px-6 py-2 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_16px_34px_rgba(0,0,0,0.36)] hover:border-white/20 hover:bg-white/5 hover:text-white"
                                         style={{
-                                            background: '#000000',
+                                            background: '#171716',
                                             border: '1px solid rgba(250, 250, 250, 0.1)',
                                             borderRadius: '0.5rem',
                                             boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 34px rgba(0, 0, 0, 0.36)',
@@ -320,14 +321,14 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         },
                                         ...transitionVariants,
                                     }}
-                                    className="mx-auto mt-10 grid w-full max-w-[58rem] gap-3 text-left sm:mt-12 lg:grid-cols-3">
+                                    className="elite-home-preview-grid mx-auto mt-10 grid w-full max-w-[58rem] gap-3 text-left sm:mt-12 lg:grid-cols-3">
                                     {heroFeatureCards.map((card) => {
                                         const Icon = card.icon
 
                                         return (
                                             <div
                                                 key={card.title}
-                                                className="group flex min-h-[4.25rem] items-center gap-3 rounded-md border border-white/10 bg-black/80 p-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_48px_rgba(0,0,0,0.28)] transition-colors hover:border-soft-gold/35">
+                                                className="elite-home-card group flex min-h-[4.25rem] items-center gap-3 rounded-md border border-white/10 bg-[#171716]/82 p-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_48px_rgba(0,0,0,0.28)] transition-colors hover:border-soft-gold/35">
                                                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-soft-gold/30 bg-soft-gold/10 text-soft-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                                                     <Icon aria-hidden="true" className="h-4 w-4 stroke-[1.8]" />
                                                 </span>
@@ -632,7 +633,7 @@ const HeroHeader = ({
             <nav
                 data-state={menuState && 'active'}
                 className="fixed z-50 w-full px-2 group">
-                <div className={cn('mx-auto mt-2 max-w-6xl px-6 shadow-none transition-[max-width,background-color,box-shadow,backdrop-filter,padding] duration-300 lg:px-12', isScrolled && 'bg-black/90 max-w-4xl rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_18px_60px_rgba(0,0,0,0.42)] backdrop-blur-lg lg:px-5')}>
+                <div className={cn('mx-auto mt-2 max-w-6xl px-6 shadow-none transition-[max-width,background-color,box-shadow,backdrop-filter,padding] duration-300 lg:px-12', isScrolled && 'bg-[#1d1d1c]/94 max-w-4xl rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_18px_60px_rgba(0,0,0,0.42)] backdrop-blur-lg lg:px-5')}>
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
                         <div className="flex w-full justify-between lg:w-auto">
                             <Link
@@ -667,7 +668,7 @@ const HeroHeader = ({
                             </ul>
                         </div>
 
-                        <div className="bg-background group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
+                        <div className="bg-[#171716]/96 group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border border-white/10 p-6 shadow-2xl shadow-black/40 backdrop-blur-xl md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
                             <div className="lg:hidden">
                                 <ul className="space-y-6 text-base font-medium">
                                     {HOME_SECTION_ROUTES.map((item, index) => (
