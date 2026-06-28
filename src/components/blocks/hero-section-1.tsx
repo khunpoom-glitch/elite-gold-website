@@ -442,7 +442,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
 
     return (
         <div ref={menuRef} className="relative flex w-full justify-end sm:w-auto">
-            <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
+            <div className="elite-profile-cluster flex w-full items-center justify-end gap-2 sm:w-auto">
                 <span
                     aria-hidden="true"
                     className="elite-profile-bell hidden size-9 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-white/58 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:grid">
