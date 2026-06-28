@@ -296,13 +296,13 @@ export function Component({
         ) : null}
       </AnimatePresence>
       <motion.div
-        className="group relative"
+        className="elite-auth-card group relative"
         onMouseLeave={handleMouseLeave}
         onMouseMove={handleMouseMove}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
       >
         <div aria-hidden="true" className="elite-login-card-border-light" />
-        <div className="relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
+        <div className="elite-auth-card-surface relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
           {onClose ? (
             <button
               aria-label="Close"
@@ -434,7 +434,7 @@ export function Component({
               </div>
 
               <ShinyButton
-                className="group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
+                className="auth-submit-button group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={isPending}
                 style={{
                   "--shiny-button-border": "rgba(255, 255, 255, 0.18)",
@@ -485,7 +485,7 @@ export function Component({
               </div>
 
               <motion.button
-                className="flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-75"
+                className="auth-google-button flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-75"
                 disabled={isGoogleLoading || isPending}
                 onClick={handleGoogleLogin}
                 style={{ fontSize: "0.78rem", lineHeight: 1 }}

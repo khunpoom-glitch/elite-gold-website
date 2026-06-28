@@ -445,7 +445,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
                 <span
                     aria-hidden="true"
-                    className="hidden size-9 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-white/58 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:grid">
+                    className="elite-profile-bell hidden size-9 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-white/58 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:grid">
                     <Bell className="size-4 stroke-[1.75]" />
                 </span>
                 <button
@@ -453,7 +453,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
                     aria-haspopup="menu"
                     aria-disabled={isSigningOut}
                     aria-label="Open member profile menu"
-                    className="flex h-10 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55 disabled:cursor-wait disabled:opacity-70"
+                    className="elite-profile-trigger flex h-10 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55 disabled:cursor-wait disabled:opacity-70"
                     disabled={isSigningOut}
                     onClick={() => setIsOpen((current) => !current)}
                     type="button">
@@ -619,7 +619,7 @@ const HeroHeader = ({
             <nav
                 data-state={menuState && 'active'}
                 className="fixed z-50 w-full px-2 group">
-                <div className={cn('mx-auto mt-2 max-w-6xl px-6 shadow-none transition-[max-width,background-color,box-shadow,backdrop-filter,padding] duration-300 lg:px-12', isScrolled && 'bg-[#1d1d1c]/88 max-w-4xl rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.075),0_14px_44px_rgba(0,0,0,0.32)] backdrop-blur-xl lg:px-5')}>
+                <div className={cn('elite-home-nav-frame mx-auto mt-2 max-w-6xl px-6 shadow-none transition-[max-width,background-color,box-shadow,backdrop-filter,padding,border-color,border-radius] duration-300 lg:px-12', isScrolled && 'elite-home-nav-frame-scrolled bg-[#1d1d1c]/88 max-w-4xl rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.075),0_14px_44px_rgba(0,0,0,0.32)] backdrop-blur-xl lg:px-5')}>
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
                         <div className="flex w-full justify-between lg:w-auto">
                             <Link
@@ -646,7 +646,7 @@ const HeroHeader = ({
                                         <Link
                                             href={item.href}
                                             onClick={(event) => navigateToHomeSection(event, item.href, item.sectionId, () => setMenuState(false))}
-                                            className="text-muted-foreground hover:text-foreground block duration-150">
+                                            className="elite-home-nav-link text-muted-foreground hover:text-foreground block duration-150">
                                             <span>{item.name}</span>
                                         </Link>
                                     </li>
@@ -654,7 +654,7 @@ const HeroHeader = ({
                             </ul>
                         </div>
 
-                        <div className="bg-[#171716]/96 group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border border-white/10 p-6 shadow-2xl shadow-black/40 backdrop-blur-xl md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
+                        <div className="elite-home-mobile-panel bg-[#171716]/96 group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border border-white/10 p-6 shadow-2xl shadow-black/40 backdrop-blur-xl md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
                             <div className="lg:hidden">
                                 <ul className="space-y-6 text-base font-medium">
                                     {HOME_SECTION_ROUTES.map((item, index) => (
@@ -662,7 +662,7 @@ const HeroHeader = ({
                                             <Link
                                                 href={item.href}
                                                 onClick={(event) => navigateToHomeSection(event, item.href, item.sectionId, () => setMenuState(false))}
-                                                className="text-muted-foreground hover:text-foreground block duration-150">
+                                                className="elite-home-nav-link text-muted-foreground hover:text-foreground block duration-150">
                                                 <span>{item.name}</span>
                                             </Link>
                                         </li>
@@ -682,7 +682,7 @@ const HeroHeader = ({
                                             asChild
                                             variant="outline"
                                             size="sm"
-                                            className={cn('h-9 px-3 text-sm font-medium border-white/10 bg-transparent shadow-none hover:border-white/20 hover:bg-white/5 hover:text-foreground focus-visible:ring-white/20', isScrolled && 'lg:hidden')}>
+                                            className={cn('elite-nav-auth-button h-9 px-3 text-sm font-medium border-white/10 bg-transparent shadow-none hover:border-white/20 hover:bg-white/5 hover:text-foreground focus-visible:ring-white/20', isScrolled && 'lg:hidden')}>
                                             <Link
                                                 href={secondaryActionHref}
                                                 onClick={handleSecondaryAction}>
@@ -693,7 +693,7 @@ const HeroHeader = ({
                                     <Button
                                         asChild
                                         size="sm"
-                                        className={cn('elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled && 'lg:hidden')}>
+                                        className={cn('elite-nav-primary-button elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled && 'lg:hidden')}>
                                         <Link
                                             href={primaryActionHref}
                                             onClick={handlePrimaryAction}>
@@ -703,7 +703,7 @@ const HeroHeader = ({
                                     <Button
                                         asChild
                                         size="sm"
-                                        className={cn('elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled ? 'lg:inline-flex' : 'hidden')}>
+                                        className={cn('elite-nav-primary-button elite-gold-orbit h-9 px-3 text-sm font-medium bg-zinc-900 text-white hover:bg-zinc-800 hover:text-white', isScrolled ? 'lg:inline-flex' : 'hidden')}>
                                         <Link
                                             href={primaryActionHref}
                                             onClick={handlePrimaryAction}>

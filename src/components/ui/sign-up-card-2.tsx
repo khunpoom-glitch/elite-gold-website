@@ -1002,7 +1002,7 @@ export function Component({
       transition={{ duration: isGoogleSignup ? 0.22 : 0.34, ease: [0.22, 1, 0.36, 1] }}
     >
       <motion.div
-        className="group relative"
+        className="elite-auth-card group relative"
         onMouseLeave={handleMouseLeave}
         onMouseMove={handleMouseMove}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
@@ -1010,7 +1010,7 @@ export function Component({
         <div aria-hidden="true" className="elite-login-card-border-light" />
         <div
           className={cn(
-            "relative z-10 rounded-[1.55rem] border border-white/10 bg-[#030303] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
+            "elite-auth-card-surface relative z-10 rounded-[1.55rem] border border-white/10 bg-[#030303] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
             isSignupComplete ? "p-4 sm:p-4" : "p-5 sm:p-6",
             onClose
               ? "max-h-[calc(100svh-3rem)] overflow-y-auto overflow-x-hidden overscroll-contain"
@@ -1164,7 +1164,7 @@ export function Component({
               <>
                 <motion.button
                   aria-busy={isGoogleRedirecting}
-                  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-80"
+                  className="auth-google-button flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-80"
                   disabled={isGoogleRedirecting}
                   onClick={handleGoogleSignup}
                   style={{ fontSize: "0.78rem", lineHeight: 1 }}
@@ -1424,7 +1424,7 @@ export function Component({
               </div>
 
               <ShinyButton
-                className="group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
+                className="auth-submit-button group/button mt-2 h-11 w-full gap-2 rounded-lg px-6 py-2 text-sm font-semibold text-white/90 transition disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={isPending || isGoogleProfileHydrating}
                 style={{
                   "--shiny-button-border": "rgba(255, 255, 255, 0.18)",

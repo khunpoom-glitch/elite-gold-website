@@ -129,7 +129,7 @@ function HomeCard({
 
 function IconTile({ children }: { children: ReactNode }) {
   return (
-    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-soft-gold/30 bg-soft-gold/10 text-soft-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+    <span className="elite-icon-tile grid h-10 w-10 shrink-0 place-items-center rounded-md border border-soft-gold/30 bg-soft-gold/10 text-soft-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
       {children}
     </span>
   );
@@ -292,7 +292,7 @@ export function HomeContentSections() {
         </Container>
       </HomeSection>
 
-      <HomeSection className="border-y" id="membership">
+      <HomeSection id="membership">
         <Container>
           <SectionIntro
             align="center"
