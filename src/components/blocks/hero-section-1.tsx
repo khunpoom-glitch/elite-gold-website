@@ -314,8 +314,8 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         return (
                                             <div
                                                 key={card.title}
-                                                className="elite-home-card group flex min-h-[4.25rem] items-center gap-3 rounded-md border border-white/10 bg-[#171716]/82 p-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_48px_rgba(0,0,0,0.28)] transition-colors hover:border-soft-gold/35">
-                                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-soft-gold/30 bg-soft-gold/10 text-soft-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                                                className="elite-home-card elite-home-preview-card group relative isolate flex min-h-[4.25rem] items-center gap-3 overflow-hidden rounded-md border border-white/10 bg-[#171716]/82 p-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_48px_rgba(0,0,0,0.28)] transition-[background,border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-soft-gold/35">
+                                                <span className="elite-home-preview-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-soft-gold/30 bg-soft-gold/10 text-soft-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                                                     <Icon aria-hidden="true" className="h-4 w-4 stroke-[1.8]" />
                                                 </span>
                                                 <span className="min-w-0">
