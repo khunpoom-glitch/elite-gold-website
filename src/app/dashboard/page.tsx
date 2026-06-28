@@ -118,8 +118,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     <section className="min-h-dvh w-full">
       <header className="sticky top-0 z-20 flex min-h-16 items-center border-b border-white/8 bg-[#1d1d1c]/96 px-4 py-3 backdrop-blur-xl sm:px-6">
         <div className="min-w-0">
-          <p className="text-[0.68rem] font-bold uppercase text-white/32">Member Area</p>
-          <h1 className="mt-1 truncate text-lg font-semibold text-white">Dashboard</h1>
+          <h1 className="truncate text-lg font-semibold text-white">Dashboard</h1>
         </div>
       </header>
 
