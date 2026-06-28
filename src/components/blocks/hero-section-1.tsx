@@ -633,7 +633,7 @@ const HeroHeader = ({
             <nav
                 data-state={menuState && 'active'}
                 className="fixed z-50 w-full px-2 group">
-                <div className={cn('mx-auto mt-2 max-w-6xl px-6 shadow-none transition-[max-width,background-color,box-shadow,backdrop-filter,padding] duration-300 lg:px-12', isScrolled && 'bg-[#1d1d1c]/94 max-w-4xl rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_18px_60px_rgba(0,0,0,0.42)] backdrop-blur-lg lg:px-5')}>
+                <div className={cn('mx-auto mt-2 max-w-6xl px-6 shadow-none transition-[max-width,background-color,box-shadow,backdrop-filter,padding] duration-300 lg:px-12', isScrolled && 'bg-[#1d1d1c]/88 max-w-4xl rounded-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.075),0_14px_44px_rgba(0,0,0,0.32)] backdrop-blur-xl lg:px-5')}>
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
                         <div className="flex w-full justify-between lg:w-auto">
                             <Link
