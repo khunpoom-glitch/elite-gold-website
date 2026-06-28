@@ -104,6 +104,11 @@ body {
   font-family: var(--font-noto-thai), Arial, Helvetica, sans-serif;
 }
 
+html:has(.elite-home-shell),
+body:has(.elite-home-shell) {
+  background: #1d1d1c;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -715,7 +720,7 @@ textarea:-webkit-autofill:active {
 .elite-home-shell {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  overflow: visible;
   background:
     radial-gradient(circle at 18% 4.5rem, rgba(246, 227, 163, 0.085), transparent 25rem),
     radial-gradient(circle at 88% 18rem, rgba(255, 255, 255, 0.045), transparent 28rem),
@@ -725,7 +730,7 @@ textarea:-webkit-autofill:active {
 .elite-home-shell::before,
 .elite-home-shell::after {
   content: "";
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
@@ -752,6 +757,10 @@ textarea:-webkit-autofill:active {
 .elite-home-shell > * {
   position: relative;
   z-index: 1;
+}
+
+.elite-home-shell > header {
+  z-index: 70;
 }
 
 .elite-home-hero {
@@ -800,6 +809,7 @@ textarea:-webkit-autofill:active {
   background:
     radial-gradient(circle at 14% 0%, rgba(246, 227, 163, 0.035), transparent 21rem),
     linear-gradient(180deg, rgba(23, 23, 22, 0.92), rgba(10, 10, 9, 0.96));
+  border-top-color: rgba(255, 255, 255, 0.1);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.035),
     inset 0 -1px 0 rgba(255, 255, 255, 0.026);
@@ -820,9 +830,28 @@ textarea:-webkit-autofill:active {
   opacity: 0.56;
 }
 
+.elite-home-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.12) 18%,
+    rgba(230, 199, 102, 0.16) 50%,
+    rgba(255, 255, 255, 0.1) 82%,
+    transparent
+  );
+}
+
 .elite-home-section > * {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .elite-home-card {
