@@ -853,10 +853,6 @@ textarea:-webkit-autofill:active {
     linear-gradient(180deg, rgba(20, 20, 19, 0.96), rgba(6, 6, 6, 0.99) 72%);
 }
 
-#about-community.elite-home-section::after {
-  content: none;
-}
-
 .elite-home-section::before {
   content: "";
   position: absolute;
@@ -872,29 +868,17 @@ textarea:-webkit-autofill:active {
   opacity: var(--home-section-grid-opacity);
 }
 
-.elite-home-section::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 1;
-  height: 1px;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.038) 12%,
-    rgba(255, 255, 255, 0.11) 46%,
-    rgba(246, 227, 163, 0.038) 58%,
-    rgba(255, 255, 255, 0.048) 84%,
-    transparent
-  );
-}
-
 .elite-home-section > * {
   position: relative;
   z-index: 2;
+}
+
+.elite-public-footer {
+  border-top: 0;
+  background:
+    radial-gradient(ellipse at 16% 0%, rgba(255, 255, 255, 0.028), transparent 24rem),
+    linear-gradient(180deg, rgba(6, 6, 6, 0.99), rgba(23, 23, 22, 0.96) 8rem, rgba(23, 23, 22, 0.96));
+  box-shadow: none;
 }
 
 .elite-home-card {

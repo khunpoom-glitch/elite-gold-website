@@ -39,7 +39,7 @@ type PublicFooterProps = {
 
 export function PublicFooter({ logo }: PublicFooterProps = {}) {
   return (
-    <footer className="border-t border-white/8 bg-[#171716]/96 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] backdrop-blur-xl">
+    <footer className="elite-public-footer backdrop-blur-xl">
       <Container className="grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-[1.35fr_0.85fr_0.85fr_0.85fr]">
         <div>
           {logo ?? <Logo />}
