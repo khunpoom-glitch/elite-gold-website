@@ -162,9 +162,9 @@ function getMemberInitials(name: string, email: string) {
     return (fallback.slice(0, 2) || 'EG').toUpperCase()
 }
 
-const memberMenuItemClass = 'flex min-h-8 items-center gap-2 rounded-lg px-2 text-[0.8125rem] font-medium leading-none tracking-normal text-white/74 transition hover:bg-white/[0.055] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45 disabled:cursor-not-allowed disabled:text-white/32'
-const memberMenuDangerItemClass = 'flex min-h-8 w-full items-center gap-2 rounded-lg px-2 text-left text-[0.8125rem] font-medium leading-none tracking-normal text-[#FF6B6B] transition hover:bg-red-500/10 hover:text-[#FF8A8A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45'
-const memberMenuIconClass = 'size-3.5 text-[#91A0C5]'
+const memberMenuItemClass = 'flex min-h-8 cursor-pointer items-center gap-2 rounded-lg px-2 text-[0.8125rem] font-medium leading-none tracking-normal text-white/72 transition hover:bg-soft-gold/[0.08] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45 disabled:cursor-not-allowed disabled:text-white/32'
+const memberMenuDangerItemClass = 'flex min-h-8 w-full cursor-pointer items-center gap-2 rounded-lg px-2 text-left text-[0.8125rem] font-medium leading-none tracking-normal text-[#FF7373] transition hover:bg-red-500/10 hover:text-[#FF9B9B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45 disabled:cursor-not-allowed'
+const memberMenuIconClass = 'size-3.5 text-soft-gold/72'
 const memberMenuDangerIconClass = 'size-3.5 text-[#FF6B6B]'
 const memberMenuLabelClass = 'text-[0.8125rem] font-medium leading-none tracking-normal'
 const signedOutPublicSession: PublicSessionState = {
@@ -492,11 +492,11 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
 
             {isOpen ? (
                 <div
-                    className="absolute right-0 top-[calc(100%+0.55rem)] z-50 w-[min(16.75rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1rem] border border-white/10 bg-[#050505]/96 text-left shadow-[0_18px_58px_rgba(0,0,0,0.52)] backdrop-blur-xl"
+                    className="elite-member-menu absolute right-0 top-[calc(100%+0.55rem)] z-50 w-[min(16.75rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1rem] border border-white/10 bg-[#10100f]/94 text-left shadow-[0_22px_70px_rgba(0,0,0,0.46)] backdrop-blur-xl"
                     role="menu">
-                    <div className="border-b border-white/8 p-3.5">
+                    <div className="relative z-10 border-b border-white/[0.07] p-3.5">
                         <div className="flex min-w-0 items-start gap-2.5">
-                            <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/22 bg-[#101010] text-[0.68rem] font-extrabold text-[#F6E3A3]">
+                            <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-soft-gold/28 bg-[#11100d] text-[0.68rem] font-extrabold text-[#F6E3A3] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_0_18px_rgba(212,175,55,0.10)]">
                                 {publicSession.memberAvatarUrl ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
@@ -512,13 +512,13 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
                                 <span className="block truncate text-[0.8125rem] font-bold leading-5 text-white">
                                     {publicSession.memberName}
                                 </span>
-                                <span className="block truncate text-[0.72rem] font-medium leading-4 text-[#91A0C5]">
+                                <span className="block truncate text-[0.72rem] font-medium leading-4 text-white/48">
                                     {publicSession.memberEmail || 'Email not set'}
                                 </span>
                             </span>
                         </div>
 
-                        <div className="mt-2.5 rounded-[0.875rem] border border-white/10 bg-white/[0.018] p-2">
+                        <div className="mt-2.5 rounded-[0.875rem] border border-white/10 bg-[#171716]/74 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_14px_34px_rgba(0,0,0,0.24)]">
                             <div className="flex items-center justify-between gap-2.5">
                                 <span className="flex min-w-0 items-center gap-1.5 text-[0.8125rem] font-semibold text-white">
                                     <StatusIcon
@@ -528,7 +528,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
                                     <span className="truncate">{publicSession.memberStatus}</span>
                                 </span>
                                 <Link
-                                    className="inline-flex shrink-0 items-center gap-1 text-[0.8125rem] font-semibold text-[#F6E3A3] transition hover:text-white"
+                                    className="inline-flex shrink-0 cursor-pointer items-center gap-1 text-[0.8125rem] font-semibold text-soft-gold transition hover:text-white"
                                     href={statusActionHref}
                                     onClick={handleMenuLinkClick}>
                                     <span>{publicSession.primaryActionLabel}</span>
@@ -536,7 +536,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
                                 </Link>
                             </div>
 
-                            <div className="mt-2.5 grid gap-1.5 border-t border-white/8 pt-2.5 text-[0.68rem] font-medium text-white/46">
+                            <div className="mt-2.5 grid gap-1.5 border-t border-white/[0.07] pt-2.5 text-[0.68rem] font-medium text-white/46">
                                 {publicSession.memberNickname ? (
                                     <div className="flex items-center justify-between gap-3">
                                         <span>Nickname</span>
@@ -551,7 +551,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
                         </div>
                     </div>
 
-                    <div className="grid p-1.5">
+                    <div className="relative z-10 grid p-1.5">
                         <Link
                             className={memberMenuItemClass}
                             href="/dashboard"
