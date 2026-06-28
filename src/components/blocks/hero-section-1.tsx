@@ -267,13 +267,12 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         key={1}
                                         onClick={handleCommunityClick}
                                         type="button"
-                                        className="h-11 min-w-[16.1875rem] cursor-pointer gap-2.5 rounded-lg px-6 py-2 text-sm font-medium text-white/90 hover:shadow-[0_0_20px_rgba(250,250,250,0.10)]"
+                                        className="elite-home-action-primary h-11 min-w-[16.1875rem] cursor-pointer gap-2.5 rounded-lg px-6 py-2 text-sm font-medium text-white/90"
                                         style={{
-                                            '--shiny-button-border': 'rgba(230, 199, 102, 0.7)',
+                                            '--shiny-button-border': 'rgba(230, 199, 102, 0.58)',
                                             '--shiny-button-border-highlight': 'rgba(255, 248, 215, 0.96)',
-                                            '--shiny-button-border-muted': 'rgba(230, 199, 102, 0.12)',
-                                            '--shiny-button-foreground': 'rgba(255, 255, 255, 0.9)',
-                                            background: '#000000',
+                                            '--shiny-button-border-muted': 'rgba(230, 199, 102, 0.18)',
+                                            '--shiny-button-foreground': 'rgba(255, 255, 255, 0.94)',
                                             fontSize: '0.875rem',
                                             fontWeight: 500,
                                             letterSpacing: 0,
@@ -287,20 +286,7 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         asChild
                                         size="lg"
                                         variant="ghost"
-                                        className="h-11 min-w-[10.75rem] cursor-pointer rounded-lg border border-white/10 bg-[#171716] px-6 py-2 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_16px_34px_rgba(0,0,0,0.36)] hover:border-white/20 hover:bg-white/5 hover:text-white"
-                                        style={{
-                                            background: '#171716',
-                                            border: '1px solid rgba(250, 250, 250, 0.1)',
-                                            borderRadius: '0.5rem',
-                                            boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 34px rgba(0, 0, 0, 0.36)',
-                                            color: '#ffffff',
-                                            fontSize: '0.875rem',
-                                            fontWeight: 500,
-                                            letterSpacing: 0,
-                                            minHeight: '2.75rem',
-                                            minWidth: '10.75rem',
-                                            paddingInline: '1.5rem',
-                                        }}>
+                                        className="elite-home-action-secondary h-11 min-w-[10.75rem] cursor-pointer rounded-lg border px-6 py-2 text-sm font-medium text-white hover:text-white">
                                         <Link
                                             href="/education"
                                             onClick={(event) => navigateToHomeSection(event, '/education', 'trading-education')}>
