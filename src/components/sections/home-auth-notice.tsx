@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, X } from "lucide-react";
 import {
@@ -69,6 +70,7 @@ export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
   });
   const [isDismissed, setIsDismissed] = useState(false);
   const isVisible = Boolean(activeNotice) && !isDismissed;
+  const portalTarget = typeof document === "undefined" ? null : document.body;
 
   useEffect(() => {
     function handleLoggedInNotice() {
@@ -102,25 +104,26 @@ export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
     return () => window.clearTimeout(timer);
   }, [activeNotice]);
 
-  if (!activeNotice) {
+  if (!activeNotice || !portalTarget) {
     return null;
   }
 
   const copy = noticeCopy[activeNotice];
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isVisible ? (
         <motion.div
           animate={{ opacity: 1, y: 0 }}
           aria-live="polite"
-          className="fixed left-1/2 top-[calc(env(safe-area-inset-top)+4.75rem)] z-[120] w-[min(22rem,calc(100vw-2rem))] -translate-x-1/2 sm:top-[5.5rem] lg:top-[5.75rem]"
+          className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+5.75rem)] z-[220] flex justify-center px-4 sm:top-[6.25rem] lg:top-[6.75rem]"
+          data-home-auth-notice
           exit={{ opacity: 0, y: -10 }}
           initial={{ opacity: 0, y: -10 }}
           role="status"
           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="relative flex min-h-[4.5rem] items-center gap-3 rounded-2xl border border-white/10 bg-[#050505]/92 px-4 py-3 pr-11 text-left text-white shadow-[0_18px_55px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+          <div className="pointer-events-auto relative flex min-h-[4.5rem] w-[min(22rem,calc(100vw-2rem))] items-center gap-3 rounded-2xl border border-white/10 bg-[#050505]/92 px-4 py-3 pr-11 text-left text-white shadow-[0_18px_55px_rgba(0,0,0,0.45)] backdrop-blur-xl">
             <span className="grid size-7 shrink-0 place-items-center rounded-full border border-emerald-400/24 bg-emerald-400/10 text-emerald-300">
               <CheckCircle2 aria-hidden="true" className="size-4" />
             </span>
@@ -139,6 +142,7 @@ export function HomeAuthNotice({ notice }: HomeAuthNoticeProps) {
           </div>
         </motion.div>
       ) : null}
-    </AnimatePresence>
+    </AnimatePresence>,
+    portalTarget,
   );
 }
