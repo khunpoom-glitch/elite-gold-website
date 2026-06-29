@@ -12,13 +12,13 @@ export default async function DashboardCommunityPage() {
 
   return (
     <ModulePlaceholder
-      description="Community route นี้เปิดพื้นที่นำทางและ preview สำหรับประกาศ กิจกรรม และ support ก่อนทำ feed/events/support เต็มระบบใน Phase 4."
-      eyebrow="Community Preview"
+      description="A preview space for member updates and community rhythm. Phase 3 keeps the route ready while feed, events, and support workflows are prepared."
+      eyebrow="Community"
       icon={MessagesSquare}
       items={["Community Feed", "Announcements", "Events"]}
       primaryLabel="Open Dashboard"
       primaryHref="/dashboard"
-      title="Community updates have a home"
+      title="Community space is being prepared"
     />
   );
 }

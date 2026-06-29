@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BadgeCheck, KeyRound, Link2, MailCheck, ReceiptText, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import { BadgeCheck, KeyRound, Link2, MailCheck, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
 import { EmailVerificationBanner } from "@/components/dashboard/email-verification-banner";
 import { MemberProfileForm } from "@/components/dashboard/member-profile-form";
@@ -80,26 +80,15 @@ const statusCards = [
     label: "Email",
   },
   {
-    description: "Synced from the authenticated profile record.",
+    description: "Controls access to the member workspace.",
     icon: ShieldCheck,
-    label: "Member Status",
+    label: "Verification",
   },
   {
-    description: "Use forgot/reset password flow for credential changes.",
+    description: "Use the reset flow for password changes.",
     icon: KeyRound,
     label: "Security",
   },
-  {
-    description: "Plans, billing, renewal, and payment history will connect later.",
-    icon: ReceiptText,
-    label: "Membership",
-  },
-];
-
-const reservedCards = [
-  ["Membership", "Current plan, expiry, renewal, and upgrade controls will connect when billing opens."],
-  ["Access Tracking", "Access attribution is recorded by code now; reporting and payout controls stay for later."],
-  ["Billing History", "Receipts and payment records will connect after the membership system is built."],
 ];
 
 export default async function AccountPage({ searchParams }: AccountPageProps) {
@@ -117,7 +106,6 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
     formatEmailStatus(profile.emailConfirmedAt),
     memberStatus,
     "Password actions ready",
-    "Pre-launch member",
   ];
   const accessSignupLink = getAccessSignupLink(profile.memberAccessCode);
   const accountSummary = [
@@ -129,24 +117,24 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
 
   return (
     <section className="grid gap-5">
-      <header className="member-surface overflow-hidden p-5 sm:p-7">
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.42fr)] lg:items-end">
+      <header className="member-surface overflow-hidden p-5 sm:p-6">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,0.36fr)] lg:items-end">
           <div className="max-w-3xl">
             <span className="member-kicker">
               <UserRound aria-hidden="true" className="size-3.5" />
-              Account Settings
+              My Account
             </span>
-            <h1 className="elite-display-type mt-5 text-balance text-3xl font-semibold leading-tight text-white sm:text-4xl">
-              Profile, access, and security
+            <h1 className="mt-4 text-balance text-2xl font-semibold leading-tight text-white sm:text-3xl">
+              Profile, access, and security settings
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/58 sm:text-base">
-              Keep your member identity accurate, confirm account readiness, and manage the access details tied to your profile.
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/54">
+              Keep your profile accurate and manage the verified access details tied to this member account.
             </p>
           </div>
 
           <div className="member-inset-panel grid gap-3 px-4 py-4">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-[0.68rem] font-bold uppercase text-white/36">Account Readiness</p>
+              <p className="text-[0.68rem] font-bold uppercase text-white/36">Readiness</p>
               <BadgeCheck aria-hidden="true" className={isMemberActive ? "size-4 text-emerald-200" : "size-4 text-white/70"} />
             </div>
             <div>
@@ -174,7 +162,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
 
       {!isMemberActive ? <EmailVerificationBanner email={profile.email} /> : null}
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" aria-label="Account status overview">
+      <section className="grid gap-4 md:grid-cols-3" aria-label="Account status overview">
         {statusCards.map((item, index) => {
           const Icon = item.icon;
           const value = statusValues[index];
@@ -198,7 +186,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
         })}
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+      <section className="grid gap-4 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
         <article className="member-surface p-5 sm:p-6">
           <div>
             <p className="text-xs font-bold uppercase text-white/38">Profile Snapshot</p>
@@ -272,15 +260,6 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
           pendingEmailChange={pendingEmailChange}
           profile={profile}
         />
-      </section>
-
-      <section className="grid gap-4 md:grid-cols-3">
-        {reservedCards.map(([title, description]) => (
-          <article className="member-surface-soft p-5" key={title}>
-            <h2 className="text-base font-semibold text-white">{title}</h2>
-            <p className="mt-2 text-sm leading-7 text-white/50">{description}</p>
-          </article>
-        ))}
       </section>
     </section>
   );

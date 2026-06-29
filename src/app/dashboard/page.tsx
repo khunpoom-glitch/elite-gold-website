@@ -5,6 +5,7 @@ import {
   ArrowRight,
   BadgeCheck,
   Link2,
+  MessagesSquare,
   UserRound,
 } from "lucide-react";
 import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
@@ -41,6 +42,12 @@ const nextSteps = [
     description: "Trading review workspace",
     href: "/dashboard/journal",
     label: "Trading Journal",
+    state: "Preview",
+  },
+  {
+    description: "Updates and member conversation hub",
+    href: "/dashboard/community",
+    label: "Community",
     state: "Preview",
   },
 ];
@@ -133,6 +140,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <BadgeCheck aria-hidden="true" className="size-5 shrink-0 text-emerald-200/75" />
             </div>
             <p className="mt-4 max-w-xl text-sm leading-7 text-white/46">{memberStatus}</p>
+            <p className="mt-5 break-all text-xs text-white/34">{profile.email}</p>
           </article>
 
           <article className="min-h-40 rounded-2xl border border-white/7 bg-[#171717] p-5">
@@ -148,6 +156,16 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               label="Copy Access Link"
               value={accessSignupLink}
             />
+            <div className="mt-4 grid gap-2 rounded-xl border border-white/7 bg-[#1D1D1D]/70 px-3 py-3 sm:grid-cols-2">
+              <div>
+                <p className="text-[0.62rem] font-bold uppercase text-white/28">Signup Source</p>
+                <p className="mt-1 text-sm font-semibold text-white/68">{profile.signupAccessCode}</p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] font-bold uppercase text-white/28">Access Status</p>
+                <p className="mt-1 text-sm font-semibold text-emerald-200/68">Ready</p>
+              </div>
+            </div>
           </article>
         </section>
 
@@ -166,7 +184,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 key={step.label}
               >
                 <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/8 bg-[#171717] text-white/42">
-                  <UserRound aria-hidden="true" className="size-4" />
+                  {step.label === "Community" ? (
+                    <MessagesSquare aria-hidden="true" className="size-4" />
+                  ) : (
+                    <UserRound aria-hidden="true" className="size-4" />
+                  )}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold text-white/78">{step.label}</span>

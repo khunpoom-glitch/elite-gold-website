@@ -224,7 +224,7 @@ export function MemberProfileForm({
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs leading-6 text-white/42">
-            Saved changes update your member profile only. Membership, billing, and access attribution stay locked for later phases.
+            Saved changes update your member profile and profile audit history.
           </p>
           <ShinyButton
             className="h-10 gap-2 rounded-xl px-4 py-2 text-sm font-bold sm:w-auto"

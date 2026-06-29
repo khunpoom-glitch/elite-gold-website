@@ -12,13 +12,13 @@ export default async function DashboardJournalPage() {
 
   return (
     <ModulePlaceholder
-      description="Trading Journal route นี้เป็น preview shell สำหรับ Phase 3 เท่านั้น ส่วน Add Trade, History, Statistics และ Screenshots จะถูกทำเป็น feature เต็มใน Phase 4."
-      eyebrow="Journal Preview"
+      description="A focused preview of the future review workspace. Phase 3 keeps the entry point in place while trade entry, history, statistics, and screenshots are prepared."
+      eyebrow="Trading Journal"
       icon={FileClock}
       items={["Add Trade", "Trade History", "Journal Statistics"]}
       primaryLabel="Open Dashboard"
       primaryHref="/dashboard"
-      title="Trading Journal workflow is staged"
+      title="Trading Journal is being prepared"
     />
   );
 }

@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, LockKeyhole } from "lucide-react";
+import { ArrowRight, Clock3 } from "lucide-react";
 import Link from "next/link";
 import { MemberMarketVisual } from "@/components/dashboard/member-market-visual";
 
@@ -55,14 +55,11 @@ export function ModulePlaceholder({
 
       <section className="grid gap-3 md:grid-cols-3">
         {items.map((item) => (
-          <article
-            className="member-surface-soft p-5"
-            key={item}
-          >
-            <LockKeyhole aria-hidden="true" className="size-5 text-white/46" />
+          <article className="member-surface-soft p-5" key={item}>
+            <Clock3 aria-hidden="true" className="size-5 text-white/46" />
             <h2 className="mt-4 text-sm font-semibold text-white">{item}</h2>
             <p className="mt-2 text-sm leading-6 text-white/50">
-              Preview shell only in Phase 3. Full functionality is reserved for the mapped later phase.
+              Prepared for the next rollout. This area stays visible so members understand what is coming next.
             </p>
           </article>
         ))}
