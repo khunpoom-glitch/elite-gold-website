@@ -1,0 +1,92 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+
+import {
+  formatMasterClassReference,
+  getMasterClassPurchaseCta,
+  getPurchaseStatusView,
+  isCoursePurchaseStatus,
+  parseMasterClassPurchase,
+} from "./purchase.ts";
+
+describe("master class purchase helpers", () => {
+  it("formats Master Class reference codes with a stable prefix and padding", () => {
+    assert.equal(formatMasterClassReference(1), "EG-MC-000001");
+    assert.equal(formatMasterClassReference(123), "EG-MC-000123");
+  });
+
+  it("recognizes only supported manual purchase statuses", () => {
+    assert.equal(isCoursePurchaseStatus("payment_started"), true);
+    assert.equal(isCoursePurchaseStatus("pending_review"), true);
+    assert.equal(isCoursePurchaseStatus("approved"), true);
+    assert.equal(isCoursePurchaseStatus("cancelled"), false);
+    assert.equal(isCoursePurchaseStatus(""), false);
+  });
+
+  it("maps empty purchase state to locked buy CTA", () => {
+    const view = getPurchaseStatusView(null);
+    const cta = getMasterClassPurchaseCta(null);
+
+    assert.equal(view.label, "Locked");
+    assert.equal(view.tone, "neutral");
+    assert.deepEqual(cta, {
+      action: "start_purchase",
+      disabled: false,
+      label: "Buy Master Class",
+    });
+  });
+
+  it("maps pending review state to a disabled review CTA", () => {
+    const view = getPurchaseStatusView("pending_review");
+    const cta = getMasterClassPurchaseCta("pending_review");
+
+    assert.equal(view.label, "Pending Review");
+    assert.equal(view.tone, "warning");
+    assert.deepEqual(cta, {
+      action: "wait_for_review",
+      disabled: true,
+      label: "Waiting for approval",
+    });
+  });
+
+  it("maps approved state to learning access", () => {
+    const view = getPurchaseStatusView("approved");
+    const cta = getMasterClassPurchaseCta("approved");
+
+    assert.equal(view.label, "Unlocked");
+    assert.equal(view.tone, "success");
+    assert.deepEqual(cta, {
+      action: "start_learning",
+      disabled: false,
+      label: "Start Learning",
+    });
+  });
+
+  it("parses Master Class purchase rows from Supabase", () => {
+    const parsed = parseMasterClassPurchase({
+      amount_thb: 12900,
+      created_at: "2026-06-29T00:00:00Z",
+      id: "purchase-id",
+      reference_code: "EG-MC-000123",
+      review_reason: null,
+      slip_file_name: "slip.png",
+      slip_storage_path: "member-id/slip.png",
+      status: "pending_review",
+      submitted_at: "2026-06-29T01:00:00Z",
+      updated_at: "2026-06-29T02:00:00Z",
+    });
+
+    assert.deepEqual(parsed, {
+      amountThb: 12900,
+      createdAt: "2026-06-29T00:00:00Z",
+      id: "purchase-id",
+      referenceCode: "EG-MC-000123",
+      reviewReason: null,
+      slipFileName: "slip.png",
+      slipStoragePath: "member-id/slip.png",
+      status: "pending_review",
+      submittedAt: "2026-06-29T01:00:00Z",
+      updatedAt: "2026-06-29T02:00:00Z",
+    });
+  });
+});

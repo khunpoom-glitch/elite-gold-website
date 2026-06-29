@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { HomeAuthNotice } from "@/components/sections/home-auth-notice";
 import { SessionNavBar } from "@/components/ui/sidebar";
+import { getAdminRoleByUserId } from "@/lib/admin/session";
 import { getAuthenticatedMember } from "@/lib/member/session";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: {
@@ -20,12 +22,15 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { email, isMemberActive, memberName, memberStatus, profile } = await getAuthenticatedMember();
+  const { email, isMemberActive, memberName, memberStatus, profile, user } = await getAuthenticatedMember();
+  const supabase = await createSupabaseServerClient();
+  const adminRole = supabase ? await getAdminRoleByUserId(supabase, user.id) : null;
 
   return (
     <main className="member-shell airova-reference-page dark h-dvh overflow-hidden bg-[#1D1D1D] text-foreground">
       <HomeAuthNotice />
       <SessionNavBar
+        isAdmin={Boolean(adminRole)}
         memberEmail={email}
         memberAvatarUrl={profile.avatarUrl}
         memberName={memberName}

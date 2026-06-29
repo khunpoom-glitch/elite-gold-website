@@ -3,6 +3,10 @@ import {
   productionCanonicalSiteUrl,
 } from "@/config/site-url";
 import { randomUUID } from "node:crypto";
+import {
+  buildCoursePurchaseApprovedEmail,
+  buildCoursePurchaseRejectedEmail,
+} from "./course-purchase";
 
 type SendEmailInput = {
   headers?: Record<string, string>;
@@ -21,6 +25,18 @@ type PasswordChangedSecurityDetails = {
   device: string;
   location: string;
   resetUrl: string;
+};
+
+type CoursePurchaseEmailDetails = {
+  courseTitle: string;
+  dashboardUrl: string;
+  name: string;
+  referenceCode: string;
+  to: string;
+};
+
+type CoursePurchaseRejectedEmailDetails = CoursePurchaseEmailDetails & {
+  reason: string;
 };
 
 const resendApiUrl = "https://api.resend.com/emails";
@@ -251,6 +267,30 @@ export async function sendTransactionalEmail({
 
     return { ok: false, reason: "network-error" };
   }
+}
+
+export async function sendCoursePurchaseApprovedEmail({
+  to,
+  ...details
+}: CoursePurchaseEmailDetails) {
+  const email = buildCoursePurchaseApprovedEmail(details);
+
+  return sendTransactionalEmail({
+    ...email,
+    to,
+  });
+}
+
+export async function sendCoursePurchaseRejectedEmail({
+  to,
+  ...details
+}: CoursePurchaseRejectedEmailDetails) {
+  const email = buildCoursePurchaseRejectedEmail(details);
+
+  return sendTransactionalEmail({
+    ...email,
+    to,
+  });
 }
 
 export async function sendEmailVerificationEmail({

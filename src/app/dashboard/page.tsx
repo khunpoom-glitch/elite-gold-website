@@ -12,10 +12,13 @@ import {
   UserRound,
 } from "lucide-react";
 import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
+import { masterClassCourse } from "@/config/education";
 import { memberPackage, memberReadinessItems, memberToolsPreview } from "@/config/member-area";
 import { siteConfig } from "@/config/site";
 import { addAuthNoticeToRedirectPath, loggedInAuthNoticeValue } from "@/lib/auth/redirect-notice";
+import { getPurchaseStatusView, parseMasterClassPurchase } from "@/lib/education/purchase";
 import { getAuthenticatedMember } from "@/lib/member/session";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -98,6 +101,42 @@ function getAccountRedirectFromNotice(verified?: string, notice?: string, auth?:
   return null;
 }
 
+async function getMasterClassDashboardStatus(memberId: string) {
+  const supabase = await createSupabaseServerClient();
+
+  if (!supabase) {
+    return getPurchaseStatusView(null);
+  }
+
+  const [{ data: purchaseData, error: purchaseError }, { data: entitlementData, error: entitlementError }] =
+    await Promise.all([
+      supabase
+        .from("course_purchase_requests")
+        .select("id,reference_code,amount_thb,status,slip_storage_path,slip_file_name,submitted_at,review_reason,created_at,updated_at")
+        .eq("member_id", memberId)
+        .eq("course_slug", masterClassCourse.slug)
+        .maybeSingle(),
+      supabase
+        .from("course_entitlements")
+        .select("id")
+        .eq("member_id", memberId)
+        .eq("course_slug", masterClassCourse.slug)
+        .maybeSingle(),
+    ]);
+
+  if (purchaseError) {
+    console.error("[dashboard] Failed to load Master Class purchase status.", purchaseError);
+  }
+
+  if (entitlementError) {
+    console.error("[dashboard] Failed to load Master Class entitlement status.", entitlementError);
+  }
+
+  const purchase = parseMasterClassPurchase(purchaseData);
+
+  return getPurchaseStatusView(entitlementData || purchase?.status === "approved" ? "approved" : purchase?.status ?? null);
+}
+
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const params = await searchParams;
   const authNotice = getFirstSearchParam(params.auth);
@@ -124,6 +163,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   }
 
   const accessSignupLink = getAccessSignupLink(profile.memberAccessCode);
+  const masterClassStatus = await getMasterClassDashboardStatus(profile.id);
 
   return (
     <section className="min-h-dvh w-full">
@@ -234,10 +274,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="truncate text-sm font-semibold text-white/80">{tool.label}</h3>
                   <span className="rounded-full border border-white/8 bg-[#171717] px-2 py-1 text-[0.6rem] font-bold uppercase text-white/34">
-                    {tool.status}
+                    {tool.label === "Education" ? masterClassStatus.label : tool.status}
                   </span>
                 </div>
-                <p className="mt-3 text-xs leading-6 text-white/38">{tool.description}</p>
+                <p className="mt-3 text-xs leading-6 text-white/38">
+                  {tool.label === "Education"
+                    ? `Master Class: ${masterClassStatus.description}`
+                    : tool.description}
+                </p>
               </article>
             ))}
           </div>

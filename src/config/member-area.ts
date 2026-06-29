@@ -16,8 +16,8 @@ export const memberPackage = {
 export const memberToolsPreview = [
   {
     label: "Education",
-    status: "Preview",
-    description: "Course library and lesson tracking are being prepared.",
+    status: "Master Class",
+    description: "Master Class details, manual purchase status, and lesson structure are live.",
   },
   {
     label: "Trading Journal",

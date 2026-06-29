@@ -10,6 +10,7 @@ import {
   Menu,
   MessagesSquare,
   Settings,
+  ShieldCheck,
   UserCircle,
   type LucideIcon,
 } from "lucide-react";
@@ -21,6 +22,7 @@ import { clearClientAuthSession, waitForLogoutFeedback } from "@/lib/auth/client
 import { cn } from "@/lib/utils";
 
 type SessionNavBarProps = {
+  isAdmin?: boolean;
   isMemberActive: boolean;
   memberAvatarUrl: string | null;
   memberEmail: string;
@@ -99,11 +101,11 @@ const navigationItems: NavItem[] = [
     label: "Dashboard",
   },
   {
-    description: "Structured lessons and learning path",
+    description: "Master Class details and access state",
     href: "/dashboard/education",
     label: "Education",
     icon: GraduationCap,
-    status: "Preview",
+    status: "Master Class",
   },
   {
     description: "Review notes, discipline, and rhythm",
@@ -128,12 +130,22 @@ const navigationItems: NavItem[] = [
   },
 ];
 
-function getNavigationItems(isMemberActive: boolean) {
+const adminNavigationItem: NavItem = {
+  description: "Manual purchase approval and admin tools",
+  href: "/admin",
+  icon: ShieldCheck,
+  label: "Admin Panel",
+  status: "Admin",
+};
+
+function getNavigationItems(isMemberActive: boolean, isAdmin: boolean) {
+  const items = isAdmin ? [...navigationItems, adminNavigationItem] : navigationItems;
+
   if (isMemberActive) {
-    return navigationItems;
+    return items;
   }
 
-  return navigationItems.map((item) =>
+  return items.map((item) =>
     item.href === "/dashboard/account"
       ? item
       : {
@@ -223,6 +235,7 @@ function MobileNavItem({ item, pathname }: { item: NavItem; pathname: string }) 
 }
 
 export function SessionNavBar({
+  isAdmin = false,
   isMemberActive,
   memberAvatarUrl,
   memberEmail,
@@ -232,7 +245,7 @@ export function SessionNavBar({
   const pathname = usePathname();
   const router = useRouter();
   const memberInitial = getInitial(memberName || memberEmail);
-  const visibleNavigationItems = getNavigationItems(isMemberActive);
+  const visibleNavigationItems = getNavigationItems(isMemberActive, isAdmin);
   const statusCopy = isMemberActive ? "Verified workspace" : "Verification required";
   const [collapsed, setCollapsed] = useState(false);
 
@@ -359,7 +372,10 @@ export function SessionNavBar({
 
       <nav
         aria-label="Member navigation"
-        className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-5 gap-1 rounded-full border border-white/10 bg-black/88 p-1 shadow-[0_22px_70px_rgba(0,0,0,0.46)] backdrop-blur-xl lg:hidden"
+        className={cn(
+          "fixed inset-x-3 bottom-3 z-50 grid gap-1 rounded-full border border-white/10 bg-black/88 p-1 shadow-[0_22px_70px_rgba(0,0,0,0.46)] backdrop-blur-xl lg:hidden",
+          visibleNavigationItems.length > 5 ? "grid-cols-6" : "grid-cols-5",
+        )}
       >
         {visibleNavigationItems.map((item) => (
           <MobileNavItem item={item} key={item.label} pathname={pathname} />
