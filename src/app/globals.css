@@ -766,24 +766,14 @@ textarea:-webkit-autofill:active {
 .elite-home-hero {
   position: relative;
   isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
   border-bottom: 0;
-  background:
-    radial-gradient(circle at 50% 7rem, rgba(246, 227, 163, 0.05), transparent 22rem),
-    linear-gradient(180deg, rgba(29, 29, 28, 0.72), rgba(17, 17, 16, 0.68) 62%, rgba(23, 23, 22, 0.88));
+  background: transparent;
 }
 
 .elite-home-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 5rem 5rem;
-  -webkit-mask-image: radial-gradient(ellipse at 50% 24%, rgba(0, 0, 0, 0.56), transparent 68%);
-  mask-image: radial-gradient(ellipse at 50% 24%, rgba(0, 0, 0, 0.56), transparent 68%);
+  content: none;
 }
 
 .elite-home-hero > * {
