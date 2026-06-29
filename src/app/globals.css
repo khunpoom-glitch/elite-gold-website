@@ -106,7 +106,8 @@ body {
 
 html:has(.elite-home-shell),
 body:has(.elite-home-shell) {
-  background: #1d1d1c;
+  background: #111110;
+  overscroll-behavior-y: none;
 }
 
 a {
@@ -721,10 +722,7 @@ textarea:-webkit-autofill:active {
   position: relative;
   isolation: isolate;
   overflow: visible;
-  background:
-    radial-gradient(circle at 18% 4.5rem, rgba(246, 227, 163, 0.052), transparent 25rem),
-    radial-gradient(circle at 88% 18rem, rgba(255, 255, 255, 0.045), transparent 28rem),
-    linear-gradient(180deg, #1d1d1c 0%, #171716 28rem, #111110 54rem, #050505 100%);
+  background: #111110;
 }
 
 .elite-home-shell::before,
@@ -749,9 +747,12 @@ textarea:-webkit-autofill:active {
 
 .elite-home-shell::after {
   background:
+    radial-gradient(circle at 18% 4.5rem, rgba(246, 227, 163, 0.052), transparent 25rem),
+    radial-gradient(circle at 88% 18rem, rgba(255, 255, 255, 0.045), transparent 28rem),
     radial-gradient(ellipse at 50% 0%, rgba(246, 227, 163, 0.032), transparent 30rem),
     radial-gradient(ellipse at 50% 34rem, rgba(0, 0, 0, 0.5), transparent 36rem),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.68), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.7));
+    linear-gradient(90deg, rgba(0, 0, 0, 0.68), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.7)),
+    linear-gradient(180deg, #1d1d1c 0%, #171716 28rem, #111110 54rem, #050505 100%);
 }
 
 .elite-home-shell > * {
