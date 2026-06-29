@@ -106,7 +106,7 @@ body {
 
 html:has(.elite-home-shell),
 body:has(.elite-home-shell) {
-  background: #111110;
+  background: #1d1d1c;
 }
 
 a {
@@ -721,7 +721,10 @@ textarea:-webkit-autofill:active {
   position: relative;
   isolation: isolate;
   overflow: visible;
-  background: #111110;
+  background:
+    radial-gradient(circle at 18% 4.5rem, rgba(246, 227, 163, 0.085), transparent 25rem),
+    radial-gradient(circle at 88% 18rem, rgba(255, 255, 255, 0.045), transparent 28rem),
+    linear-gradient(180deg, #1d1d1c 0%, #171716 28rem, #111110 54rem, #050505 100%);
 }
 
 .elite-home-shell::before,
@@ -746,12 +749,9 @@ textarea:-webkit-autofill:active {
 
 .elite-home-shell::after {
   background:
-    radial-gradient(circle at 18% 4.5rem, rgba(246, 227, 163, 0.085), transparent 25rem),
-    radial-gradient(circle at 88% 18rem, rgba(255, 255, 255, 0.045), transparent 28rem),
     radial-gradient(ellipse at 50% 0%, rgba(246, 227, 163, 0.055), transparent 30rem),
     radial-gradient(ellipse at 50% 34rem, rgba(0, 0, 0, 0.5), transparent 36rem),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.68), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.7)),
-    linear-gradient(180deg, #1d1d1c 0%, #171716 28rem, #111110 54rem, #050505 100%);
+    linear-gradient(90deg, rgba(0, 0, 0, 0.68), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.7));
 }
 
 .elite-home-shell > * {
@@ -797,14 +797,65 @@ textarea:-webkit-autofill:active {
 }
 
 .elite-home-section {
-  background: transparent;
+  --home-section-grid-opacity: 0.48;
+  --home-section-grid-size: 4.5rem;
+  background:
+    radial-gradient(ellipse at 14% -6%, rgba(255, 255, 255, 0.05), transparent 24rem),
+    radial-gradient(circle at 88% 20%, rgba(246, 227, 163, 0.026), transparent 28rem),
+    linear-gradient(180deg, rgba(23, 23, 22, 0.92), rgba(10, 10, 9, 0.96));
   border-top: 0;
   border-bottom: 0;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  box-shadow: none;
+}
+
+#about-community.elite-home-section {
+  --home-section-grid-opacity: 0.42;
+  background:
+    radial-gradient(ellipse at 11% 6%, rgba(255, 255, 255, 0.062), transparent 25rem),
+    radial-gradient(circle at 82% 18%, rgba(246, 227, 163, 0.026), transparent 29rem),
+    linear-gradient(162deg, rgba(25, 25, 24, 0.94), rgba(9, 9, 8, 0.98) 58%, rgba(18, 18, 17, 0.96));
+}
+
+#trading-education.elite-home-section {
+  --home-section-grid-opacity: 0.52;
+  --home-section-grid-size: 4rem;
+  background:
+    radial-gradient(ellipse at 50% -4%, rgba(246, 227, 163, 0.042), transparent 28rem),
+    radial-gradient(circle at 8% 44%, rgba(255, 255, 255, 0.035), transparent 24rem),
+    linear-gradient(180deg, rgba(14, 14, 13, 0.98), rgba(24, 24, 23, 0.93) 44%, rgba(7, 7, 7, 0.98));
+}
+
+#membership.elite-home-section {
+  --home-section-grid-opacity: 0.36;
+  --home-section-grid-size: 5.25rem;
+  background:
+    radial-gradient(ellipse at 86% 8%, rgba(246, 227, 163, 0.058), transparent 27rem),
+    radial-gradient(circle at 18% 78%, rgba(255, 255, 255, 0.028), transparent 25rem),
+    linear-gradient(143deg, rgba(8, 8, 7, 0.99), rgba(24, 23, 20, 0.94) 46%, rgba(5, 5, 5, 0.99));
+}
+
+#faq.elite-home-section {
+  --home-section-grid-opacity: 0.32;
+  --home-section-grid-size: 5rem;
+  background:
+    radial-gradient(ellipse at 20% 12%, rgba(255, 255, 255, 0.038), transparent 26rem),
+    radial-gradient(ellipse at 76% 72%, rgba(246, 227, 163, 0.024), transparent 24rem),
+    linear-gradient(180deg, rgba(20, 20, 19, 0.96), rgba(6, 6, 6, 0.99) 72%);
 }
 
 .elite-home-section::before {
-  content: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px);
+  background-size: var(--home-section-grid-size) var(--home-section-grid-size);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 62%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 62%);
+  opacity: var(--home-section-grid-opacity);
 }
 
 .elite-home-section > * {
@@ -814,8 +865,10 @@ textarea:-webkit-autofill:active {
 
 .elite-public-footer {
   border-top: 0;
-  background: transparent;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  background:
+    radial-gradient(ellipse at 16% 0%, rgba(255, 255, 255, 0.028), transparent 24rem),
+    linear-gradient(180deg, rgba(6, 6, 6, 0.99), rgba(23, 23, 22, 0.96) 8rem, rgba(23, 23, 22, 0.96));
+  box-shadow: none;
 }
 
 .elite-home-card {
