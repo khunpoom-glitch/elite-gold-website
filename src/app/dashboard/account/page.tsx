@@ -186,7 +186,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
         })}
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
+      <section className="grid gap-4 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:items-start">
         <article className="member-surface p-5 sm:p-6">
           <div>
             <p className="text-xs font-bold uppercase text-white/38">Profile Snapshot</p>
