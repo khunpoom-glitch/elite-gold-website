@@ -162,9 +162,9 @@ function getMemberInitials(name: string, email: string) {
     return (fallback.slice(0, 2) || 'EG').toUpperCase()
 }
 
-const memberMenuItemClass = 'flex min-h-8 cursor-pointer items-center gap-2 rounded-lg px-2 text-[0.8125rem] font-medium leading-none tracking-normal text-white/72 transition hover:bg-soft-gold/[0.08] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/45 disabled:cursor-not-allowed disabled:text-white/32'
+const memberMenuItemClass = 'group flex min-h-8 cursor-pointer items-center gap-2 rounded-lg px-2 text-[0.8125rem] font-medium leading-none tracking-normal text-white/68 transition hover:bg-white/[0.065] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40 disabled:cursor-not-allowed disabled:text-white/32'
 const memberMenuDangerItemClass = 'flex min-h-8 w-full cursor-pointer items-center gap-2 rounded-lg px-2 text-left text-[0.8125rem] font-medium leading-none tracking-normal text-[#FF7373] transition hover:bg-red-500/10 hover:text-[#FF9B9B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300/45 disabled:cursor-not-allowed'
-const memberMenuIconClass = 'size-3.5 text-soft-gold/72'
+const memberMenuIconClass = 'size-3.5 text-white/46 transition group-hover:text-white/82'
 const memberMenuDangerIconClass = 'size-3.5 text-[#FF6B6B]'
 const memberMenuLabelClass = 'text-[0.8125rem] font-medium leading-none tracking-normal'
 const signedOutPublicSession: PublicSessionState = {
@@ -467,11 +467,11 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
                     aria-haspopup="menu"
                     aria-disabled={isSigningOut}
                     aria-label="Open member profile menu"
-                    className="flex h-10 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] py-1 pl-1 pr-2 text-white transition hover:border-[#E6C766]/28 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/55 disabled:cursor-wait disabled:opacity-70"
+                    className={cn('flex h-10 min-w-0 items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] py-1 pl-1 pr-2 text-white transition hover:border-white/18 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/45 disabled:cursor-wait disabled:opacity-70', isOpen && 'border-white/18 bg-white/[0.055] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_34px_rgba(0,0,0,0.22)]')}
                     disabled={isSigningOut}
                     onClick={() => setIsOpen((current) => !current)}
                     type="button">
-                    <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-[#E6C766]/24 bg-[#11131A] text-[0.68rem] font-extrabold text-[#F6E3A3]">
+                    <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-white/14 bg-[#171717] text-[0.68rem] font-extrabold text-white/76 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                         {publicSession.memberAvatarUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -485,18 +485,18 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
                     </span>
                     <ChevronDown
                         aria-hidden="true"
-                        className={cn('size-4 shrink-0 text-white/48 transition-transform', isOpen && 'rotate-180 text-[#F6E3A3]')}
+                        className={cn('size-4 shrink-0 text-white/48 transition-transform', isOpen && 'rotate-180 text-white/78')}
                     />
                 </button>
             </div>
 
             {isOpen ? (
                 <div
-                    className="elite-member-menu absolute right-0 top-[calc(100%+0.55rem)] z-50 w-[min(16.75rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1rem] border border-white/10 bg-[#10100f]/94 text-left shadow-[0_22px_70px_rgba(0,0,0,0.46)] backdrop-blur-xl"
+                    className="elite-member-menu absolute right-0 top-[calc(100%+0.55rem)] z-50 w-[min(16.75rem,calc(100vw-1.5rem))] overflow-hidden rounded-[1rem] border border-white/10 bg-[#171717]/95 text-left shadow-[0_22px_70px_rgba(0,0,0,0.46)] backdrop-blur-xl"
                     role="menu">
                     <div className="relative z-10 border-b border-white/[0.07] p-3.5">
                         <div className="flex min-w-0 items-start gap-2.5">
-                            <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-soft-gold/28 bg-[#11100d] text-[0.68rem] font-extrabold text-[#F6E3A3] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_0_18px_rgba(212,175,55,0.10)]">
+                            <span className="relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-full border border-white/14 bg-[#171717] text-[0.68rem] font-extrabold text-white/76 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_14px_28px_rgba(0,0,0,0.26)]">
                                 {publicSession.memberAvatarUrl ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
@@ -528,7 +528,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
                                     <span className="truncate">{publicSession.memberStatus}</span>
                                 </span>
                                 <Link
-                                    className="inline-flex shrink-0 cursor-pointer items-center gap-1 text-[0.8125rem] font-semibold text-soft-gold transition hover:text-white"
+                                    className="inline-flex shrink-0 cursor-pointer items-center gap-1 text-[0.8125rem] font-semibold text-white/78 transition hover:text-white"
                                     href={statusActionHref}
                                     onClick={handleMenuLinkClick}>
                                     <span>{publicSession.primaryActionLabel}</span>
@@ -545,7 +545,7 @@ function MemberProfileMenu({ onLogout, publicSession, onNavigate }: MemberProfil
                                 ) : null}
                                 <div className="flex items-center justify-between gap-3">
                                     <span>Access Code</span>
-                                    <span className="truncate font-bold text-[#F6E3A3]">{accessCode ?? 'Not set'}</span>
+                                    <span className="truncate font-bold text-white/86">{accessCode ?? 'Not set'}</span>
                                 </div>
                             </div>
                         </div>
