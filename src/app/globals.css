@@ -591,6 +591,13 @@ textarea:-webkit-autofill:active {
 
 .member-page-enter {
   animation: memberPageFadeIn 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  padding-bottom: calc(6.5rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 1024px) {
+  .member-page-enter {
+    padding-bottom: 0;
+  }
 }
 
 @keyframes memberBackgroundFadeIn {
