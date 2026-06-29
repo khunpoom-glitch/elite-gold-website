@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { BadgeCheck, KeyRound, Link2, MailCheck, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import { BadgeCheck, CircleDollarSign, KeyRound, Link2, MailCheck, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
 import { EmailVerificationBanner } from "@/components/dashboard/email-verification-banner";
 import { MemberProfileForm } from "@/components/dashboard/member-profile-form";
+import { memberPackage } from "@/config/member-area";
 import { siteConfig } from "@/config/site";
 import { getPendingEmailChangeRequest } from "@/lib/member/profile";
 import { getAuthenticatedMember } from "@/lib/member/session";
@@ -184,6 +185,38 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
             </article>
           );
         })}
+      </section>
+
+      <section className="member-surface p-5 sm:p-6" aria-label="Membership package">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] lg:items-start">
+          <div>
+            <span className="member-kicker">
+              <CircleDollarSign aria-hidden="true" className="size-3.5" />
+              Membership
+            </span>
+            <h2 className="mt-4 text-2xl font-semibold text-white">{memberPackage.name}</h2>
+            <p className="mt-3 text-sm leading-7 text-white/52">{memberPackage.description}</p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="rounded-2xl border border-white/8 bg-[#171717]/62 px-3 py-3">
+                <p className="text-[0.66rem] font-bold uppercase text-white/34">Current Package</p>
+                <p className="mt-1 text-sm font-semibold text-white/82">{memberPackage.statusLabel}</p>
+              </div>
+              <div className="rounded-2xl border border-white/8 bg-[#171717]/62 px-3 py-3">
+                <p className="text-[0.66rem] font-bold uppercase text-white/34">Billing State</p>
+                <p className="mt-1 text-sm font-semibold text-white/82">{memberPackage.billingLabel}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {memberPackage.features.map((feature) => (
+              <div className="flex min-h-16 items-center gap-3 rounded-2xl border border-white/8 bg-[#171717]/62 px-4 py-3" key={feature}>
+                <BadgeCheck aria-hidden="true" className={isMemberActive ? "size-4 shrink-0 text-emerald-200/70" : "size-4 shrink-0 text-white/34"} />
+                <p className="text-sm font-semibold leading-6 text-white/72">{feature}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:items-start">

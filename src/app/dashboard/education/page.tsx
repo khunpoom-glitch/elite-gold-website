@@ -15,7 +15,23 @@ export default async function DashboardEducationPage() {
       description="A calm preview of the learning workspace. Phase 3 keeps the navigation ready while the full course library, lessons, and progress tracking are prepared for the next rollout."
       eyebrow="Education"
       icon={GraduationCap}
-      items={["Course Library", "Video Lessons", "Learning Progress"]}
+      items={[
+        {
+          description: "Structured course categories and member learning paths will live here.",
+          label: "Course Library",
+          status: "Preview",
+        },
+        {
+          description: "Video lesson access, progress state, and lesson notes are reserved for the next rollout.",
+          label: "Video Lessons",
+          status: "Planned",
+        },
+        {
+          description: "Completion and review rhythm will be tracked after the education backend is ready.",
+          label: "Learning Progress",
+          status: "Planned",
+        },
+      ]}
       primaryLabel="Open My Account"
       primaryHref="/dashboard/account"
       title="Trading Education is being prepared"

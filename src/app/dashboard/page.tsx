@@ -4,11 +4,15 @@ import { redirect } from "next/navigation";
 import {
   ArrowRight,
   BadgeCheck,
+  CircleDollarSign,
   Link2,
   MessagesSquare,
+  ShieldCheck,
+  Sparkles,
   UserRound,
 } from "lucide-react";
 import { AccessCodeCopyButton } from "@/components/dashboard/access-code-copy-button";
+import { memberPackage, memberReadinessItems, memberToolsPreview } from "@/config/member-area";
 import { siteConfig } from "@/config/site";
 import { addAuthNoticeToRedirectPath, loggedInAuthNoticeValue } from "@/lib/auth/redirect-notice";
 import { getAuthenticatedMember } from "@/lib/member/session";
@@ -126,6 +130,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       <header className="sticky top-0 z-20 flex min-h-16 items-center border-b border-white/8 bg-[#1D1D1D]/96 px-4 py-3 backdrop-blur-xl sm:px-6">
         <div className="min-w-0">
           <h1 className="truncate text-lg font-semibold text-white">Dashboard</h1>
+          <p className="mt-1 hidden text-xs text-white/36 sm:block">Member home, access status, and next workspace actions</p>
         </div>
       </header>
 
@@ -167,6 +172,75 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
             </div>
           </article>
+        </section>
+
+        <section className="grid gap-5 xl:grid-cols-[minmax(0,0.86fr)_minmax(20rem,0.54fr)]" aria-label="Membership overview">
+          <article className="rounded-2xl border border-white/7 bg-[#171717] p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[0.68rem] font-bold uppercase text-white/34">Membership Package</p>
+                <h2 className="mt-2 text-2xl font-semibold text-white">{memberPackage.name}</h2>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-white/50">{memberPackage.description}</p>
+              </div>
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-white/8 bg-white/[0.035] text-[#F6E3A3]/75">
+                <CircleDollarSign aria-hidden="true" className="size-4" />
+              </span>
+            </div>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-white/7 bg-[#1D1D1D]/70 px-3 py-3">
+                <p className="text-[0.62rem] font-bold uppercase text-white/28">Package Status</p>
+                <p className="mt-1 text-sm font-semibold text-white/72">{memberPackage.statusLabel}</p>
+              </div>
+              <div className="rounded-xl border border-white/7 bg-[#1D1D1D]/70 px-3 py-3">
+                <p className="text-[0.62rem] font-bold uppercase text-white/28">Billing</p>
+                <p className="mt-1 text-sm font-semibold text-white/72">{memberPackage.billingLabel}</p>
+              </div>
+            </div>
+          </article>
+
+          <article className="rounded-2xl border border-white/7 bg-[#171717] p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[0.68rem] font-bold uppercase text-white/34">Account Readiness</p>
+                <h2 className="mt-2 text-xl font-semibold text-white">Ready for member access</h2>
+              </div>
+              <ShieldCheck aria-hidden="true" className="size-5 shrink-0 text-emerald-200/70" />
+            </div>
+
+            <div className="mt-5 grid gap-3">
+              {memberReadinessItems.map((item) => (
+                <div className="flex items-center gap-3 rounded-xl border border-white/7 bg-[#1D1D1D]/70 px-3 py-3" key={item}>
+                  <BadgeCheck aria-hidden="true" className="size-4 shrink-0 text-emerald-200/70" />
+                  <p className="text-sm font-semibold text-white/72">{item}</p>
+                </div>
+              ))}
+            </div>
+          </article>
+        </section>
+
+        <section className="rounded-2xl border border-white/7 bg-[#171717] p-5" aria-label="Workspace modules">
+          <div className="mb-5 flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-white">Workspace modules</h2>
+              <p className="mt-2 text-sm leading-6 text-white/42">A light map of what is live now and what is being prepared next.</p>
+            </div>
+            <Sparkles aria-hidden="true" className="mt-1 size-5 shrink-0 text-[#F6E3A3]/58" />
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {memberToolsPreview.map((tool) => (
+              <article className="rounded-xl border border-white/8 bg-[#1D1D1D] px-4 py-4" key={tool.label}>
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="truncate text-sm font-semibold text-white/80">{tool.label}</h3>
+                  <span className="rounded-full border border-white/8 bg-[#171717] px-2 py-1 text-[0.6rem] font-bold uppercase text-white/34">
+                    {tool.status}
+                  </span>
+                </div>
+                <p className="mt-3 text-xs leading-6 text-white/38">{tool.description}</p>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="rounded-2xl border border-white/7 bg-[#171717] p-5" aria-label="Next actions">
