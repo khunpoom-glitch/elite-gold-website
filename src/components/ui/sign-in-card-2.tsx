@@ -22,7 +22,7 @@ type SignInCardProps = {
 };
 
 const forgotPasswordLinkClassName =
-  "text-xs font-normal text-[#F6E3A3] transition hover:text-white";
+  "text-xs font-normal text-white/78 transition hover:text-white";
 const forgotPasswordLinkStyle = {
   fontSize: "0.75rem",
   fontWeight: 400,
@@ -192,9 +192,9 @@ export function Component({
 
   function getInputClassName(name: LoginFieldName, extraClassName: string) {
     return cn(
-      "elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#050505] text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-[#D4AF37]/60 focus:bg-[#050505] focus:ring-2 focus:ring-[#D4AF37]/18",
+      "elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#171717] text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-white/12 focus:bg-[#171717] focus:ring-2 focus:ring-white/10",
       extraClassName,
-      getFieldError(name) ? "border-[#F6E3A3]/70 ring-2 ring-[#D4AF37]/20" : null,
+      getFieldError(name) ? "border-white/28 ring-2 ring-white/10" : null,
     );
   }
 
@@ -302,7 +302,7 @@ export function Component({
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
       >
         <div aria-hidden="true" className="elite-login-card-border-light" />
-        <div className="relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
+        <div className="relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#171717] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
           {onClose ? (
             <button
               aria-label="Close"
@@ -344,7 +344,7 @@ export function Component({
                     aria-hidden="true"
                     className={cn(
                       "pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 transition-colors",
-                      focusedInput === "email" ? "text-[#F6E3A3]" : "text-[#D4AF37]/70",
+                      focusedInput === "email" ? "text-white/78" : "text-white/48",
                     )}
                   />
                   <input
@@ -369,7 +369,7 @@ export function Component({
                     aria-hidden="true"
                     className={cn(
                       "pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 transition-colors",
-                      focusedInput === "password" ? "text-[#F6E3A3]" : "text-[#D4AF37]/70",
+                      focusedInput === "password" ? "text-white/78" : "text-white/48",
                     )}
                   />
                   <input
@@ -400,7 +400,7 @@ export function Component({
                   <span className="relative grid size-4 shrink-0 place-items-center">
                     <input
                       checked={rememberMe}
-                      className="peer size-4 appearance-none rounded border border-[#D4AF37]/45 bg-white/[0.04] transition checked:border-[#F6E3A3] checked:bg-[#D4AF37] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/60"
+                      className="peer size-4 appearance-none rounded border border-white/12 bg-white/[0.04] transition checked:border-white/80 checked:bg-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
                       name="remember"
                       onChange={() => setRememberMe((current) => !current)}
                       type="checkbox"
@@ -441,7 +441,7 @@ export function Component({
                   "--shiny-button-border-highlight": "rgba(255, 255, 255, 0.42)",
                   "--shiny-button-border-muted": "rgba(255, 255, 255, 0.08)",
                   "--shiny-button-foreground": "rgba(255, 255, 255, 0.92)",
-                  background: "#181818",
+                  background: "#171717",
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                   fontSize: "0.875rem",
                   fontWeight: 650,
@@ -485,7 +485,7 @@ export function Component({
               </div>
 
               <motion.button
-                className="flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-75"
+                className="flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-white/12 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-75"
                 disabled={isGoogleLoading || isPending}
                 onClick={handleGoogleLogin}
                 style={{ fontSize: "0.78rem", lineHeight: 1 }}
@@ -494,7 +494,7 @@ export function Component({
                 whileTap={isGoogleLoading || isPending ? undefined : { scale: 0.985 }}
               >
                 {isGoogleLoading ? (
-                  <LoaderCircle aria-hidden="true" className="size-4 animate-spin text-[#F6E3A3]" />
+                  <LoaderCircle aria-hidden="true" className="size-4 animate-spin text-white/78" />
                 ) : (
                   <GoogleLogo />
                 )}
@@ -505,21 +505,21 @@ export function Component({
                 Don&apos;t have an account?{" "}
                 {onSignupClick ? (
                   <button
-                    className="font-semibold text-[#F6E3A3] transition hover:text-white"
+                    className="font-semibold text-white/78 transition hover:text-white"
                     onClick={onSignupClick}
                     type="button"
                   >
                     Sign up
                   </button>
                 ) : (
-                  <Link className="font-semibold text-[#F6E3A3] transition hover:text-white" href="/signup">
+                  <Link className="font-semibold text-white/78 transition hover:text-white" href="/signup">
                     Sign up
                   </Link>
                 )}
               </p>
 
               {state.status === "success" && !state.redirectTo ? (
-                <p className="rounded-lg border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-3 py-2 text-sm text-[#F6E3A3]">
+                <p className="rounded-lg border border-white/12 bg-white/[0.055] px-3 py-2 text-sm text-white/78">
                   {state.message}
                 </p>
               ) : null}

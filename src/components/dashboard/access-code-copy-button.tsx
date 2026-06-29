@@ -32,7 +32,7 @@ export function AccessCodeCopyButton({
   return (
     <button
       className={cn(
-        "member-shimmer-action inline-flex h-9 items-center justify-center gap-2 rounded-xl border px-3 text-xs font-bold transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50",
+        "member-shimmer-action inline-flex h-9 items-center justify-center gap-2 rounded-xl border px-3 text-xs font-bold transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50",
         className,
       )}
       onClick={handleCopy}

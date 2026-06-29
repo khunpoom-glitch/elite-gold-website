@@ -41,7 +41,7 @@ export function ModulePlaceholder({
             </div>
 
             <Link
-              className="member-shimmer-action inline-flex h-11 w-fit items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6E3A3]/50"
+              className="member-shimmer-action inline-flex h-11 w-fit items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50"
               href={primaryHref}
             >
               {primaryLabel}

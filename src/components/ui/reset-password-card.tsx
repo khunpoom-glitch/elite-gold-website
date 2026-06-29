@@ -100,18 +100,18 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
         <motion.div
           aria-live="polite"
           animate={{ opacity: isLeaving ? 1 : 0 }}
-          className="fixed inset-0 z-[95] grid place-items-center bg-black/96 px-6 text-center backdrop-blur-sm"
+          className="fixed inset-0 z-[95] grid place-items-center bg-[#1D1D1D]/96 px-6 text-center backdrop-blur-sm"
           initial={{ opacity: 0 }}
           role="status"
           transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
         >
           <motion.div
             animate={{ opacity: isLeaving ? 1 : 0, y: isLeaving ? 0 : 6, scale: isLeaving ? 1 : 0.985 }}
-            className="inline-flex items-center gap-3 rounded-full border border-white/12 bg-[#080808]/92 px-4 py-3 text-sm font-semibold text-white/86 shadow-[0_18px_55px_rgba(0,0,0,0.48)]"
+            className="inline-flex items-center gap-3 rounded-full border border-white/12 bg-[#171717]/92 px-4 py-3 text-sm font-semibold text-white/86 shadow-[0_18px_55px_rgba(0,0,0,0.48)]"
             initial={{ opacity: 0, y: 6, scale: 0.985 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
           >
-            <LoaderCircle aria-hidden="true" className="size-4 animate-spin text-[#F6E3A3]" />
+            <LoaderCircle aria-hidden="true" className="size-4 animate-spin text-white/78" />
             <span>Opening login...</span>
           </motion.div>
         </motion.div>
@@ -127,7 +127,7 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
         transition={{ duration: isLeaving ? 0.2 : 0.42, ease: [0.22, 1, 0.36, 1] }}
       >
         <div aria-hidden="true" className="elite-login-card-border-light" />
-        <div className="relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
+        <div className="relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#171717] p-6 text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]">
         <div className="mb-5 text-center">
           <span className="elite-login-card-logo relative mx-auto grid place-items-center">
             <Image
@@ -159,11 +159,11 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
             <span className="relative">
               <Lock
                 aria-hidden="true"
-                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#D4AF37]/70"
+                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/48"
               />
               <input
                 autoComplete="new-password"
-                className="elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#050505] pl-10 pr-11 text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-[#D4AF37]/60 focus:bg-[#050505] focus:ring-2 focus:ring-[#D4AF37]/18"
+                className="elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#171717] pl-10 pr-11 text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-white/12 focus:bg-[#171717] focus:ring-2 focus:ring-white/10"
                 name="password"
                 placeholder="New password"
                 required
@@ -185,11 +185,11 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
             <span className="relative">
               <Lock
                 aria-hidden="true"
-                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#D4AF37]/70"
+                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/48"
               />
               <input
                 autoComplete="new-password"
-                className="elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#050505] pl-10 pr-11 text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-[#D4AF37]/60 focus:bg-[#050505] focus:ring-2 focus:ring-[#D4AF37]/18"
+                className="elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#171717] pl-10 pr-11 text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-white/12 focus:bg-[#171717] focus:ring-2 focus:ring-white/10"
                 name="confirmPassword"
                 placeholder="Confirm password"
                 required
@@ -208,7 +208,7 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
 
           {noticeCopy ? (
             <div
-              className="flex items-start gap-2 rounded-xl border border-[#D4AF37]/28 bg-[#D4AF37]/10 px-3 py-2.5 text-left text-[#F6E3A3]"
+              className="flex items-start gap-2 rounded-xl border border-white/12 bg-white/[0.055] px-3 py-2.5 text-left text-white/78"
               role="alert"
             >
               <AlertTriangle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
@@ -217,7 +217,7 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
                 <span className="mt-0.5 block text-xs leading-5 text-white/62">{noticeCopy.message}</span>
                 {noticeCopy.actionHref && noticeCopy.actionLabel ? (
                   <Link
-                    className="mt-1.5 inline-flex text-xs font-semibold text-[#F6E3A3] transition hover:text-white"
+                    className="mt-1.5 inline-flex text-xs font-semibold text-white/78 transition hover:text-white"
                     href={noticeCopy.actionHref}
                   >
                     {noticeCopy.actionLabel}
@@ -235,7 +235,7 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
               "--shiny-button-border-highlight": "rgba(255, 255, 255, 0.42)",
               "--shiny-button-border-muted": "rgba(255, 255, 255, 0.08)",
               "--shiny-button-foreground": "rgba(255, 255, 255, 0.92)",
-              background: "#181818",
+              background: "#171717",
               boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
               fontSize: "0.875rem",
               fontWeight: 650,
@@ -258,7 +258,7 @@ export function ResetPasswordCard({ usesGoogleSignIn = false }: ResetPasswordCar
 
           <p className="pt-1 text-center text-xs text-white/58">
             Back to{" "}
-            <Link className="font-semibold text-[#F6E3A3] transition hover:text-white" href="/login">
+            <Link className="font-semibold text-white/78 transition hover:text-white" href="/login">
               Login
             </Link>
           </p>

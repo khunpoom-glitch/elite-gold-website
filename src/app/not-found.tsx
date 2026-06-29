@@ -7,7 +7,7 @@ export default function NotFound() {
     <main className="flex min-h-screen items-center">
       <Container>
         <div className="max-w-xl">
-          <p className="text-sm font-semibold uppercase text-soft-gold">
+          <p className="text-sm font-medium uppercase text-white/64">
             404
           </p>
           <h1 className="mt-4 text-4xl font-semibold text-white">ไม่พบหน้าที่ต้องการ</h1>

@@ -233,9 +233,9 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                             <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                                 <AnimatedGroup variants={transitionVariants}>
                                     <div
-                                        className="elite-home-kicker mx-auto mt-6 inline-flex max-w-full items-center rounded-full border border-white/10 bg-[#171716]/72 px-5 py-2 text-[0.62rem] font-semibold uppercase text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-md sm:px-7 sm:py-2.5 sm:text-sm lg:mt-8"
+                                        className="elite-home-kicker mx-auto mt-6 inline-flex max-w-full items-center rounded-full border border-white/10 bg-[#171717]/72 px-5 py-2 text-[0.62rem] font-semibold uppercase text-muted-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-md sm:px-7 sm:py-2.5 sm:text-sm lg:mt-8"
                                         style={{ letterSpacing: 'clamp(0.1em, 0.55vw, 0.22em)' }}>
-                                        <span aria-hidden="true" className="mr-3 text-soft-gold">●</span>
+                                        <span aria-hidden="true" className="mr-3 text-white/64">●</span>
                                         <span className="text-nowrap">DISCIPLINE · STRATEGY · CONSISTENCY</span>
                                     </div>
                                     <h1
@@ -267,15 +267,15 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         key={1}
                                         onClick={handleCommunityClick}
                                         type="button"
-                                        className="h-11 min-w-[16.1875rem] cursor-pointer gap-2.5 rounded-lg px-6 py-2 text-sm font-medium text-white/90 hover:shadow-[0_0_20px_rgba(250,250,250,0.10)]"
+                                        className="h-11 min-w-[16.1875rem] cursor-pointer gap-2.5 rounded-lg px-6 py-2 text-sm font-semibold text-white hover:shadow-[0_0_20px_rgba(250,250,250,0.10)]"
                                         style={{
-                                            '--shiny-button-border': 'rgba(230, 199, 102, 0.7)',
-                                            '--shiny-button-border-highlight': 'rgba(255, 248, 215, 0.96)',
-                                            '--shiny-button-border-muted': 'rgba(230, 199, 102, 0.12)',
-                                            '--shiny-button-foreground': 'rgba(255, 255, 255, 0.9)',
-                                            background: '#000000',
+                                            '--shiny-button-border': 'rgba(252, 253, 255, 0.42)',
+                                            '--shiny-button-border-highlight': 'rgba(252, 253, 255, 0.92)',
+                                            '--shiny-button-border-muted': 'rgba(252, 253, 255, 0.12)',
+                                            '--shiny-button-foreground': 'rgba(255, 255, 255, 0.96)',
+                                            background: '#171717',
                                             fontSize: '0.875rem',
-                                            fontWeight: 500,
+                                            fontWeight: 600,
                                             letterSpacing: 0,
                                         } as React.CSSProperties}>
                                         <Sparkles aria-hidden="true" className="size-4 shrink-0 stroke-[1.85]" />
@@ -287,9 +287,9 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         asChild
                                         size="lg"
                                         variant="ghost"
-                                        className="h-11 min-w-[10.75rem] cursor-pointer rounded-lg border border-white/10 bg-[#171716] px-6 py-2 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_16px_34px_rgba(0,0,0,0.36)] hover:border-white/20 hover:bg-white/5 hover:text-white"
+                                        className="h-11 min-w-[10.75rem] cursor-pointer rounded-lg border border-white/10 bg-[#171717] px-6 py-2 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_16px_34px_rgba(0,0,0,0.36)] hover:border-white/20 hover:bg-white/5 hover:text-white"
                                         style={{
-                                            background: '#171716',
+                                            background: '#171717',
                                             border: '1px solid rgba(250, 250, 250, 0.1)',
                                             borderRadius: '0.5rem',
                                             boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 34px rgba(0, 0, 0, 0.36)',
@@ -328,8 +328,8 @@ export function HeroSection({ publicSession }: HeroSectionProps) {
                                         return (
                                             <div
                                                 key={card.title}
-                                                className="elite-home-card group flex min-h-[4.25rem] items-center gap-3 rounded-md border border-white/10 bg-[#171716]/82 p-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_48px_rgba(0,0,0,0.28)] transition-colors hover:border-soft-gold/35">
-                                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-soft-gold/30 bg-soft-gold/10 text-soft-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                                                className="elite-home-card group flex min-h-[4.25rem] items-center gap-3 rounded-md border border-white/10 bg-[#171717]/82 p-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_48px_rgba(0,0,0,0.28)] transition-colors hover:border-white/18">
+                                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-white/12 bg-white/[0.045] text-white/68 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                                                     <Icon aria-hidden="true" className="h-4 w-4 stroke-[1.8]" />
                                                 </span>
                                                 <span className="min-w-0">
@@ -629,7 +629,7 @@ const HeroHeader = ({
     }, [])
     return (
         <>
-        <header>
+        <header className="fixed inset-x-0 top-0 z-50">
             <nav
                 data-state={menuState && 'active'}
                 className="fixed z-50 w-full px-2 group">

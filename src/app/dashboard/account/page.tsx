@@ -147,10 +147,10 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
           <div className="member-inset-panel grid gap-3 px-4 py-4">
             <div className="flex items-center justify-between gap-3">
               <p className="text-[0.68rem] font-bold uppercase text-white/36">Account Readiness</p>
-              <BadgeCheck aria-hidden="true" className={isMemberActive ? "size-4 text-emerald-200" : "size-4 text-[#F6E3A3]"} />
+              <BadgeCheck aria-hidden="true" className={isMemberActive ? "size-4 text-emerald-200" : "size-4 text-white/70"} />
             </div>
             <div>
-              <p className={isMemberActive ? "text-lg font-semibold text-emerald-200" : "text-lg font-semibold text-[#F6E3A3]"}>
+              <p className={isMemberActive ? "text-lg font-semibold text-emerald-200" : "text-lg font-semibold text-white/70"}>
                 {memberStatus}
               </p>
               <p className="mt-2 break-all text-xs leading-5 text-white/46">{profile.email}</p>
@@ -209,7 +209,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
           </div>
           <dl className="mt-5 grid gap-3">
             {accountSummary.map(([label, value]) => (
-              <div className="rounded-2xl border border-white/8 bg-black/24 px-3 py-3" key={label}>
+              <div className="rounded-2xl border border-white/8 bg-[#171717]/62 px-3 py-3" key={label}>
                 <dt className="text-[0.66rem] font-bold uppercase text-white/34">{label}</dt>
                 <dd className="mt-1 break-words text-sm font-semibold text-white/82">{value}</dd>
               </div>
@@ -232,14 +232,14 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
           </p>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)]">
-            <div className="rounded-2xl border border-white/8 bg-black/24 p-4">
+            <div className="rounded-2xl border border-white/8 bg-[#171717]/62 p-4">
               <p className="text-[0.68rem] font-bold uppercase text-white/36">My Access Code</p>
               <p className="mt-2 text-3xl font-bold text-white">{profile.memberAccessCode}</p>
               <p className="mt-3 text-[0.68rem] font-bold uppercase text-white/36">Signup Source</p>
               <p className="mt-1 text-sm font-semibold text-white/78">{profile.signupAccessCode}</p>
             </div>
 
-            <div className="rounded-2xl border border-white/8 bg-black/24 p-4">
+            <div className="rounded-2xl border border-white/8 bg-[#171717]/62 p-4">
               <div className="flex items-center gap-2 text-xs font-bold uppercase text-white/38">
                 <Link2 aria-hidden="true" className="size-3.5" />
                 Access Link

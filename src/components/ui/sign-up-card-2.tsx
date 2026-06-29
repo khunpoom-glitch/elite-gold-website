@@ -377,9 +377,9 @@ const phoneCountryProfiles = countryProfiles.flatMap((profile) => {
 
 const labelClassName = "grid gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-white/80";
 const inputClassName =
-  "elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#050505] text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-[#D4AF37]/60 focus:bg-[#050505] focus:ring-2 focus:ring-[#D4AF37]/18";
+  "elite-login-card-input h-11 w-full rounded-lg border border-white/10 bg-[#171717] text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:border-white/12 focus:bg-[#171717] focus:ring-2 focus:ring-white/10";
 const iconClassName =
-  "pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#D4AF37]/70 transition-colors";
+  "pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/48 transition-colors";
 const chevronClassName =
   "pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-white/36";
 
@@ -500,7 +500,7 @@ function SearchableCountrySelect<T extends CountryProfile>({
       {isOpen ? (
         <div
           className={cn(
-            "absolute left-0 top-[calc(100%+0.4rem)] z-50 max-h-60 w-full overflow-y-auto rounded-xl border border-white/12 bg-[#0A0A0A]/96 p-1.5 shadow-[0_18px_48px_rgba(0,0,0,0.48),0_0_24px_rgba(212,175,55,0.12)] backdrop-blur-xl",
+            "absolute left-0 top-[calc(100%+0.4rem)] z-50 max-h-60 w-full overflow-y-auto rounded-xl border border-white/12 bg-[#171717]/96 p-1.5 shadow-[0_18px_48px_rgba(0,0,0,0.48),0_0_24px_rgba(255,255,255,0.06)] backdrop-blur-xl",
             dropdownClassName,
           )}
           id={listboxId}
@@ -515,7 +515,7 @@ function SearchableCountrySelect<T extends CountryProfile>({
                   aria-selected={isSelected}
                   className={cn(
                     "flex min-h-9 w-full items-center rounded-lg px-3 text-left text-xs font-medium normal-case tracking-normal text-white/76 transition hover:bg-white/[0.07] hover:text-white",
-                    isSelected ? "bg-[#D4AF37]/18 text-[#F6E3A3]" : null,
+                    isSelected ? "bg-white/[0.08] text-white/88" : null,
                   )}
                   key={option.code}
                   onClick={() => handleSelect(option)}
@@ -891,7 +891,7 @@ export function Component({
     return cn(
       inputClassName,
       extraClassName,
-      getFieldError(name) ? "border-[#F6E3A3]/70 ring-2 ring-[#D4AF37]/20" : null,
+      getFieldError(name) ? "border-white/28 ring-2 ring-white/10" : null,
     );
   }
 
@@ -1010,7 +1010,7 @@ export function Component({
         <div aria-hidden="true" className="elite-login-card-border-light" />
         <div
           className={cn(
-            "relative z-10 rounded-[1.55rem] border border-white/10 bg-[#030303] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
+            "relative z-10 rounded-[1.55rem] border border-white/10 bg-[#171717] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
             isSignupComplete ? "p-4 sm:p-4" : "p-5 sm:p-6",
             onClose
               ? "max-h-[calc(100svh-3rem)] overflow-y-auto overflow-x-hidden overscroll-contain"
@@ -1069,22 +1069,22 @@ export function Component({
                       className="mt-4 flex flex-col items-center gap-2"
                       initial={{ opacity: 0, y: 6 }}
                     >
-                      <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/24 bg-[#D4AF37]/10 px-3 py-1.5 text-[0.7rem] font-semibold text-[#F6E3A3] shadow-[0_0_18px_rgba(212,175,55,0.10)] sm:text-[0.72rem]">
+                      <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.055] px-3 py-1.5 text-[0.7rem] font-semibold text-white/78 shadow-[0_0_18px_rgba(255,255,255,0.06)] sm:text-[0.72rem]">
                         <LoaderCircle aria-hidden="true" className="size-3 animate-spin" />
                         Email verified. Opening dashboard...
                       </span>
                       <span className="h-px w-16 overflow-hidden rounded-full bg-white/10">
                         <motion.span
                           animate={{ x: ["-80%", "180%"] }}
-                          className="block h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-[#F6E3A3]/80 to-transparent"
+                          className="block h-full w-1/2 rounded-full bg-gradient-to-r from-transparent via-white/70 to-transparent"
                           transition={{ duration: 0.72, ease: "easeInOut", repeat: Infinity }}
                         />
                       </span>
                     </motion.div>
                   ) : (
                     <>
-                      <div className="mt-5 rounded-xl border border-[#D4AF37]/16 bg-[#D4AF37]/[0.045] px-3 py-2.5 text-[0.72rem] leading-5 text-white/64 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] sm:text-xs">
-                        Check your inbox and click <span className="font-semibold text-[#F6E3A3]">Verify Email</span> to activate member access.
+                      <div className="mt-5 rounded-xl border border-white/12 bg-white/[0.05] px-3 py-2.5 text-[0.72rem] leading-5 text-white/64 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] sm:text-xs">
+                        Check your inbox and click <span className="font-semibold text-white/78">Verify Email</span> to activate member access.
                       </div>
                       {onClose ? (
                         <button
@@ -1128,7 +1128,7 @@ export function Component({
             </div>
 
             {readableNotice ? (
-              <div className="mb-3 rounded-lg border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-3 py-2 text-xs leading-5 text-[#F6E3A3]" role="status">
+              <div className="mb-3 rounded-lg border border-white/12 bg-white/[0.055] px-3 py-2 text-xs leading-5 text-white/78" role="status">
                 {readableNotice}
               </div>
             ) : null}
@@ -1136,7 +1136,7 @@ export function Component({
             {isGoogleSignup ? (
               <motion.div
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-3 overflow-hidden rounded-lg border border-white/10 bg-[#080808]/92 px-2.5 py-2 text-xs leading-5 text-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)]"
+                className="mb-3 overflow-hidden rounded-lg border border-white/10 bg-[#171717]/92 px-2.5 py-2 text-xs leading-5 text-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)]"
                 initial={{ opacity: 0, y: 6 }}
                 role="status"
               >
@@ -1164,7 +1164,7 @@ export function Component({
               <>
                 <motion.button
                   aria-busy={isGoogleRedirecting}
-                  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-[#D4AF37]/35 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-80"
+                  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] text-[0.78rem] font-normal leading-none text-white/82 transition hover:border-white/12 hover:bg-white/[0.07] hover:text-white disabled:cursor-wait disabled:opacity-80"
                   disabled={isGoogleRedirecting}
                   onClick={handleGoogleSignup}
                   style={{ fontSize: "0.78rem", lineHeight: 1 }}
@@ -1181,7 +1181,7 @@ export function Component({
                         initial={{ opacity: 0 }}
                         key="google-loading"
                       >
-                        <span className="size-4 rounded-full border-2 border-[#F6E3A3]/80 border-t-transparent animate-spin" />
+                        <span className="size-4 rounded-full border-2 border-white/28 border-t-transparent animate-spin" />
                         Connecting to Google...
                       </motion.span>
                     ) : (
@@ -1226,7 +1226,7 @@ export function Component({
                     inputExtraClassName={cn(
                       "pl-3",
                       getFieldError("nationality")
-                        ? "border-[#F6E3A3]/70 ring-2 ring-[#D4AF37]/20"
+                        ? "border-white/28 ring-2 ring-white/10"
                         : null,
                     )}
                     invalid={Boolean(getFieldError("nationality"))}
@@ -1298,7 +1298,7 @@ export function Component({
                       inputExtraClassName={cn(
                         "px-3 pr-8",
                         getFieldError("phoneCountry")
-                          ? "border-[#F6E3A3]/70 ring-2 ring-[#D4AF37]/20"
+                          ? "border-white/28 ring-2 ring-white/10"
                           : null,
                       )}
                       invalid={Boolean(getFieldError("phoneCountry"))}
@@ -1431,7 +1431,7 @@ export function Component({
                   "--shiny-button-border-highlight": "rgba(255, 255, 255, 0.42)",
                   "--shiny-button-border-muted": "rgba(255, 255, 255, 0.08)",
                   "--shiny-button-foreground": "rgba(255, 255, 255, 0.92)",
-                  background: "#181818",
+                  background: "#171717",
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                   fontSize: "0.875rem",
                   fontWeight: 650,
@@ -1450,7 +1450,7 @@ export function Component({
                       initial={{ opacity: 0 }}
                       key="loading"
                     >
-                      <span className="size-4 rounded-full border-2 border-[#F6E3A3]/80 border-t-transparent animate-spin" />
+                      <span className="size-4 rounded-full border-2 border-white/28 border-t-transparent animate-spin" />
                       Sign Up
                     </motion.span>
                   ) : (
@@ -1471,7 +1471,7 @@ export function Component({
                 Already have an account?{" "}
                 {onLoginClick ? (
                   <button
-                    className="font-semibold text-[#F6E3A3] transition hover:text-white"
+                    className="font-semibold text-white/78 transition hover:text-white"
                     onClick={handleLoginClick}
                     type="button"
                   >
@@ -1479,7 +1479,7 @@ export function Component({
                   </button>
                 ) : (
                   <Link
-                    className="font-semibold text-[#F6E3A3] transition hover:text-white"
+                    className="font-semibold text-white/78 transition hover:text-white"
                     href="/login"
                     onClick={() => requestGoogleSignupDraftDiscard()}
                   >

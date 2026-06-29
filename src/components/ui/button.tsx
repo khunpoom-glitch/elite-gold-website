@@ -6,14 +6,14 @@ type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "border border-champagne/60 bg-[linear-gradient(135deg,#fff8d7,#e6c766_44%,#9f741c)] text-black shadow-[0_0_34px_rgba(230,199,102,0.28)] hover:shadow-[0_0_48px_rgba(230,199,102,0.42)] focus-visible:outline-soft-gold",
+    "border border-white/28 bg-[linear-gradient(180deg,#ffffff_0%,#e7e8ec_100%)] !text-[#111111] shadow-[inset_0_1px_0_rgba(255,255,255,0.82),0_16px_42px_rgba(0,0,0,0.32)] hover:bg-[linear-gradient(180deg,#ffffff_0%,#f0f1f4_100%)] hover:!text-[#000000] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_20px_52px_rgba(0,0,0,0.4)] focus-visible:outline-white/70",
   secondary:
-    "border border-white/12 bg-black text-white hover:border-gold/44 hover:bg-black hover:text-champagne focus-visible:outline-white",
+    "border border-white/12 bg-[#171717]/88 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_14px_36px_rgba(0,0,0,0.24)] hover:border-white/22 hover:bg-[#202020] hover:text-white focus-visible:outline-white/60",
   outline:
-    "border border-gold/35 bg-transparent text-soft-gold hover:border-soft-gold hover:bg-gold/10 focus-visible:outline-soft-gold",
+    "border border-white/14 bg-transparent text-white/82 hover:border-white/24 hover:bg-white/[0.06] hover:text-white focus-visible:outline-white/60",
   ghost:
-    "border border-transparent bg-transparent text-text-secondary hover:bg-black hover:text-white focus-visible:outline-white",
-  link: "border border-transparent bg-transparent px-0 text-soft-gold underline-offset-4 hover:text-white hover:underline focus-visible:outline-soft-gold",
+    "border border-transparent bg-transparent text-text-secondary hover:bg-white/[0.06] hover:text-white focus-visible:outline-white/60",
+  link: "border border-transparent bg-transparent px-0 text-white/74 underline-offset-4 hover:text-white hover:underline focus-visible:outline-white/60",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -32,7 +32,7 @@ export function buttonVariants({
   className?: string;
 } = {}) {
   return cn(
-    "elite-action-button inline-flex items-center justify-center gap-2 rounded-xl font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50",
+    "elite-action-button inline-flex items-center justify-center gap-2 rounded-lg font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50",
     variantClasses[variant],
     sizeClasses[size],
     className,

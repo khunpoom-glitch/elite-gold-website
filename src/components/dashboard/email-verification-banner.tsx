@@ -55,7 +55,7 @@ export function EmailVerificationBanner({ email }: EmailVerificationBannerProps)
     <section className="member-surface overflow-hidden p-4 sm:p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035] text-[#F6E3A3]">
+          <span className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035] text-white/70">
             <MailCheck aria-hidden="true" className="size-4" />
           </span>
           <div>
@@ -71,11 +71,11 @@ export function EmailVerificationBanner({ email }: EmailVerificationBannerProps)
             className="h-10 gap-2 rounded-xl px-4 py-2 text-sm font-bold disabled:cursor-wait disabled:opacity-70"
             disabled={isPending || isCoolingDown}
             style={{
-              "--shiny-button-border": "rgba(230, 199, 102, 0.50)",
-              "--shiny-button-border-highlight": "rgba(255, 248, 215, 0.90)",
-              "--shiny-button-border-muted": "rgba(230, 199, 102, 0.10)",
-              "--shiny-button-foreground": "rgba(246, 227, 163, 0.94)",
-              background: "#000000",
+              "--shiny-button-border": "rgba(252, 253, 255, 0.34)",
+              "--shiny-button-border-highlight": "rgba(252, 253, 255, 0.82)",
+              "--shiny-button-border-muted": "rgba(252, 253, 255, 0.10)",
+              "--shiny-button-foreground": "rgba(252, 253, 255, 0.86)",
+              background: "#171717",
               fontSize: "0.875rem",
               fontWeight: 700,
               letterSpacing: 0,

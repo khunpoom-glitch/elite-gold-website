@@ -57,7 +57,7 @@ export default async function ResetPasswordPage() {
   const usesGoogleSignIn = await getUsesGoogleSignIn();
 
   return (
-    <main className="airova-reference-page dark relative isolate grid min-h-dvh place-items-center overflow-hidden bg-black px-4 py-10 text-foreground">
+    <main className="airova-reference-page dark relative isolate grid min-h-dvh place-items-center overflow-hidden bg-[#1D1D1D] px-4 py-10 text-foreground">
       <div className="relative z-10 flex w-full justify-center">
         <ResetPasswordCard usesGoogleSignIn={usesGoogleSignIn} />
       </div>

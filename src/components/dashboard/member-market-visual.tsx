@@ -53,7 +53,7 @@ export function MemberMarketVisual({
           >
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
             <stop offset="28%" stopColor="#ffffff" stopOpacity="0.2" />
-            <stop offset="58%" stopColor="#f6e3a3" stopOpacity="0.86" />
+            <stop offset="58%" stopColor="#fcfdff" stopOpacity="0.72" />
             <stop offset="82%" stopColor="#ffffff" stopOpacity="0.22" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
             <animate
@@ -72,7 +72,7 @@ export function MemberMarketVisual({
             />
           </linearGradient>
           <linearGradient id="member-market-area" x1="0%" x2="0%" y1="0%" y2="100%">
-            <stop offset="0%" stopColor="#f6e3a3" stopOpacity="0.14" />
+            <stop offset="0%" stopColor="#fcfdff" stopOpacity="0.10" />
             <stop offset="48%" stopColor="#9aa4b8" stopOpacity="0.055" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>

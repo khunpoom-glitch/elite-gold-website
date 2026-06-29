@@ -318,7 +318,7 @@ export function Component({
       <div aria-hidden="true" className="elite-login-card-border-light" />
       <div
         className={cn(
-          "relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#030303] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
+          "relative z-10 overflow-hidden rounded-[1.55rem] border border-white/10 bg-[#171717] text-white shadow-[inset_0_1px_0_rgba(248,250,252,0.12),0_34px_90px_rgba(0,0,0,0.58)]",
           isSuccess ? "p-5" : "p-6",
         )}
       >
@@ -375,7 +375,7 @@ export function Component({
             <div aria-live="polite" className="grid gap-4">
               <motion.div
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="rounded-[1.15rem] border border-emerald-300/22 bg-[#080808]/96 px-4 py-4 text-center shadow-[0_18px_60px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.05)]"
+                className="rounded-[1.15rem] border border-emerald-300/22 bg-[#171717]/96 px-4 py-4 text-center shadow-[0_18px_60px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.05)]"
                 initial={{ opacity: 0, scale: 0.965, y: 8 }}
                 role="status"
                 transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
@@ -399,7 +399,7 @@ export function Component({
                     "--shiny-button-border-highlight": "rgba(255, 255, 255, 0.42)",
                     "--shiny-button-border-muted": "rgba(255, 255, 255, 0.08)",
                     "--shiny-button-foreground": "rgba(255, 255, 255, 0.92)",
-                    background: "#181818",
+                    background: "#171717",
                     boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                     fontSize: "0.875rem",
                     fontWeight: 650,
@@ -413,7 +413,7 @@ export function Component({
                 </ShinyButton>
               ) : (
                 <Link
-                  className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-[#181818] px-6 py-2 text-sm font-semibold text-white/90 transition hover:border-white/28 hover:bg-[#202020] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35"
+                  className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-[#202020] px-6 py-2 text-sm font-semibold text-white/90 transition hover:border-white/28 hover:bg-[#202020] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35"
                   href="/login"
                 >
                   Back to Login
@@ -428,16 +428,16 @@ export function Component({
                 <span className="relative">
                   <Mail
                     aria-hidden="true"
-                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#D4AF37]/70"
+                    className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/48"
                   />
                   <input
                     aria-invalid={hasEmailError}
                     autoComplete="email"
                     className={cn(
-                      "elite-login-card-input h-11 w-full rounded-lg border bg-[#050505] pl-10 pr-3 text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:bg-[#050505]",
+                      "elite-login-card-input h-11 w-full rounded-lg border bg-[#171717] pl-10 pr-3 text-sm text-white outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-white/28 focus:bg-[#171717]",
                       hasEmailError
-                        ? "border-[#E6C85C]/70 shadow-[0_0_0_3px_rgba(212,175,55,0.14)] focus:border-[#E6C85C]/80 focus:ring-2 focus:ring-[#D4AF37]/18"
-                        : "border-white/10 focus:border-[#D4AF37]/60 focus:ring-2 focus:ring-[#D4AF37]/18",
+                        ? "border-white/28 shadow-[0_0_0_3px_rgba(255,255,255,0.10)] focus:border-white/28 focus:ring-2 focus:ring-white/10"
+                        : "border-white/10 focus:border-white/12 focus:ring-2 focus:ring-white/10",
                     )}
                     name="email"
                     onChange={(event) => {
@@ -466,7 +466,7 @@ export function Component({
                   "--shiny-button-border-highlight": "rgba(255, 255, 255, 0.42)",
                   "--shiny-button-border-muted": "rgba(255, 255, 255, 0.08)",
                   "--shiny-button-foreground": "rgba(255, 255, 255, 0.92)",
-                  background: "#181818",
+                  background: "#171717",
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                   fontSize: "0.875rem",
                   fontWeight: 650,
@@ -516,14 +516,14 @@ export function Component({
                 Remember your password?{" "}
                 {onLoginClick ? (
                   <button
-                    className="font-semibold text-[#F6E3A3] transition hover:text-white"
+                    className="font-semibold text-white/78 transition hover:text-white"
                     onClick={onLoginClick}
                     type="button"
                   >
                     Login
                   </button>
                 ) : (
-                  <Link className="font-semibold text-[#F6E3A3] transition hover:text-white" href="/login">
+                  <Link className="font-semibold text-white/78 transition hover:text-white" href="/login">
                     Login
                   </Link>
                 )}

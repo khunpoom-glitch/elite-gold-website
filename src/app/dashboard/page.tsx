@@ -116,7 +116,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   return (
     <section className="min-h-dvh w-full">
-      <header className="sticky top-0 z-20 flex min-h-16 items-center border-b border-white/8 bg-[#1d1d1c]/96 px-4 py-3 backdrop-blur-xl sm:px-6">
+      <header className="sticky top-0 z-20 flex min-h-16 items-center border-b border-white/8 bg-[#1D1D1D]/96 px-4 py-3 backdrop-blur-xl sm:px-6">
         <div className="min-w-0">
           <h1 className="truncate text-lg font-semibold text-white">Dashboard</h1>
         </div>
@@ -124,7 +124,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       <div className="grid gap-5 p-4 sm:p-6">
         <section className="grid gap-5 lg:grid-cols-2" aria-label="Dashboard summary">
-          <article className="min-h-40 rounded-2xl border border-white/7 bg-[#171716] p-5">
+          <article className="min-h-40 rounded-2xl border border-white/7 bg-[#171717] p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[0.68rem] font-bold uppercase text-white/34">Member Status</p>
@@ -135,13 +135,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <p className="mt-4 max-w-xl text-sm leading-7 text-white/46">{memberStatus}</p>
           </article>
 
-          <article className="min-h-40 rounded-2xl border border-white/7 bg-[#171716] p-5">
+          <article className="min-h-40 rounded-2xl border border-white/7 bg-[#171717] p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[0.68rem] font-bold uppercase text-white/34">Access Code</p>
                 <h2 className="mt-2 text-3xl font-semibold text-white">{profile.memberAccessCode}</h2>
               </div>
-              <Link2 aria-hidden="true" className="size-5 shrink-0 text-[#F6E3A3]/48" />
+              <Link2 aria-hidden="true" className="size-5 shrink-0 text-white/48" />
             </div>
             <AccessCodeCopyButton
               className="mt-5 h-10 rounded-xl px-4"
@@ -151,7 +151,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </article>
         </section>
 
-        <section className="rounded-2xl border border-white/7 bg-[#171716] p-5" aria-label="Next actions">
+        <section className="rounded-2xl border border-white/7 bg-[#171717] p-5" aria-label="Next actions">
           <div className="mb-5 flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-white">Quick actions</h2>
@@ -161,18 +161,18 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <div className="grid gap-3">
             {nextSteps.map((step) => (
               <Link
-                className="group flex min-h-14 items-center gap-3 rounded-xl border border-white/6 bg-[#242423] px-4 py-3 transition hover:border-white/12 hover:bg-[#2a2a29] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
+                className="group flex min-h-14 items-center gap-3 rounded-xl border border-white/8 bg-[#1D1D1D] px-4 py-3 transition hover:border-white/16 hover:bg-[#232323] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
                 href={step.href}
                 key={step.label}
               >
-                <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/7 bg-[#171716] text-white/42">
+                <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-white/8 bg-[#171717] text-white/42">
                   <UserRound aria-hidden="true" className="size-4" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold text-white/78">{step.label}</span>
                   <span className="block truncate text-xs text-white/35">{step.description}</span>
                 </span>
-                <span className="hidden rounded-full border border-white/7 bg-[#171716] px-2 py-1 text-[0.62rem] font-bold uppercase text-white/34 sm:inline-flex">
+                <span className="hidden rounded-full border border-white/8 bg-[#171717] px-2 py-1 text-[0.62rem] font-bold uppercase text-white/34 sm:inline-flex">
                   {step.state}
                 </span>
                 <ArrowRight aria-hidden="true" className="size-4 shrink-0 text-white/22 transition group-hover:translate-x-0.5 group-hover:text-white/54" />

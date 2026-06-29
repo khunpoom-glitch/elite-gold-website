@@ -50,7 +50,7 @@ export function PublicFooter({ logo }: PublicFooterProps = {}) {
         </div>
         {footerGroups.map((group) => (
           <div key={group.title}>
-            <h2 className="text-sm font-semibold uppercase text-soft-gold">
+            <h2 className="text-sm font-medium uppercase text-white/64">
               {group.title}
             </h2>
             <ul className="mt-4 grid gap-3">

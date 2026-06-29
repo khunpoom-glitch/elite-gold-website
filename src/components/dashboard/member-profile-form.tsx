@@ -30,7 +30,7 @@ function FieldError({ message }: { message?: string }) {
     return null;
   }
 
-  return <span className="text-xs font-medium text-[#F6E3A3]">{message}</span>;
+  return <span className="text-xs font-medium text-white/70">{message}</span>;
 }
 
 function formatPendingDate(value: string) {
@@ -230,11 +230,11 @@ export function MemberProfileForm({
             className="h-10 gap-2 rounded-xl px-4 py-2 text-sm font-bold sm:w-auto"
             disabled={isProfilePending}
             style={{
-              "--shiny-button-border": "rgba(230, 199, 102, 0.46)",
-              "--shiny-button-border-highlight": "rgba(255, 248, 215, 0.88)",
-              "--shiny-button-border-muted": "rgba(230, 199, 102, 0.10)",
-              "--shiny-button-foreground": "rgba(246, 227, 163, 0.94)",
-              background: "#000000",
+              "--shiny-button-border": "rgba(252, 253, 255, 0.34)",
+              "--shiny-button-border-highlight": "rgba(252, 253, 255, 0.82)",
+              "--shiny-button-border-muted": "rgba(252, 253, 255, 0.10)",
+              "--shiny-button-foreground": "rgba(252, 253, 255, 0.86)",
+              background: "#171717",
               fontSize: "0.875rem",
               fontWeight: 700,
               letterSpacing: 0,
@@ -251,7 +251,7 @@ export function MemberProfileForm({
         </div>
       </form>
 
-      <form action={emailFormAction} className="grid gap-4 rounded-2xl border border-white/8 bg-black/24 p-4" noValidate>
+      <form action={emailFormAction} className="grid gap-4 rounded-2xl border border-white/8 bg-[#171717]/62 p-4" noValidate>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-bold uppercase text-white/38">
@@ -264,7 +264,7 @@ export function MemberProfileForm({
             </p>
           </div>
           {pendingEmailChange ? (
-            <span className="rounded-xl border border-[#D4AF37]/25 bg-[#D4AF37]/10 px-3 py-2 text-xs font-semibold leading-5 text-[#F6E3A3]">
+            <span className="rounded-xl border border-white/12 bg-white/[0.045] px-3 py-2 text-xs font-semibold leading-5 text-white/72">
               Pending: {pendingEmailChange.newEmail}
               {pendingEmailChangeDate ? (
                 <span className="block font-medium text-white/46">
@@ -308,11 +308,11 @@ export function MemberProfileForm({
             className="h-10 gap-2 rounded-xl px-4 py-2 text-sm font-bold sm:w-auto"
             disabled={isEmailPending}
             style={{
-              "--shiny-button-border": "rgba(230, 199, 102, 0.46)",
-              "--shiny-button-border-highlight": "rgba(255, 248, 215, 0.88)",
-              "--shiny-button-border-muted": "rgba(230, 199, 102, 0.10)",
-              "--shiny-button-foreground": "rgba(246, 227, 163, 0.94)",
-              background: "#000000",
+              "--shiny-button-border": "rgba(252, 253, 255, 0.34)",
+              "--shiny-button-border-highlight": "rgba(252, 253, 255, 0.82)",
+              "--shiny-button-border-muted": "rgba(252, 253, 255, 0.10)",
+              "--shiny-button-foreground": "rgba(252, 253, 255, 0.86)",
+              background: "#171717",
               fontSize: "0.875rem",
               fontWeight: 700,
               letterSpacing: 0,

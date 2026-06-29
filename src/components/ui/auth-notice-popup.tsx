@@ -31,9 +31,9 @@ const toneStyles = {
     title: "text-white/92",
   },
   warning: {
-    icon: "border-[#D4AF37]/24 bg-[#D4AF37]/[0.075] text-[#F6E3A3]",
-    panel: "border-[#D4AF37]/22 shadow-[0_18px_54px_rgba(0,0,0,0.46),0_0_22px_rgba(212,175,55,0.06)]",
-    title: "text-[#F6E3A3]",
+    icon: "border-white/12 bg-white/[0.05] text-white/78",
+    panel: "border-white/12 shadow-[0_18px_54px_rgba(0,0,0,0.46),0_0_22px_rgba(255,255,255,0.05)]",
+    title: "text-white/78",
   },
 };
 
@@ -77,7 +77,7 @@ export function AuthNoticePopup({
     >
       <div
         className={cn(
-          "pointer-events-auto relative w-full rounded-2xl border bg-[#070707]/96 px-3.5 py-3 pr-11 text-left text-white ring-1 ring-white/[0.035] backdrop-blur-xl",
+          "pointer-events-auto relative w-full rounded-2xl border bg-[#171717]/96 px-3.5 py-3 pr-11 text-left text-white ring-1 ring-white/[0.035] backdrop-blur-xl",
           isFixed ? "max-w-[22.5rem]" : "max-w-full",
           styles.panel,
         )}

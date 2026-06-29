@@ -99,7 +99,7 @@ function SectionIntro({
 }) {
   return (
     <div className={cn("max-w-3xl", align === "center" && "mx-auto text-center")}>
-      <p className="elite-display-type text-xs font-semibold uppercase text-soft-gold sm:text-sm">
+      <p className="elite-display-type text-xs font-medium uppercase text-white/64 sm:text-sm">
         {eyebrow}
       </p>
       <h2 className="elite-display-type mt-3 text-balance text-3xl font-semibold leading-tight text-white sm:text-4xl">
@@ -119,7 +119,7 @@ function HomeCard({
   return (
     <div
       className={cn(
-        "elite-home-card group relative overflow-hidden rounded-md border border-white/10 bg-[#171716]/82 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_20px_64px_rgba(0,0,0,0.34)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-soft-gold/35 hover:bg-[#1d1d1c] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.09),0_0_34px_rgba(212,175,55,0.1),0_24px_76px_rgba(0,0,0,0.42)]",
+        "elite-home-card group relative overflow-hidden rounded-md border border-white/10 bg-[#171717]/82 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_20px_64px_rgba(0,0,0,0.34)] transition-[border-color,background-color,box-shadow] duration-300 hover:border-white/18 hover:bg-[#1D1D1D] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.09),0_24px_76px_rgba(0,0,0,0.42)]",
         className,
       )}
       {...props}
@@ -129,7 +129,7 @@ function HomeCard({
 
 function IconTile({ children }: { children: ReactNode }) {
   return (
-    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-soft-gold/30 bg-soft-gold/10 text-soft-gold shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-white/12 bg-white/[0.045] text-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
       {children}
     </span>
   );
@@ -148,7 +148,7 @@ export function HomeContentSections() {
             />
             <div className="grid gap-4 sm:grid-cols-2">
               <HomeCard className="p-5">
-                <p className="elite-display-type text-xs font-semibold uppercase text-soft-gold">
+                <p className="elite-display-type text-xs font-medium uppercase text-white/64">
                   Vision
                 </p>
                 <p className="mt-4 text-sm leading-7 text-muted-foreground">
@@ -156,7 +156,7 @@ export function HomeContentSections() {
                 </p>
               </HomeCard>
               <HomeCard className="p-5">
-                <p className="elite-display-type text-xs font-semibold uppercase text-soft-gold">
+                <p className="elite-display-type text-xs font-medium uppercase text-white/64">
                   Mission
                 </p>
                 <p className="mt-4 text-sm leading-7 text-muted-foreground">
@@ -194,7 +194,7 @@ export function HomeContentSections() {
 
                 return (
                   <HomeCard className="p-6" key={principle.title}>
-                    <Icon aria-hidden="true" className="h-6 w-6 text-soft-gold" />
+                    <Icon aria-hidden="true" className="h-6 w-6 text-white/68" />
                     <h3 className="mt-5 text-xl font-semibold text-white">{principle.title}</h3>
                     <p className="mt-3 text-sm leading-7 text-muted-foreground">
                       {principle.description}
@@ -222,7 +222,7 @@ export function HomeContentSections() {
           <div className="mt-10 grid gap-4 lg:grid-cols-5">
             {learningPath.map((step, index) => (
               <HomeCard className="p-5" key={step}>
-                <p className="font-mono text-sm text-soft-gold">0{index + 1}</p>
+                <p className="font-mono text-sm text-white/58">0{index + 1}</p>
                 <h3 className="mt-5 text-lg font-semibold text-white">{step}</h3>
               </HomeCard>
             ))}
@@ -238,7 +238,7 @@ export function HomeContentSections() {
             <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
               {courseCategories.map((category) => (
                 <HomeCard className="p-5" key={category}>
-                  <BookOpenCheck aria-hidden="true" className="h-5 w-5 text-soft-gold" />
+                  <BookOpenCheck aria-hidden="true" className="h-5 w-5 text-white/68" />
                   <h3 className="mt-5 text-lg font-semibold text-white">{category}</h3>
                   <p className="mt-2 text-sm leading-7 text-muted-foreground">
                     Structured learning track
@@ -257,7 +257,7 @@ export function HomeContentSections() {
             <div className="grid gap-3">
               {featuredLessons.map((lesson) => (
                 <HomeCard className="flex items-center gap-3 p-4" key={lesson}>
-                  <PlayCircle aria-hidden="true" className="h-5 w-5 shrink-0 text-soft-gold" />
+                  <PlayCircle aria-hidden="true" className="h-5 w-5 shrink-0 text-white/68" />
                   <p className="text-sm font-medium leading-6 text-white">{lesson}</p>
                 </HomeCard>
               ))}
@@ -292,7 +292,7 @@ export function HomeContentSections() {
         </Container>
       </HomeSection>
 
-      <HomeSection className="border-y" id="membership">
+      <HomeSection id="membership">
         <Container>
           <SectionIntro
             align="center"
@@ -305,7 +305,7 @@ export function HomeContentSections() {
               <HomeCard
                 className={cn(
                   "flex min-h-full flex-col p-7",
-                  plan.highlighted && "border-soft-gold/45 bg-[#070604]",
+                  plan.highlighted && "border-white/18 bg-[#171717]/92",
                 )}
                 key={plan.name}
               >
@@ -318,7 +318,7 @@ export function HomeContentSections() {
                     )}
                   </IconTile>
                   {plan.highlighted ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-soft-gold/30 bg-soft-gold/10 px-2.5 py-1 text-xs font-semibold text-soft-gold">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.045] px-2.5 py-1 text-xs font-medium text-white/72">
                       <Crown aria-hidden="true" className="h-3.5 w-3.5" />
                       Recommended
                     </span>
@@ -326,13 +326,13 @@ export function HomeContentSections() {
                 </div>
                 <h3 className="mt-5 text-2xl font-semibold text-white">{plan.name}</h3>
                 <p className="mt-2 text-sm leading-7 text-muted-foreground">{plan.description}</p>
-                <p className="pt-4 text-xl font-semibold text-soft-gold">{plan.price}</p>
+                <p className="pt-4 text-xl font-semibold text-white/82">{plan.price}</p>
                 <ul className="mt-6 grid gap-4 text-sm text-muted-foreground">
                   {plan.features.map((feature) => (
                     <li className="flex gap-3" key={feature}>
                       <CheckCircle2
                         aria-hidden="true"
-                        className="mt-0.5 h-5 w-5 shrink-0 text-soft-gold"
+                        className="mt-0.5 h-5 w-5 shrink-0 text-white/68"
                       />
                       <span>{feature}</span>
                     </li>
@@ -379,7 +379,7 @@ export function HomeContentSections() {
               title="คำถามที่พบบ่อยเกี่ยวกับ Elite Gold Community"
             />
             <div>
-              <p className="elite-display-type text-xs font-semibold uppercase text-soft-gold sm:text-sm">
+              <p className="elite-display-type text-xs font-medium uppercase text-white/64 sm:text-sm">
                 คำถามที่พบบ่อย
               </p>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">
@@ -388,13 +388,13 @@ export function HomeContentSections() {
               <div className="mt-6 grid gap-3">
                 {faqItems.map((item) => (
                   <details
-                    className="elite-home-card group rounded-md border border-white/10 bg-[#171716]/82 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_54px_rgba(0,0,0,0.3)] open:border-soft-gold/35"
+                    className="elite-home-card group rounded-md border border-white/10 bg-[#171717]/82 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_18px_54px_rgba(0,0,0,0.3)] open:border-white/18"
                     key={item.question}
                   >
                     <summary className="cursor-pointer list-none text-base font-semibold text-white marker:hidden">
                       <span className="flex items-center justify-between gap-4">
                         {item.question}
-                        <span className="text-soft-gold transition-transform group-open:rotate-45">
+                        <span className="text-white/64 transition-transform group-open:rotate-45">
                           +
                         </span>
                       </span>

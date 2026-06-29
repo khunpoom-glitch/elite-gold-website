@@ -23,14 +23,14 @@ type AuthModalProps = {
 function SessionExpiredPopup() {
   return (
     <div
-      className="flex min-h-[4.25rem] items-center gap-3 rounded-2xl border border-[#D4AF37]/22 bg-[#070707]/96 px-4 py-3 text-left shadow-[0_18px_54px_rgba(0,0,0,0.46),0_0_22px_rgba(212,175,55,0.06)] ring-1 ring-white/[0.035]"
+      className="flex min-h-[4.25rem] items-center gap-3 rounded-2xl border border-white/12 bg-[#171717]/96 px-4 py-3 text-left shadow-[0_18px_54px_rgba(0,0,0,0.46),0_0_22px_rgba(255,255,255,0.05)] ring-1 ring-white/[0.035]"
       role="status"
     >
-      <span className="grid size-8 shrink-0 place-items-center rounded-full border border-[#D4AF37]/24 bg-[#D4AF37]/[0.075] text-[#F6E3A3]">
+      <span className="grid size-8 shrink-0 place-items-center rounded-full border border-white/12 bg-white/[0.05] text-white/78">
         <Clock3 aria-hidden="true" className="size-4" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-semibold leading-5 text-[#F6E3A3]">
+        <span className="block text-sm font-semibold leading-5 text-white/78">
           Session expired
         </span>
         <span className="mt-0.5 block text-xs leading-5 text-white/62">
@@ -45,7 +45,7 @@ function PasswordUpdatedPopup() {
   return (
     <motion.div
       animate={{ filter: "blur(0px)", opacity: 1, y: 0, scale: 1 }}
-      className="pointer-events-auto flex min-h-[4.25rem] items-center gap-3 rounded-2xl border border-emerald-300/22 bg-[#070707]/96 px-4 py-3 text-left shadow-[0_18px_54px_rgba(0,0,0,0.46),0_0_22px_rgba(16,185,129,0.07)] ring-1 ring-white/[0.035]"
+      className="pointer-events-auto flex min-h-[4.25rem] items-center gap-3 rounded-2xl border border-emerald-300/22 bg-[#171717]/96 px-4 py-3 text-left shadow-[0_18px_54px_rgba(0,0,0,0.46),0_0_22px_rgba(16,185,129,0.07)] ring-1 ring-white/[0.035]"
       exit={{
         filter: "blur(5px)",
         opacity: 0,
