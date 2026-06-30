@@ -1,5 +1,4 @@
 export const coursePurchaseStatuses = [
-  "payment_started",
   "pending_review",
   "approved",
   "rejected",
@@ -15,7 +14,6 @@ export type MasterClassPurchaseAction =
 
 export type MasterClassCheckoutStage =
   | "learning"
-  | "payment_upload"
   | "receipt_received"
   | "resubmission"
   | "start_purchase";
@@ -58,11 +56,6 @@ const purchaseStatusViewByStatus: Record<CoursePurchaseStatus, PurchaseStatusVie
     description: "Your Master Class access has been approved.",
     label: "Unlocked",
     tone: "success",
-  },
-  payment_started: {
-    description: "Bank-transfer instructions are ready. Upload your transfer slip after payment.",
-    label: "Payment Started",
-    tone: "warning",
   },
   pending_review: {
     description: "Your transfer slip has been submitted and is waiting for team review.",
@@ -107,11 +100,11 @@ export function getMasterClassPurchaseCta(status: CoursePurchaseStatus | null): 
     };
   }
 
-  if (status === "payment_started" || status === "rejected") {
+  if (status === "rejected") {
     return {
       action: "upload_slip",
       disabled: false,
-      label: status === "rejected" ? "Upload New Slip" : "Upload Slip",
+      label: "Upload New Slip",
     };
   }
 
@@ -131,10 +124,6 @@ export function getMasterClassCheckoutStage(status: CoursePurchaseStatus | null)
     return "receipt_received";
   }
 
-  if (status === "payment_started") {
-    return "payment_upload";
-  }
-
   if (status === "rejected") {
     return "resubmission";
   }
@@ -148,8 +137,6 @@ export function getMasterClassCheckoutHref(path = "/dashboard/education") {
 
 export function getCoursePurchaseExpiry(status: CoursePurchaseStatus, from = new Date()) {
   const daysByStatus: Partial<Record<CoursePurchaseStatus, number>> = {
-    approved: 90,
-    payment_started: 2,
     rejected: 14,
   };
   const days = daysByStatus[status];

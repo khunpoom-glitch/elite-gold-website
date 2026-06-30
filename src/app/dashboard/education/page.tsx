@@ -23,12 +23,9 @@ import {
 } from "@/lib/education/purchase";
 import { getActiveMemberOrRedirect } from "@/lib/member/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import {
-  uploadMasterClassSlipAction,
-} from "./actions";
+import { uploadMasterClassSlipAction } from "./actions";
 import { BuyMasterClassButton } from "./buy-master-class-button";
 import { CheckoutModalFrame } from "./checkout-modal-frame";
-import { StartPurchaseForm } from "./start-purchase-form";
 import { TransferSlipFileInput } from "./transfer-slip-file-input";
 
 export const metadata: Metadata = {
@@ -55,11 +52,6 @@ function getNotice(notice?: string) {
     case "course_unlocked":
       return {
         message: "Your Master Class access is ready.",
-        tone: "success" as const,
-      };
-    case "purchase_started":
-      return {
-        message: "Your payment reference is ready. Transfer by bank and upload the slip in this checkout window.",
         tone: "success" as const,
       };
     case "purchase_existing":
@@ -197,10 +189,8 @@ function CourseActionCard({
             Start Learning
             <ArrowRight aria-hidden="true" className="size-4" />
           </Link>
-        ) : checkoutStage === "start_purchase" ? (
-          <StartPurchaseForm label="Buy Master Class" />
         ) : (
-          <BuyMasterClassButton>
+          <BuyMasterClassButton label={checkoutStage === "resubmission" ? "Upload New Slip" : "Buy Master Class"}>
             {checkoutContent}
           </BuyMasterClassButton>
         )}
@@ -209,10 +199,10 @@ function CourseActionCard({
   );
 }
 
-function UploadSlipForm({ purchase }: { purchase: MasterClassPurchase }) {
+function UploadSlipForm({ purchase }: { purchase: MasterClassPurchase | null }) {
   return (
     <form action={uploadMasterClassSlipAction} className="grid gap-3">
-      <input name="purchaseId" type="hidden" value={purchase.id} />
+      {purchase ? <input name="purchaseId" type="hidden" value={purchase.id} /> : null}
       <div className="grid gap-2 text-sm font-semibold text-white/76">
         <span>Transfer slip</span>
         <TransferSlipFileInput />
@@ -234,16 +224,21 @@ function UploadSlipForm({ purchase }: { purchase: MasterClassPurchase }) {
   );
 }
 
-function TransferDetails({ purchase }: { purchase: MasterClassPurchase }) {
+function TransferDetails({ purchase }: { purchase: MasterClassPurchase | null }) {
+  const transferDetails = [
+    ["Amount", formatThaiBaht(masterClassBankTransfer.amountThb)],
+    ["Bank", masterClassBankTransfer.bankName],
+    ["Account Name", masterClassBankTransfer.accountName],
+    ["Account No.", masterClassBankTransfer.accountNumber],
+  ];
+
+  if (purchase) {
+    transferDetails.push(["Reference", purchase.referenceCode]);
+  }
+
   return (
     <div className="grid gap-1 rounded-xl border border-white/8 bg-black/26 p-3">
-      {[
-        ["Amount", formatThaiBaht(masterClassBankTransfer.amountThb)],
-        ["Bank", masterClassBankTransfer.bankName],
-        ["Account Name", masterClassBankTransfer.accountName],
-        ["Account No.", masterClassBankTransfer.accountNumber],
-        ["Reference", purchase.referenceCode],
-      ].map(([label, value]) => (
+      {transferDetails.map(([label, value]) => (
         <div className="flex items-start justify-between gap-4 border-b border-white/7 py-2 last:border-b-0" key={label}>
           <span className="text-xs font-bold uppercase text-white/34">{label}</span>
           <span className="text-right text-sm font-semibold text-white/76">{value}</span>
@@ -293,7 +288,7 @@ function CheckoutBody({
     );
   }
 
-  if ((stage === "payment_upload" || stage === "resubmission") && purchase) {
+  if (stage === "start_purchase" || (stage === "resubmission" && purchase)) {
     return (
       <div className="grid gap-4">
         <div>
@@ -311,9 +306,8 @@ function CheckoutBody({
   return (
     <div className="grid gap-4">
       <p className="text-sm leading-7 text-white/56">
-        Open a secure manual checkout reference for Master Class. Bank-transfer details will appear here after the reference is created.
+        Unable to load this checkout right now. Please close this window and try again.
       </p>
-      <StartPurchaseForm label="Create Payment Reference" />
     </div>
   );
 }

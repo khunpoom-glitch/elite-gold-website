@@ -8,9 +8,10 @@ import { CheckoutModalFrame } from "./checkout-modal-frame";
 
 type BuyMasterClassButtonProps = {
   children: ReactNode;
+  label?: string;
 };
 
-export function BuyMasterClassButton({ children }: BuyMasterClassButtonProps) {
+export function BuyMasterClassButton({ children, label = "Buy Master Class" }: BuyMasterClassButtonProps) {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   function openCheckout() {
@@ -24,7 +25,7 @@ export function BuyMasterClassButton({ children }: BuyMasterClassButtonProps) {
         onClick={openCheckout}
         type="button"
       >
-        Buy Master Class
+        {label}
         <ArrowRight aria-hidden="true" className="size-4" />
       </button>
 

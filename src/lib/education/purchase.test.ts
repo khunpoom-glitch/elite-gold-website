@@ -20,9 +20,10 @@ describe("master class purchase helpers", () => {
   });
 
   it("recognizes only supported manual purchase statuses", () => {
-    assert.equal(isCoursePurchaseStatus("payment_started"), true);
+    assert.equal(isCoursePurchaseStatus("payment_started"), false);
     assert.equal(isCoursePurchaseStatus("pending_review"), true);
     assert.equal(isCoursePurchaseStatus("approved"), true);
+    assert.equal(isCoursePurchaseStatus("rejected"), true);
     assert.equal(isCoursePurchaseStatus("cancelled"), false);
     assert.equal(isCoursePurchaseStatus(""), false);
   });
@@ -72,18 +73,16 @@ describe("master class purchase helpers", () => {
 
   it("maps purchase statuses to checkout modal stages", () => {
     assert.equal(getMasterClassCheckoutStage(null), "start_purchase");
-    assert.equal(getMasterClassCheckoutStage("payment_started"), "payment_upload");
     assert.equal(getMasterClassCheckoutStage("pending_review"), "receipt_received");
     assert.equal(getMasterClassCheckoutStage("rejected"), "resubmission");
     assert.equal(getMasterClassCheckoutStage("approved"), "learning");
   });
 
-  it("sets active purchase expiry windows without expiring pending reviews", () => {
+  it("sets the rejected resubmission expiry without expiring review or approved history", () => {
     const now = new Date("2026-06-30T00:00:00.000Z");
 
-    assert.equal(getCoursePurchaseExpiry("payment_started", now)?.toISOString(), "2026-07-02T00:00:00.000Z");
     assert.equal(getCoursePurchaseExpiry("rejected", now)?.toISOString(), "2026-07-14T00:00:00.000Z");
-    assert.equal(getCoursePurchaseExpiry("approved", now)?.toISOString(), "2026-09-28T00:00:00.000Z");
+    assert.equal(getCoursePurchaseExpiry("approved", now), null);
     assert.equal(getCoursePurchaseExpiry("pending_review", now), null);
   });
 

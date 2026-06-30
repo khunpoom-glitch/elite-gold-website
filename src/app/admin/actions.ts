@@ -61,7 +61,7 @@ export async function approveMasterClassPurchaseAction(formData: FormData) {
   const { error: updateError } = await supabase
     .from("course_purchase_requests")
     .update({
-      expires_at: getCoursePurchaseExpiry("approved", new Date(reviewedAt))?.toISOString() ?? null,
+      expires_at: null,
       review_reason: null,
       reviewed_at: reviewedAt,
       reviewed_by: user.id,
