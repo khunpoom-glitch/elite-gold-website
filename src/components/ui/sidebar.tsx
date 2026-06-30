@@ -31,10 +31,12 @@ type SessionNavBarProps = {
 };
 
 type NavItem = {
+  activePath?: string;
   href?: string;
   description: string;
   icon: LucideIcon;
   label: string;
+  prefetch?: false;
   status?: string;
 };
 
@@ -131,10 +133,12 @@ const navigationItems: NavItem[] = [
 ];
 
 const adminNavigationItem: NavItem = {
+  activePath: "/dashboard/admin",
   description: "Manual purchase approval and admin tools",
-  href: "/dashboard/admin",
+  href: "/dashboard/admin/verify?next=%2Fdashboard%2Fadmin",
   icon: ShieldCheck,
   label: "Admin Panel",
+  prefetch: false,
   status: "Admin",
 };
 
@@ -160,17 +164,19 @@ function getInitial(value: string) {
   return value.trim().charAt(0).toUpperCase() || "E";
 }
 
-function isActivePath(pathname: string, href?: string) {
-  if (!href) {
+function isActivePath(pathname: string, item: NavItem) {
+  if (!item.href) {
     return false;
   }
 
-  return href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+  const targetPath = item.activePath ?? item.href.split("?")[0] ?? item.href;
+
+  return targetPath === "/dashboard" ? pathname === targetPath : pathname.startsWith(targetPath);
 }
 
 function DesktopNavItem({ collapsed, item, pathname }: { collapsed: boolean; item: NavItem; pathname: string }) {
   const Icon = item.icon;
-  const isActive = isActivePath(pathname, item.href);
+  const isActive = isActivePath(pathname, item);
   const label = item.status ? `${item.label} (${item.status})` : item.label;
   const className = cn(
     "group flex h-10 items-center rounded-xl text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28",
@@ -194,7 +200,7 @@ function DesktopNavItem({ collapsed, item, pathname }: { collapsed: boolean; ite
 
   if (item.href) {
     return (
-      <Link aria-current={isActive ? "page" : undefined} aria-label={label} className={className} href={item.href} title={label}>
+      <Link aria-current={isActive ? "page" : undefined} aria-label={label} className={className} href={item.href} prefetch={item.prefetch} title={label}>
         {content}
       </Link>
     );
@@ -209,7 +215,7 @@ function DesktopNavItem({ collapsed, item, pathname }: { collapsed: boolean; ite
 
 function MobileNavItem({ item, pathname }: { item: NavItem; pathname: string }) {
   const Icon = item.icon;
-  const isActive = isActivePath(pathname, item.href);
+  const isActive = isActivePath(pathname, item);
   const label = item.status ? `${item.label} (${item.status})` : item.label;
   const className = cn(
     "grid h-12 place-items-center rounded-full border text-white/58 transition",
@@ -221,7 +227,7 @@ function MobileNavItem({ item, pathname }: { item: NavItem; pathname: string }) 
 
   if (item.href) {
     return (
-      <Link aria-label={label} aria-current={isActive ? "page" : undefined} className={className} href={item.href}>
+      <Link aria-label={label} aria-current={isActive ? "page" : undefined} className={className} href={item.href} prefetch={item.prefetch}>
         <Icon aria-hidden="true" className="size-4" />
       </Link>
     );
