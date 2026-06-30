@@ -92,8 +92,8 @@ export default async function AdminVerifyPage({ searchParams }: AdminVerifyPageP
   const canEnterCode = challenge.ok || Boolean(activeChallenge);
 
   return (
-    <section className="-m-4 min-h-[calc(100dvh-4rem)] overflow-hidden sm:-m-6">
-      <div className="relative min-h-[calc(100dvh-4rem)] px-4 py-5 sm:px-6 lg:px-8">
+    <section className="-m-4 min-h-[calc(100svh-4rem)] overflow-hidden sm:-m-6">
+      <div className="relative grid min-h-[calc(100svh-4rem)] place-items-center px-4 py-5 sm:px-6 lg:px-8">
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_78%_20%,rgba(246,227,163,0.10),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.035),transparent_42%)]" />
 
         <div aria-hidden="true" className="absolute inset-0 overflow-hidden opacity-70 blur-[2.5px]">
@@ -141,8 +141,8 @@ export default async function AdminVerifyPage({ searchParams }: AdminVerifyPageP
 
         <div aria-hidden="true" className="absolute inset-0 bg-[#1D1D1D]/58 backdrop-blur-[7px]" />
 
-        <div className="relative z-10 flex min-h-[calc(100dvh-4rem)] items-center justify-end">
-          <div className="w-full max-w-[26rem] rounded-[1.35rem] border border-white/10 bg-[#171717]/92 p-5 shadow-[0_28px_90px_rgba(0,0,0,0.58)] backdrop-blur-2xl sm:p-6">
+        <div className="admin-verification-overlay pointer-events-none fixed bottom-16 right-0 top-16 z-30 grid place-items-center px-4 py-5 sm:px-6 lg:bottom-0 lg:px-8">
+          <div className="pointer-events-auto w-full max-w-[26rem] rounded-[1.35rem] border border-white/10 bg-[#171717]/92 p-5 shadow-[0_28px_90px_rgba(0,0,0,0.58)] backdrop-blur-2xl sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full border border-[#F6E3A3]/18 bg-[#F6E3A3]/7 px-3 py-1 text-[0.68rem] font-bold uppercase text-[#F6E3A3]/82">
