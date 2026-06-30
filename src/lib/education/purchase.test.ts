@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   formatMasterClassReference,
   getCoursePurchaseExpiry,
+  getMasterClassCheckoutHref,
   getMasterClassCheckoutStage,
   getMasterClassPurchaseCta,
   getPurchaseStatusView,
@@ -37,6 +38,10 @@ describe("master class purchase helpers", () => {
       disabled: false,
       label: "Buy Master Class",
     });
+  });
+
+  it("builds a direct checkout modal href for the Master Class buy action", () => {
+    assert.equal(getMasterClassCheckoutHref(), "/dashboard/education?checkout=1");
   });
 
   it("maps pending review state to a disabled review CTA", () => {

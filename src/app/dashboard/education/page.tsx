@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowRight,
   BookOpen,
@@ -15,6 +16,7 @@ import {
 import { masterClassBankTransfer, masterClassCourse } from "@/config/education";
 import {
   formatThaiBaht,
+  getMasterClassCheckoutHref,
   getMasterClassCheckoutStage,
   parseMasterClassPurchase,
   type CoursePurchaseStatus,
@@ -26,6 +28,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   uploadMasterClassSlipAction,
 } from "./actions";
+import { BuyMasterClassButton } from "./buy-master-class-button";
+import { CheckoutModalFrame } from "./checkout-modal-frame";
 import { StartPurchaseForm } from "./start-purchase-form";
 
 export const metadata: Metadata = {
@@ -110,12 +114,6 @@ async function getMasterClassPurchase(memberId: string) {
     };
   }
 
-  const { error: cleanupError } = await supabase.rpc("cleanup_expired_course_purchase_requests");
-
-  if (cleanupError) {
-    console.error("[education] Failed to archive expired Master Class purchases.", cleanupError);
-  }
-
   const [{ data: purchaseData, error: purchaseError }, { data: entitlementData, error: entitlementError }] =
     await Promise.all([
       supabase
@@ -178,7 +176,13 @@ function NoticeBanner({ notice }: { notice: ReturnType<typeof getNotice> }) {
   );
 }
 
-function CourseActionCard({ entitlement }: { entitlement: Entitlement | null }) {
+function CourseActionCard({
+  checkoutHref,
+  entitlement,
+}: {
+  checkoutHref: string;
+  entitlement: Entitlement | null;
+}) {
   return (
     <aside className="member-surface-soft p-4 lg:sticky lg:top-24">
       <p className="text-[0.68rem] font-bold uppercase text-white/36">Course Access</p>
@@ -188,12 +192,12 @@ function CourseActionCard({ entitlement }: { entitlement: Entitlement | null }) 
       </p>
       <div className="mt-5">
         {entitlement ? (
-          <a className="member-shimmer-action inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold" href="#syllabus">
+          <Link className="member-shimmer-action inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold" href="#syllabus" scroll={false}>
             Start Learning
             <ArrowRight aria-hidden="true" className="size-4" />
-          </a>
+          </Link>
         ) : (
-          <StartPurchaseForm />
+          <BuyMasterClassButton checkoutHref={checkoutHref} />
         )}
       </div>
     </aside>
@@ -265,10 +269,10 @@ function CheckoutBody({
         <p className="text-sm leading-7 text-white/58">
           Master Class access is ready for this account.
         </p>
-        <a className="member-shimmer-action inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold" href="/dashboard/education#syllabus">
+        <Link className="member-shimmer-action inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold" href="/dashboard/education#syllabus" scroll={false}>
           Start Learning
           <ArrowRight aria-hidden="true" className="size-4" />
-        </a>
+        </Link>
       </div>
     );
   }
@@ -283,9 +287,9 @@ function CheckoutBody({
             The team will review your transfer and email you after the decision. You can close this window and continue browsing the course details.
           </p>
         </div>
-        <a className="inline-flex h-11 items-center justify-center rounded-xl border border-white/12 bg-white px-4 text-sm font-bold text-black transition hover:bg-white/90" href="/dashboard/education">
+        <Link className="inline-flex h-11 items-center justify-center rounded-xl border border-white/12 bg-white px-4 text-sm font-bold text-black transition hover:bg-white/90" href="/dashboard/education" scroll={false}>
           Close Checkout
-        </a>
+        </Link>
       </div>
     );
   }
@@ -310,7 +314,7 @@ function CheckoutBody({
       <p className="text-sm leading-7 text-white/56">
         Open a secure manual checkout reference for Master Class. Bank-transfer details will appear here after the reference is created.
       </p>
-      <StartPurchaseForm />
+      <StartPurchaseForm label="Create Payment Reference" />
     </div>
   );
 }
@@ -333,40 +337,35 @@ function CheckoutModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex min-h-dvh items-center justify-center overflow-y-auto bg-black/78 px-4 py-4 backdrop-blur-md sm:px-6 sm:py-8">
-      <a aria-label="Close checkout" className="absolute inset-0 cursor-default" href="/dashboard/education" />
-      <section
-        aria-labelledby="master-class-checkout-title"
-        aria-modal="true"
-        className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/10 bg-[#171717] p-4 shadow-2xl shadow-black/50 sm:p-5"
-        role="dialog"
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <span className="member-kicker">
-              <ReceiptText aria-hidden="true" className="size-3.5" />
-              Master Class Checkout
-            </span>
-            <h2 className="mt-3 text-2xl font-semibold text-white" id="master-class-checkout-title">
-              {masterClassCourse.title}
-            </h2>
-          </div>
-          <a
-            aria-label="Close checkout"
-            className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.035] text-white/58 transition hover:border-white/18 hover:text-white"
-            href="/dashboard/education"
-          >
-            <X aria-hidden="true" className="size-4" />
-          </a>
+    <CheckoutModalFrame closeHref="/dashboard/education" labelledBy="master-class-checkout-title">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <span className="member-kicker">
+            <ReceiptText aria-hidden="true" className="size-3.5" />
+            Master Class Checkout
+          </span>
+          <h2 className="mt-3 text-2xl font-semibold text-white" id="master-class-checkout-title">
+            {masterClassCourse.title}
+          </h2>
         </div>
+        <Link
+          aria-label="Close checkout"
+          className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.035] text-white/58 transition hover:border-white/18 hover:text-white"
+          href="/dashboard/education"
+          scroll={false}
+        >
+          <X aria-hidden="true" className="size-4" />
+        </Link>
+      </div>
+      {notice ? (
         <div className="mt-4">
           <NoticeBanner notice={notice} />
         </div>
-        <div className="mt-4">
-          <CheckoutBody entitlement={entitlement} purchase={purchase} stage={stage} />
-        </div>
-      </section>
-    </div>
+      ) : null}
+      <div className="mt-4">
+        <CheckoutBody entitlement={entitlement} purchase={purchase} stage={stage} />
+      </div>
+    </CheckoutModalFrame>
   );
 }
 
@@ -377,6 +376,7 @@ export default async function DashboardEducationPage({ searchParams }: Education
   const { entitlement, purchase } = await getMasterClassPurchase(profile.id);
   const status = getEffectiveStatus(purchase, entitlement);
   const checkoutStage = getMasterClassCheckoutStage(status);
+  const checkoutHref = getMasterClassCheckoutHref();
   const isCheckoutOpen = getFirstSearchParam(params.checkout) === "1" || Boolean(notice);
   const stats = [
     ["Level", masterClassCourse.level],
@@ -423,7 +423,7 @@ export default async function DashboardEducationPage({ searchParams }: Education
               ))}
             </div>
           </div>
-          <CourseActionCard entitlement={entitlement} />
+          <CourseActionCard checkoutHref={checkoutHref} entitlement={entitlement} />
         </div>
       </header>
 

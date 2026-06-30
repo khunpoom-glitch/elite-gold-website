@@ -142,6 +142,10 @@ export function getMasterClassCheckoutStage(status: CoursePurchaseStatus | null)
   return "start_purchase";
 }
 
+export function getMasterClassCheckoutHref(path = "/dashboard/education") {
+  return `${path}?checkout=1`;
+}
+
 export function getCoursePurchaseExpiry(status: CoursePurchaseStatus, from = new Date()) {
   const daysByStatus: Partial<Record<CoursePurchaseStatus, number>> = {
     approved: 90,
