@@ -59,10 +59,17 @@ function getNotice(notice?: string) {
 
 async function getAdminPurchases() {
   const { supabase } = await getAuthenticatedAdmin("/admin");
+  const { error: cleanupError } = await supabase.rpc("cleanup_expired_course_purchase_requests");
+
+  if (cleanupError) {
+    console.error("[admin] Failed to archive expired course purchase requests.", cleanupError);
+  }
+
   const { data, error } = await supabase
     .from("course_purchase_requests")
-    .select("id,reference_code,amount_thb,status,slip_storage_path,slip_file_name,submitted_at,review_reason,created_at,updated_at,member_email,member_name")
+    .select("id,reference_code,amount_thb,status,slip_storage_path,slip_file_name,submitted_at,review_reason,created_at,updated_at,expires_at,archived_at,member_email,member_name")
     .eq("course_slug", masterClassCourse.slug)
+    .is("archived_at", null)
     .order("created_at", { ascending: false })
     .limit(50);
 
@@ -222,7 +229,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         </span>
         <h1 className="mt-4 text-3xl font-semibold text-white">Manual purchase approval</h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-white/52">
-          Review transfer slips, approve Master Class access, or reject with a reason that members can see and receive by email.
+          Review active transfer slips, approve Master Class access, or reject with an email reason. Expired checkout statuses are archived from this active queue.
         </p>
       </section>
 

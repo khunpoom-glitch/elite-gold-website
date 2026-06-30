@@ -101,7 +101,7 @@ const navigationItems: NavItem[] = [
     label: "Dashboard",
   },
   {
-    description: "Master Class details and access state",
+    description: "Master Class details and lesson structure",
     href: "/dashboard/education",
     label: "Education",
     icon: GraduationCap,

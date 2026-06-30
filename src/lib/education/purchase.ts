@@ -13,6 +13,13 @@ export type MasterClassPurchaseAction =
   | "wait_for_review"
   | "start_learning";
 
+export type MasterClassCheckoutStage =
+  | "learning"
+  | "payment_upload"
+  | "receipt_received"
+  | "resubmission"
+  | "start_purchase";
+
 export type MasterClassPurchaseCta = {
   action: MasterClassPurchaseAction;
   disabled: boolean;
@@ -27,7 +34,9 @@ export type PurchaseStatusView = {
 
 export type MasterClassPurchase = {
   amountThb: number;
+  archivedAt: string | null;
   createdAt: string;
+  expiresAt: string | null;
   id: string;
   referenceCode: string;
   reviewReason: string | null;
@@ -107,6 +116,41 @@ export function getMasterClassPurchaseCta(status: CoursePurchaseStatus | null): 
   };
 }
 
+export function getMasterClassCheckoutStage(status: CoursePurchaseStatus | null): MasterClassCheckoutStage {
+  if (status === "approved") {
+    return "learning";
+  }
+
+  if (status === "pending_review") {
+    return "receipt_received";
+  }
+
+  if (status === "payment_started") {
+    return "payment_upload";
+  }
+
+  if (status === "rejected") {
+    return "resubmission";
+  }
+
+  return "start_purchase";
+}
+
+export function getCoursePurchaseExpiry(status: CoursePurchaseStatus, from = new Date()) {
+  const daysByStatus: Partial<Record<CoursePurchaseStatus, number>> = {
+    approved: 90,
+    payment_started: 2,
+    rejected: 14,
+  };
+  const days = daysByStatus[status];
+
+  if (!days) {
+    return null;
+  }
+
+  return new Date(from.getTime() + days * 24 * 60 * 60 * 1000);
+}
+
 export function formatMasterClassReference(sequence: number) {
   return `EG-MC-${Math.max(0, Math.trunc(sequence)).toString().padStart(6, "0")}`;
 }
@@ -142,7 +186,9 @@ export function parseMasterClassPurchase(row: unknown): MasterClassPurchase | nu
 
   return {
     amountThb: getNumber(row.amount_thb),
+    archivedAt: getNullableString(row.archived_at),
     createdAt: getString(row.created_at),
+    expiresAt: getNullableString(row.expires_at),
     id: getString(row.id),
     referenceCode: getString(row.reference_code),
     reviewReason: getNullableString(row.review_reason),

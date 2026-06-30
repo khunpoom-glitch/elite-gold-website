@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { masterClassCourse } from "@/config/education";
 import { siteConfig } from "@/config/site";
 import { getAuthenticatedAdmin } from "@/lib/admin/session";
-import { parseMasterClassPurchase } from "@/lib/education/purchase";
+import { getCoursePurchaseExpiry, parseMasterClassPurchase } from "@/lib/education/purchase";
 import {
   sendCoursePurchaseApprovedEmail,
   sendCoursePurchaseRejectedEmail,
@@ -61,6 +61,7 @@ export async function approveMasterClassPurchaseAction(formData: FormData) {
   const { error: updateError } = await supabase
     .from("course_purchase_requests")
     .update({
+      expires_at: getCoursePurchaseExpiry("approved", new Date(reviewedAt))?.toISOString() ?? null,
       review_reason: null,
       reviewed_at: reviewedAt,
       reviewed_by: user.id,
@@ -151,11 +152,13 @@ export async function rejectMasterClassPurchaseAction(formData: FormData) {
     redirectWithNotice("invalid_purchase_state");
   }
 
+  const reviewedAt = new Date().toISOString();
   const { error: updateError } = await supabase
     .from("course_purchase_requests")
     .update({
+      expires_at: getCoursePurchaseExpiry("rejected", new Date(reviewedAt))?.toISOString() ?? null,
       review_reason: reason,
-      reviewed_at: new Date().toISOString(),
+      reviewed_at: reviewedAt,
       reviewed_by: user.id,
       status: "rejected",
     })

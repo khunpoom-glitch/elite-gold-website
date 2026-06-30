@@ -4,21 +4,21 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
-  Clock3,
   FileText,
   GraduationCap,
   LockKeyhole,
   ReceiptText,
   ShieldCheck,
   UploadCloud,
+  X,
 } from "lucide-react";
 import { masterClassBankTransfer, masterClassCourse } from "@/config/education";
 import {
   formatThaiBaht,
-  getMasterClassPurchaseCta,
-  getPurchaseStatusView,
+  getMasterClassCheckoutStage,
   parseMasterClassPurchase,
   type CoursePurchaseStatus,
+  type MasterClassCheckoutStage,
   type MasterClassPurchase,
 } from "@/lib/education/purchase";
 import { getActiveMemberOrRedirect } from "@/lib/member/session";
@@ -34,6 +34,7 @@ export const metadata: Metadata = {
 
 type EducationPageProps = {
   searchParams: Promise<{
+    checkout?: string | string[];
     notice?: string | string[];
   }>;
 };
@@ -48,19 +49,24 @@ function getFirstSearchParam(value?: string | string[]) {
 
 function getNotice(notice?: string) {
   switch (notice) {
+    case "course_unlocked":
+      return {
+        message: "Your Master Class access is ready.",
+        tone: "success" as const,
+      };
     case "purchase_started":
       return {
-        message: "Purchase request created. Use the bank-transfer details below and upload your slip after payment.",
+        message: "Your payment reference is ready. Transfer by bank and upload the slip in this checkout window.",
         tone: "success" as const,
       };
     case "purchase_existing":
       return {
-        message: "You already have an active Master Class purchase request.",
-        tone: "warning" as const,
+        message: "Continue from the checkout step below.",
+        tone: "success" as const,
       };
     case "slip_submitted":
       return {
-        message: "Transfer slip submitted. The Elite Gold team will review it and notify you by email.",
+        message: "We received your transfer slip. The Elite Gold team will email you after review.",
         tone: "success" as const,
       };
     case "slip_required":
@@ -80,7 +86,7 @@ function getNotice(notice?: string) {
       };
     case "purchase_locked":
       return {
-        message: "This purchase is currently locked for review. Please wait for the team decision.",
+        message: "We already received your slip. The team will follow up by email after review.",
         tone: "warning" as const,
       };
     case "purchase_error":
@@ -104,13 +110,20 @@ async function getMasterClassPurchase(memberId: string) {
     };
   }
 
+  const { error: cleanupError } = await supabase.rpc("cleanup_expired_course_purchase_requests");
+
+  if (cleanupError) {
+    console.error("[education] Failed to archive expired Master Class purchases.", cleanupError);
+  }
+
   const [{ data: purchaseData, error: purchaseError }, { data: entitlementData, error: entitlementError }] =
     await Promise.all([
       supabase
         .from("course_purchase_requests")
-        .select("id,reference_code,amount_thb,status,slip_storage_path,slip_file_name,submitted_at,review_reason,created_at,updated_at")
+        .select("id,reference_code,amount_thb,status,slip_storage_path,slip_file_name,submitted_at,review_reason,created_at,updated_at,expires_at,archived_at")
         .eq("member_id", memberId)
         .eq("course_slug", masterClassCourse.slug)
+        .is("archived_at", null)
         .maybeSingle(),
       supabase
         .from("course_entitlements")
@@ -147,23 +160,6 @@ function getEffectiveStatus(
   return purchase?.status ?? null;
 }
 
-function StatusBadge({ status }: { status: CoursePurchaseStatus | null }) {
-  const view = getPurchaseStatusView(status);
-  const toneClass = {
-    danger: "border-red-300/18 bg-red-300/8 text-red-100/82",
-    neutral: "border-white/10 bg-white/[0.035] text-white/62",
-    success: "border-emerald-200/20 bg-emerald-200/8 text-emerald-100/82",
-    warning: "border-[#F6E3A3]/20 bg-[#F6E3A3]/8 text-[#F6E3A3]/82",
-  }[view.tone];
-
-  return (
-    <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold ${toneClass}`}>
-      <span className="size-1.5 rounded-full bg-current" />
-      {view.label}
-    </span>
-  );
-}
-
 function NoticeBanner({ notice }: { notice: ReturnType<typeof getNotice> }) {
   if (!notice) {
     return null;
@@ -190,6 +186,28 @@ function StartPurchaseForm() {
         <ArrowRight aria-hidden="true" className="size-4" />
       </button>
     </form>
+  );
+}
+
+function CourseActionCard({ entitlement }: { entitlement: Entitlement | null }) {
+  return (
+    <aside className="member-surface-soft p-4 lg:sticky lg:top-24">
+      <p className="text-[0.68rem] font-bold uppercase text-white/36">Course Access</p>
+      <h2 className="mt-2 text-2xl font-semibold text-white">{formatThaiBaht(masterClassCourse.priceThb)}</h2>
+      <p className="mt-3 text-sm leading-6 text-white/48">
+        Full Master Class access, lesson resources, and member-only learning materials.
+      </p>
+      <div className="mt-5">
+        {entitlement ? (
+          <a className="member-shimmer-action inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold" href="#syllabus">
+            Start Learning
+            <ArrowRight aria-hidden="true" className="size-4" />
+          </a>
+        ) : (
+          <StartPurchaseForm />
+        )}
+      </div>
+    </aside>
   );
 }
 
@@ -224,99 +242,142 @@ function UploadSlipForm({ purchase }: { purchase: MasterClassPurchase }) {
   );
 }
 
-function PurchasePanel({
-  entitlement,
-  purchase,
-  status,
-}: {
-  entitlement: Entitlement | null;
-  purchase: MasterClassPurchase | null;
-  status: CoursePurchaseStatus | null;
-}) {
-  const cta = getMasterClassPurchaseCta(status);
-  const view = getPurchaseStatusView(status);
-
+function TransferDetails({ purchase }: { purchase: MasterClassPurchase }) {
   return (
-    <aside className="member-surface-soft p-4 lg:sticky lg:top-24">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[0.68rem] font-bold uppercase text-white/36">Course Access</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">{formatThaiBaht(masterClassCourse.priceThb)}</h2>
+    <div className="grid gap-2 rounded-2xl border border-white/8 bg-black/26 p-4">
+      {[
+        ["Amount", formatThaiBaht(masterClassBankTransfer.amountThb)],
+        ["Bank", masterClassBankTransfer.bankName],
+        ["Account Name", masterClassBankTransfer.accountName],
+        ["Account No.", masterClassBankTransfer.accountNumber],
+        ["Reference", purchase.referenceCode],
+      ].map(([label, value]) => (
+        <div className="flex items-start justify-between gap-4 border-b border-white/7 py-2 last:border-b-0" key={label}>
+          <span className="text-xs font-bold uppercase text-white/34">{label}</span>
+          <span className="text-right text-sm font-semibold text-white/76">{value}</span>
         </div>
-        <StatusBadge status={status} />
-      </div>
-      <p className="mt-3 text-sm leading-6 text-white/48">{view.description}</p>
-
-      <div className="mt-5 grid gap-2 rounded-xl border border-white/8 bg-black/26 p-3">
-        <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="text-white/42">Reference</span>
-          <span className="font-mono font-semibold text-white/78">{purchase?.referenceCode ?? "Created after purchase"}</span>
-        </div>
-        <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="text-white/42">Review</span>
-          <span className="font-semibold text-white/72">{entitlement ? "Approved" : getPurchaseStatusView(status).label}</span>
-        </div>
-      </div>
-
-      <div className="mt-5">
-        {cta.action === "start_purchase" ? <StartPurchaseForm /> : null}
-        {cta.action === "upload_slip" && purchase ? <UploadSlipForm purchase={purchase} /> : null}
-        {cta.action === "wait_for_review" ? (
-          <button className="inline-flex h-11 w-full cursor-default items-center justify-center rounded-xl border border-white/10 bg-white/[0.035] px-4 text-sm font-bold text-white/48" disabled type="button">
-            {cta.label}
-          </button>
-        ) : null}
-        {cta.action === "start_learning" ? (
-          <a className="member-shimmer-action inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold" href="#syllabus">
-            {cta.label}
-            <ArrowRight aria-hidden="true" className="size-4" />
-          </a>
-        ) : null}
-      </div>
-
-      {purchase?.status === "rejected" && purchase.reviewReason ? (
-        <div className="mt-4 rounded-xl border border-red-300/16 bg-red-300/8 px-3 py-3 text-sm leading-6 text-red-100/78">
-          {purchase.reviewReason}
-        </div>
-      ) : null}
-    </aside>
+      ))}
+    </div>
   );
 }
 
-function BankTransferPanel({ purchase }: { purchase: MasterClassPurchase | null }) {
-  if (!purchase || purchase.status === "approved") {
+function CheckoutBody({
+  entitlement,
+  purchase,
+  stage,
+}: {
+  entitlement: Entitlement | null;
+  purchase: MasterClassPurchase | null;
+  stage: MasterClassCheckoutStage;
+}) {
+  if (stage === "learning" || entitlement) {
+    return (
+      <div className="grid gap-4">
+        <p className="text-sm leading-7 text-white/58">
+          Master Class access is ready for this account.
+        </p>
+        <a className="member-shimmer-action inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold" href="/dashboard/education#syllabus">
+          Start Learning
+          <ArrowRight aria-hidden="true" className="size-4" />
+        </a>
+      </div>
+    );
+  }
+
+  if (stage === "receipt_received") {
+    return (
+      <div className="grid gap-4">
+        <div className="rounded-2xl border border-emerald-200/16 bg-emerald-200/8 p-4">
+          <CheckCircle2 aria-hidden="true" className="size-5 text-emerald-100/76" />
+          <h3 className="mt-3 text-lg font-semibold text-white">Slip received</h3>
+          <p className="mt-2 text-sm leading-7 text-white/56">
+            The team will review your transfer and email you after the decision. You can close this window and continue browsing the course details.
+          </p>
+        </div>
+        <a className="inline-flex h-11 items-center justify-center rounded-xl border border-white/12 bg-white px-4 text-sm font-bold text-black transition hover:bg-white/90" href="/dashboard/education">
+          Close Checkout
+        </a>
+      </div>
+    );
+  }
+
+  if ((stage === "payment_upload" || stage === "resubmission") && purchase) {
+    return (
+      <div className="grid gap-5">
+        <div>
+          <p className="text-sm leading-7 text-white/56">
+            Transfer the exact amount, keep your receipt, and upload the slip in this checkout window.
+            {stage === "resubmission" ? " If the team requested a correction, submit the corrected slip here." : ""}
+          </p>
+        </div>
+        <TransferDetails purchase={purchase} />
+        <UploadSlipForm purchase={purchase} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-4">
+      <p className="text-sm leading-7 text-white/56">
+        Open a secure manual checkout reference for Master Class. Bank-transfer details will appear here after the reference is created.
+      </p>
+      <StartPurchaseForm />
+    </div>
+  );
+}
+
+function CheckoutModal({
+  entitlement,
+  notice,
+  open,
+  purchase,
+  stage,
+}: {
+  entitlement: Entitlement | null;
+  notice: ReturnType<typeof getNotice>;
+  open: boolean;
+  purchase: MasterClassPurchase | null;
+  stage: MasterClassCheckoutStage;
+}) {
+  if (!open) {
     return null;
   }
 
   return (
-    <section className="member-surface p-5 sm:p-6" aria-label="Bank transfer instructions">
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(18rem,0.5fr)]">
-        <div>
-          <span className="member-kicker">
-            <ReceiptText aria-hidden="true" className="size-3.5" />
-            Bank Transfer
-          </span>
-          <h2 className="mt-4 text-2xl font-semibold text-white">Transfer instructions</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-white/52">
-            Transfer the exact amount, keep your receipt, and upload the slip for team review. Approval is manual and will also be sent by email.
-          </p>
+    <div className="fixed inset-0 z-50 grid min-h-dvh place-items-center overflow-y-auto bg-black/78 px-4 py-6 backdrop-blur-md">
+      <a aria-label="Close checkout" className="absolute inset-0 cursor-default" href="/dashboard/education" />
+      <section
+        aria-labelledby="master-class-checkout-title"
+        aria-modal="true"
+        className="relative z-10 w-full max-w-2xl rounded-2xl border border-white/10 bg-[#171717] p-4 shadow-2xl shadow-black/50 sm:p-5"
+        role="dialog"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <span className="member-kicker">
+              <ReceiptText aria-hidden="true" className="size-3.5" />
+              Master Class Checkout
+            </span>
+            <h2 className="mt-4 text-2xl font-semibold text-white" id="master-class-checkout-title">
+              {masterClassCourse.title}
+            </h2>
+          </div>
+          <a
+            aria-label="Close checkout"
+            className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.035] text-white/58 transition hover:border-white/18 hover:text-white"
+            href="/dashboard/education"
+          >
+            <X aria-hidden="true" className="size-4" />
+          </a>
         </div>
-        <div className="grid gap-2 rounded-2xl border border-white/8 bg-black/26 p-4">
-          {[
-            ["Amount", formatThaiBaht(masterClassBankTransfer.amountThb)],
-            ["Bank", masterClassBankTransfer.bankName],
-            ["Account Name", masterClassBankTransfer.accountName],
-            ["Account No.", masterClassBankTransfer.accountNumber],
-            ["Reference", purchase.referenceCode],
-          ].map(([label, value]) => (
-            <div className="flex items-start justify-between gap-4 border-b border-white/7 py-2 last:border-b-0" key={label}>
-              <span className="text-xs font-bold uppercase text-white/34">{label}</span>
-              <span className="text-right text-sm font-semibold text-white/76">{value}</span>
-            </div>
-          ))}
+        <div className="mt-4">
+          <NoticeBanner notice={notice} />
         </div>
-      </div>
-    </section>
+        <div className="mt-5">
+          <CheckoutBody entitlement={entitlement} purchase={purchase} stage={stage} />
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -326,6 +387,8 @@ export default async function DashboardEducationPage({ searchParams }: Education
   const { profile } = await getActiveMemberOrRedirect("/dashboard/education");
   const { entitlement, purchase } = await getMasterClassPurchase(profile.id);
   const status = getEffectiveStatus(purchase, entitlement);
+  const checkoutStage = getMasterClassCheckoutStage(status);
+  const isCheckoutOpen = getFirstSearchParam(params.checkout) === "1" || Boolean(notice);
   const stats = [
     ["Level", masterClassCourse.level],
     ["Duration", masterClassCourse.duration],
@@ -371,13 +434,9 @@ export default async function DashboardEducationPage({ searchParams }: Education
               ))}
             </div>
           </div>
-          <PurchasePanel entitlement={entitlement} purchase={purchase} status={status} />
+          <CourseActionCard entitlement={entitlement} />
         </div>
       </header>
-
-      <NoticeBanner notice={notice} />
-
-      <BankTransferPanel purchase={purchase} />
 
       <section className="grid gap-5 xl:grid-cols-[minmax(0,0.88fr)_minmax(18rem,0.42fr)]" aria-label="Master Class detail">
         <div className="grid gap-5">
@@ -436,40 +495,43 @@ export default async function DashboardEducationPage({ searchParams }: Education
 
         <aside className="grid content-start gap-5">
           <section className="member-surface-soft p-4">
-            <p className="text-[0.68rem] font-bold uppercase text-white/36">Member State</p>
+            <p className="text-[0.68rem] font-bold uppercase text-white/36">Course Format</p>
             <div className="mt-4 grid gap-3">
               <div className="rounded-xl border border-white/8 bg-black/24 px-3 py-3">
-                <p className="text-xs font-bold uppercase text-white/32">Access</p>
-                <p className="mt-1 text-sm font-semibold text-white/74">{getPurchaseStatusView(status).label}</p>
+                <p className="text-xs font-bold uppercase text-white/32">Lessons</p>
+                <p className="mt-1 text-sm font-semibold text-white/74">{masterClassCourse.lessonCount} guided sessions</p>
               </div>
               <div className="rounded-xl border border-white/8 bg-black/24 px-3 py-3">
-                <p className="text-xs font-bold uppercase text-white/32">Last Update</p>
-                <p className="mt-1 text-sm font-semibold text-white/74">
-                  {entitlement?.grantedAt || purchase?.updatedAt || "No purchase yet"}
-                </p>
+                <p className="text-xs font-bold uppercase text-white/32">Resources</p>
+                <p className="mt-1 text-sm font-semibold text-white/74">{masterClassCourse.resourceCount} templates and checklists</p>
               </div>
               <div className="rounded-xl border border-white/8 bg-black/24 px-3 py-3">
-                <p className="text-xs font-bold uppercase text-white/32">Slip</p>
-                <p className="mt-1 break-words text-sm font-semibold text-white/74">
-                  {purchase?.slipFileName || "Not submitted"}
-                </p>
+                <p className="text-xs font-bold uppercase text-white/32">Rhythm</p>
+                <p className="mt-1 text-sm font-semibold text-white/74">{masterClassCourse.duration}</p>
               </div>
             </div>
           </section>
 
           <section className="member-surface-soft p-4">
             <div className="flex items-start gap-3">
-              <Clock3 aria-hidden="true" className="mt-1 size-4 shrink-0 text-[#F6E3A3]/70" />
+              <BookOpen aria-hidden="true" className="mt-1 size-4 shrink-0 text-[#F6E3A3]/70" />
               <div>
-                <h2 className="text-base font-semibold text-white">Manual approval rhythm</h2>
+                <h2 className="text-base font-semibold text-white">Built for review</h2>
                 <p className="mt-2 text-sm leading-6 text-white/48">
-                  Transfer slips are reviewed by the Elite Gold team. Approval or rejection is reflected here and sent to your email.
+                  Lessons are designed to connect with journal habits, weekly review, and disciplined decision-making.
                 </p>
               </div>
             </div>
           </section>
         </aside>
       </section>
+      <CheckoutModal
+        entitlement={entitlement}
+        notice={notice}
+        open={isCheckoutOpen}
+        purchase={purchase}
+        stage={checkoutStage}
+      />
     </section>
   );
 }

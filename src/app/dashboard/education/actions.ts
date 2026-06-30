@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { masterClassCourse } from "@/config/education";
-import { parseMasterClassPurchase } from "@/lib/education/purchase";
+import { getCoursePurchaseExpiry, parseMasterClassPurchase } from "@/lib/education/purchase";
 import { getActiveMemberOrRedirect } from "@/lib/member/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -24,7 +24,7 @@ function getStringField(formData: FormData, name: string) {
 }
 
 function redirectWithNotice(notice: string): never {
-  redirect(`${educationPath}?notice=${encodeURIComponent(notice)}`);
+  redirect(`${educationPath}?checkout=1&notice=${encodeURIComponent(notice)}`);
 }
 
 function getMemberName(profile: Awaited<ReturnType<typeof getActiveMemberOrRedirect>>["profile"]) {
@@ -41,6 +41,16 @@ function getSafeFileName(name: string) {
   return safeName || "transfer-slip";
 }
 
+async function cleanupExpiredCoursePurchases(
+  supabase: NonNullable<Awaited<ReturnType<typeof createSupabaseServerClient>>>,
+) {
+  const { error } = await supabase.rpc("cleanup_expired_course_purchase_requests");
+
+  if (error) {
+    console.error("[education] Failed to archive expired Master Class purchases.", error);
+  }
+}
+
 export async function startMasterClassPurchaseAction() {
   const { profile } = await getActiveMemberOrRedirect(educationPath);
   const supabase = await createSupabaseServerClient();
@@ -49,27 +59,50 @@ export async function startMasterClassPurchaseAction() {
     redirectWithNotice("purchase_error");
   }
 
-  const { data: existingPurchase, error: existingError } = await supabase
-    .from("course_purchase_requests")
-    .select("id,status")
-    .eq("member_id", profile.id)
-    .eq("course_slug", masterClassCourse.slug)
-    .maybeSingle();
+  await cleanupExpiredCoursePurchases(supabase);
+
+  const [{ data: existingPurchase, error: existingError }, { data: entitlement, error: entitlementError }] =
+    await Promise.all([
+      supabase
+        .from("course_purchase_requests")
+        .select("id,status")
+        .eq("member_id", profile.id)
+        .eq("course_slug", masterClassCourse.slug)
+        .is("archived_at", null)
+        .maybeSingle(),
+      supabase
+        .from("course_entitlements")
+        .select("id")
+        .eq("member_id", profile.id)
+        .eq("course_slug", masterClassCourse.slug)
+        .maybeSingle(),
+    ]);
 
   if (existingError) {
     console.error("[education] Failed to read existing Master Class purchase.", existingError);
     redirectWithNotice("purchase_error");
   }
 
+  if (entitlementError) {
+    console.error("[education] Failed to read Master Class entitlement.", entitlementError);
+    redirectWithNotice("purchase_error");
+  }
+
+  if (entitlement) {
+    redirectWithNotice("course_unlocked");
+  }
+
   if (existingPurchase) {
     redirectWithNotice("purchase_existing");
   }
 
+  const paymentExpiresAt = getCoursePurchaseExpiry("payment_started")?.toISOString() ?? null;
   const { error } = await supabase
     .from("course_purchase_requests")
     .insert({
       amount_thb: masterClassCourse.priceThb,
       course_slug: masterClassCourse.slug,
+      expires_at: paymentExpiresAt,
       member_email: profile.email,
       member_id: profile.id,
       member_name: getMemberName(profile),
@@ -114,10 +147,11 @@ export async function uploadMasterClassSlipAction(formData: FormData) {
 
   const { data, error: purchaseError } = await supabase
     .from("course_purchase_requests")
-    .select("id,status")
+    .select("id,reference_code,amount_thb,status,slip_storage_path,slip_file_name,submitted_at,review_reason,created_at,updated_at,expires_at,archived_at")
     .eq("id", purchaseId)
     .eq("member_id", profile.id)
     .eq("course_slug", masterClassCourse.slug)
+    .is("archived_at", null)
     .maybeSingle();
 
   if (purchaseError) {
@@ -148,6 +182,7 @@ export async function uploadMasterClassSlipAction(formData: FormData) {
   const { error: updateError } = await supabase
     .from("course_purchase_requests")
     .update({
+      expires_at: null,
       review_reason: null,
       reviewed_at: null,
       reviewed_by: null,

@@ -3,6 +3,8 @@ import { describe, it } from "node:test";
 
 import {
   formatMasterClassReference,
+  getCoursePurchaseExpiry,
+  getMasterClassCheckoutStage,
   getMasterClassPurchaseCta,
   getPurchaseStatusView,
   isCoursePurchaseStatus,
@@ -62,10 +64,29 @@ describe("master class purchase helpers", () => {
     });
   });
 
+  it("maps purchase statuses to checkout modal stages", () => {
+    assert.equal(getMasterClassCheckoutStage(null), "start_purchase");
+    assert.equal(getMasterClassCheckoutStage("payment_started"), "payment_upload");
+    assert.equal(getMasterClassCheckoutStage("pending_review"), "receipt_received");
+    assert.equal(getMasterClassCheckoutStage("rejected"), "resubmission");
+    assert.equal(getMasterClassCheckoutStage("approved"), "learning");
+  });
+
+  it("sets active purchase expiry windows without expiring pending reviews", () => {
+    const now = new Date("2026-06-30T00:00:00.000Z");
+
+    assert.equal(getCoursePurchaseExpiry("payment_started", now)?.toISOString(), "2026-07-02T00:00:00.000Z");
+    assert.equal(getCoursePurchaseExpiry("rejected", now)?.toISOString(), "2026-07-14T00:00:00.000Z");
+    assert.equal(getCoursePurchaseExpiry("approved", now)?.toISOString(), "2026-09-28T00:00:00.000Z");
+    assert.equal(getCoursePurchaseExpiry("pending_review", now), null);
+  });
+
   it("parses Master Class purchase rows from Supabase", () => {
     const parsed = parseMasterClassPurchase({
       amount_thb: 12900,
+      archived_at: null,
       created_at: "2026-06-29T00:00:00Z",
+      expires_at: "2026-07-01T00:00:00Z",
       id: "purchase-id",
       reference_code: "EG-MC-000123",
       review_reason: null,
@@ -78,7 +99,9 @@ describe("master class purchase helpers", () => {
 
     assert.deepEqual(parsed, {
       amountThb: 12900,
+      archivedAt: null,
       createdAt: "2026-06-29T00:00:00Z",
+      expiresAt: "2026-07-01T00:00:00Z",
       id: "purchase-id",
       referenceCode: "EG-MC-000123",
       reviewReason: null,
