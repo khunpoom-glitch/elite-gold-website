@@ -10,10 +10,13 @@ import { masterClassCourse } from "@/config/education";
 import {
   formatThaiBaht,
   getPurchaseStatusView,
+  parseMasterClassBuyerAttribution,
   parseMasterClassPurchase,
+  type MasterClassBuyerAttribution,
   type MasterClassPurchase,
 } from "@/lib/education/purchase";
 import { getAuthenticatedAdmin } from "@/lib/admin/session";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   approveMasterClassPurchaseAction,
   rejectMasterClassPurchaseAction,
@@ -29,8 +32,9 @@ type AdminPageProps = {
   }>;
 };
 
-type AdminPurchase = MasterClassPurchase & {
+type AdminPurchase = MasterClassPurchase & MasterClassBuyerAttribution & {
   memberEmail: string;
+  memberId: string;
   memberName: string;
   slipUrl: string | null;
 };
@@ -57,6 +61,49 @@ function getNotice(notice?: string) {
   }
 }
 
+function getStringValue(row: unknown, key: string) {
+  if (typeof row !== "object" || row === null) {
+    return "";
+  }
+
+  const value = (row as Record<string, unknown>)[key];
+
+  return typeof value === "string" ? value : "";
+}
+
+async function getPurchaseAttributionByMemberId(
+  supabase: Awaited<ReturnType<typeof getAuthenticatedAdmin>>["supabase"],
+  memberIds: string[],
+) {
+  const uniqueMemberIds = Array.from(new Set(memberIds.filter(Boolean)));
+  const attributionByMemberId = new Map<string, MasterClassBuyerAttribution>();
+
+  if (uniqueMemberIds.length === 0) {
+    return attributionByMemberId;
+  }
+
+  const profileClient = createSupabaseAdminClient() ?? supabase;
+  const { data, error } = await profileClient
+    .from("customer_profile_directory")
+    .select("profile_id,member_access_code,signup_access_code,signup_access_owner_code")
+    .in("profile_id", uniqueMemberIds);
+
+  if (error) {
+    console.error("[admin] Failed to load purchase access-code attribution.", error);
+    return attributionByMemberId;
+  }
+
+  for (const row of data ?? []) {
+    const profileId = getStringValue(row, "profile_id");
+
+    if (profileId) {
+      attributionByMemberId.set(profileId, parseMasterClassBuyerAttribution(row));
+    }
+  }
+
+  return attributionByMemberId;
+}
+
 async function getAdminPurchases() {
   const { supabase } = await getAuthenticatedAdmin("/admin");
   const { error: cleanupError } = await supabase.rpc("cleanup_expired_course_purchase_requests");
@@ -67,7 +114,7 @@ async function getAdminPurchases() {
 
   const { data, error } = await supabase
     .from("course_purchase_requests")
-    .select("id,reference_code,amount_thb,status,slip_storage_path,slip_file_name,submitted_at,review_reason,created_at,updated_at,expires_at,archived_at,member_email,member_name")
+    .select("id,member_id,reference_code,amount_thb,status,slip_storage_path,slip_file_name,submitted_at,review_reason,created_at,updated_at,expires_at,archived_at,member_email,member_name")
     .eq("course_slug", masterClassCourse.slug)
     .is("archived_at", null)
     .order("created_at", { ascending: false })
@@ -78,8 +125,15 @@ async function getAdminPurchases() {
     return [];
   }
 
-  return Promise.all((data ?? []).map(async (row): Promise<AdminPurchase | null> => {
+  const rows = data ?? [];
+  const attributionByMemberId = await getPurchaseAttributionByMemberId(
+    supabase,
+    rows.map((row) => getStringValue(row, "member_id")),
+  );
+
+  return Promise.all(rows.map(async (row): Promise<AdminPurchase | null> => {
     const purchase = parseMasterClassPurchase(row);
+    const memberId = getStringValue(row, "member_id");
 
     if (!purchase) {
       return null;
@@ -97,7 +151,9 @@ async function getAdminPurchases() {
 
     return {
       ...purchase,
+      ...(attributionByMemberId.get(memberId) ?? parseMasterClassBuyerAttribution(null)),
       memberEmail: typeof row.member_email === "string" ? row.member_email : "",
+      memberId,
       memberName: typeof row.member_name === "string" ? row.member_name : "",
       slipUrl,
     };
@@ -139,6 +195,12 @@ function StatCard({ icon: Icon, label, value }: { icon: typeof Clock3; label: st
 function PurchaseCard({ purchase }: { purchase: AdminPurchase }) {
   const statusView = getPurchaseStatusView(purchase.status);
   const isPending = purchase.status === "pending_review";
+  const sponsorLabel = purchase.sponsorAccessCode
+    ? purchase.sponsorAccessCode
+    : "Unknown";
+  const commissionLabel = purchase.commissionOwnerAccessCode
+    ? purchase.commissionOwnerAccessCode
+    : "No sponsor";
 
   return (
     <article className="rounded-2xl border border-white/8 bg-[#171717] p-4">
@@ -152,7 +214,7 @@ function PurchaseCard({ purchase }: { purchase: AdminPurchase }) {
           </div>
           <h2 className="mt-3 text-xl font-semibold text-white">{purchase.memberName || "Elite Gold Member"}</h2>
           <p className="mt-1 break-all text-sm text-white/42">{purchase.memberEmail}</p>
-          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
             <div className="rounded-xl border border-white/8 bg-black/24 px-3 py-2">
               <p className="text-[0.62rem] font-bold uppercase text-white/30">Amount</p>
               <p className="mt-1 text-sm font-semibold text-white/72">{formatThaiBaht(purchase.amountThb)}</p>
@@ -170,6 +232,18 @@ function PurchaseCard({ purchase }: { purchase: AdminPurchase }) {
               ) : (
                 <p className="mt-1 text-sm font-semibold text-white/42">No slip</p>
               )}
+            </div>
+            <div className="rounded-xl border border-white/8 bg-black/24 px-3 py-2">
+              <p className="text-[0.62rem] font-bold uppercase text-white/30">Member Code</p>
+              <p className="mt-1 font-mono text-sm font-semibold text-white/72">{purchase.buyerAccessCode ?? "Unknown"}</p>
+            </div>
+            <div className="rounded-xl border border-white/8 bg-black/24 px-3 py-2">
+              <p className="text-[0.62rem] font-bold uppercase text-white/30">Sponsor Code</p>
+              <p className="mt-1 font-mono text-sm font-semibold text-white/72">{sponsorLabel}</p>
+            </div>
+            <div className="rounded-xl border border-[#F6E3A3]/14 bg-[#F6E3A3]/8 px-3 py-2">
+              <p className="text-[0.62rem] font-bold uppercase text-[#F6E3A3]/48">Commission To</p>
+              <p className="mt-1 font-mono text-sm font-semibold text-[#F6E3A3]/86">{commissionLabel}</p>
             </div>
           </div>
           {purchase.reviewReason ? (

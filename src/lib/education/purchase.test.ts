@@ -8,6 +8,7 @@ import {
   getMasterClassPurchaseCta,
   getPurchaseStatusView,
   isCoursePurchaseStatus,
+  parseMasterClassBuyerAttribution,
   parseMasterClassPurchase,
 } from "./purchase.ts";
 
@@ -111,5 +112,33 @@ describe("master class purchase helpers", () => {
       submittedAt: "2026-06-29T01:00:00Z",
       updatedAt: "2026-06-29T02:00:00Z",
     });
+  });
+
+  it("parses buyer and sponsor access codes for admin commission review", () => {
+    assert.deepEqual(
+      parseMasterClassBuyerAttribution({
+        member_access_code: "EG002",
+        signup_access_code: "EG001",
+        signup_access_owner_code: "EG001",
+      }),
+      {
+        buyerAccessCode: "EG002",
+        commissionOwnerAccessCode: "EG001",
+        sponsorAccessCode: "EG001",
+      },
+    );
+
+    assert.deepEqual(
+      parseMasterClassBuyerAttribution({
+        member_access_code: "EG002",
+        signup_access_code: "EG000",
+        signup_access_owner_code: null,
+      }),
+      {
+        buyerAccessCode: "EG002",
+        commissionOwnerAccessCode: null,
+        sponsorAccessCode: "EG000",
+      },
+    );
   });
 });

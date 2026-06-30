@@ -47,6 +47,12 @@ export type MasterClassPurchase = {
   updatedAt: string;
 };
 
+export type MasterClassBuyerAttribution = {
+  buyerAccessCode: string | null;
+  commissionOwnerAccessCode: string | null;
+  sponsorAccessCode: string | null;
+};
+
 const purchaseStatusViewByStatus: Record<CoursePurchaseStatus, PurchaseStatusView> = {
   approved: {
     description: "Your Master Class access has been approved.",
@@ -175,6 +181,16 @@ function getNullableString(value: unknown) {
   return typeof value === "string" && value.length > 0 ? value : null;
 }
 
+function getAccessCode(value: unknown) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const accessCode = value.trim().toUpperCase();
+
+  return accessCode.length > 0 ? accessCode : null;
+}
+
 function getNumber(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
@@ -197,5 +213,28 @@ export function parseMasterClassPurchase(row: unknown): MasterClassPurchase | nu
     status: row.status,
     submittedAt: getNullableString(row.submitted_at),
     updatedAt: getString(row.updated_at),
+  };
+}
+
+export function parseMasterClassBuyerAttribution(row: unknown): MasterClassBuyerAttribution {
+  if (!isRecord(row)) {
+    return {
+      buyerAccessCode: null,
+      commissionOwnerAccessCode: null,
+      sponsorAccessCode: null,
+    };
+  }
+
+  const buyerAccessCode = getAccessCode(row.member_access_code);
+  const sponsorAccessCode = getAccessCode(row.signup_access_code);
+  const sponsorOwnerAccessCode = getAccessCode(row.signup_access_owner_code);
+  const isDirectOrHouseCode = !sponsorAccessCode || sponsorAccessCode === "EG000";
+
+  return {
+    buyerAccessCode,
+    commissionOwnerAccessCode: isDirectOrHouseCode
+      ? null
+      : sponsorOwnerAccessCode ?? sponsorAccessCode,
+    sponsorAccessCode,
   };
 }

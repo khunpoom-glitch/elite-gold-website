@@ -24,9 +24,9 @@ import {
 import { getActiveMemberOrRedirect } from "@/lib/member/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
-  startMasterClassPurchaseAction,
   uploadMasterClassSlipAction,
 } from "./actions";
+import { StartPurchaseForm } from "./start-purchase-form";
 
 export const metadata: Metadata = {
   title: "Education",
@@ -178,17 +178,6 @@ function NoticeBanner({ notice }: { notice: ReturnType<typeof getNotice> }) {
   );
 }
 
-function StartPurchaseForm() {
-  return (
-    <form action={startMasterClassPurchaseAction}>
-      <button className="member-shimmer-action inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold transition hover:border-white/24 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/32" type="submit">
-        Buy Master Class
-        <ArrowRight aria-hidden="true" className="size-4" />
-      </button>
-    </form>
-  );
-}
-
 function CourseActionCard({ entitlement }: { entitlement: Entitlement | null }) {
   return (
     <aside className="member-surface-soft p-4 lg:sticky lg:top-24">
@@ -228,7 +217,7 @@ function UploadSlipForm({ purchase }: { purchase: MasterClassPurchase }) {
       <label className="grid gap-2 text-sm font-semibold text-white/76">
         Transfer note
         <textarea
-          className="min-h-20 resize-y rounded-xl border border-white/10 bg-black/32 px-3 py-2 text-sm leading-6 text-white/78 outline-none transition placeholder:text-white/26 focus:border-white/24"
+          className="min-h-16 resize-y rounded-xl border border-white/10 bg-black/32 px-3 py-2 text-sm leading-6 text-white/78 outline-none transition placeholder:text-white/26 focus:border-white/24"
           maxLength={280}
           name="transferNote"
           placeholder="Optional: transfer time, sender name, or bank note"
@@ -244,7 +233,7 @@ function UploadSlipForm({ purchase }: { purchase: MasterClassPurchase }) {
 
 function TransferDetails({ purchase }: { purchase: MasterClassPurchase }) {
   return (
-    <div className="grid gap-2 rounded-2xl border border-white/8 bg-black/26 p-4">
+    <div className="grid gap-1 rounded-xl border border-white/8 bg-black/26 p-3">
       {[
         ["Amount", formatThaiBaht(masterClassBankTransfer.amountThb)],
         ["Bank", masterClassBankTransfer.bankName],
@@ -303,7 +292,7 @@ function CheckoutBody({
 
   if ((stage === "payment_upload" || stage === "resubmission") && purchase) {
     return (
-      <div className="grid gap-5">
+      <div className="grid gap-4">
         <div>
           <p className="text-sm leading-7 text-white/56">
             Transfer the exact amount, keep your receipt, and upload the slip in this checkout window.
@@ -344,12 +333,12 @@ function CheckoutModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 grid min-h-dvh place-items-center overflow-y-auto bg-black/78 px-4 py-6 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex min-h-dvh items-center justify-center overflow-y-auto bg-black/78 px-4 py-4 backdrop-blur-md sm:px-6 sm:py-8">
       <a aria-label="Close checkout" className="absolute inset-0 cursor-default" href="/dashboard/education" />
       <section
         aria-labelledby="master-class-checkout-title"
         aria-modal="true"
-        className="relative z-10 w-full max-w-2xl rounded-2xl border border-white/10 bg-[#171717] p-4 shadow-2xl shadow-black/50 sm:p-5"
+        className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/10 bg-[#171717] p-4 shadow-2xl shadow-black/50 sm:p-5"
         role="dialog"
       >
         <div className="flex items-start justify-between gap-4">
@@ -358,7 +347,7 @@ function CheckoutModal({
               <ReceiptText aria-hidden="true" className="size-3.5" />
               Master Class Checkout
             </span>
-            <h2 className="mt-4 text-2xl font-semibold text-white" id="master-class-checkout-title">
+            <h2 className="mt-3 text-2xl font-semibold text-white" id="master-class-checkout-title">
               {masterClassCourse.title}
             </h2>
           </div>
@@ -373,7 +362,7 @@ function CheckoutModal({
         <div className="mt-4">
           <NoticeBanner notice={notice} />
         </div>
-        <div className="mt-5">
+        <div className="mt-4">
           <CheckoutBody entitlement={entitlement} purchase={purchase} stage={stage} />
         </div>
       </section>
