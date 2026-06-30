@@ -29,6 +29,7 @@ import {
 import { BuyMasterClassButton } from "./buy-master-class-button";
 import { CheckoutModalFrame } from "./checkout-modal-frame";
 import { StartPurchaseForm } from "./start-purchase-form";
+import { TransferSlipFileInput } from "./transfer-slip-file-input";
 
 export const metadata: Metadata = {
   title: "Education",
@@ -212,16 +213,10 @@ function UploadSlipForm({ purchase }: { purchase: MasterClassPurchase }) {
   return (
     <form action={uploadMasterClassSlipAction} className="grid gap-3">
       <input name="purchaseId" type="hidden" value={purchase.id} />
-      <label className="grid gap-2 text-sm font-semibold text-white/76">
-        Transfer slip
-        <input
-          accept="image/jpeg,image/png,image/webp,application/pdf"
-          className="block w-full rounded-xl border border-white/10 bg-black/32 px-3 py-2 text-sm text-white/72 file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28"
-          name="slip"
-          required
-          type="file"
-        />
-      </label>
+      <div className="grid gap-2 text-sm font-semibold text-white/76">
+        <span>Transfer slip</span>
+        <TransferSlipFileInput />
+      </div>
       <label className="grid gap-2 text-sm font-semibold text-white/76">
         Transfer note
         <textarea
