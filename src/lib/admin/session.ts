@@ -9,6 +9,11 @@ import {
   type AdminRole,
   type AdminUser,
 } from "./roles";
+import {
+  adminDashboardPath,
+  getAdminVerificationGatePath,
+  hasValidAdminVerificationCookie,
+} from "./verification";
 
 function getLoginRedirectPath(nextPath: string, sessionExpired = false) {
   const searchParams = new URLSearchParams({
@@ -40,7 +45,7 @@ export async function getAdminRoleByUserId(
   return parseAdminUser(data);
 }
 
-export const getAuthenticatedAdmin = cache(async (nextPath = "/admin") => {
+export const getAuthenticatedAdmin = cache(async (nextPath = adminDashboardPath) => {
   const sessionPolicy = await getServerAuthSessionPolicyStatus();
 
   if (sessionPolicy.state !== "active") {
@@ -77,8 +82,32 @@ export const getAuthenticatedAdmin = cache(async (nextPath = "/admin") => {
   };
 });
 
-export async function getAuthenticatedSuperAdmin(nextPath = "/admin/users") {
+export async function getAuthenticatedSuperAdmin(nextPath = `${adminDashboardPath}/users`) {
   const adminSession = await getAuthenticatedAdmin(nextPath);
+
+  if (!adminSession.isSuperAdmin) {
+    notFound();
+  }
+
+  return adminSession;
+}
+
+export const getVerifiedAdmin = cache(async (nextPath = adminDashboardPath) => {
+  const adminSession = await getAuthenticatedAdmin(nextPath);
+  const isVerified = await hasValidAdminVerificationCookie({
+    admin: adminSession.admin,
+    userId: adminSession.user.id,
+  });
+
+  if (!isVerified) {
+    redirect(getAdminVerificationGatePath(nextPath));
+  }
+
+  return adminSession;
+});
+
+export async function getVerifiedSuperAdmin(nextPath = `${adminDashboardPath}/users`) {
+  const adminSession = await getVerifiedAdmin(nextPath);
 
   if (!adminSession.isSuperAdmin) {
     notFound();

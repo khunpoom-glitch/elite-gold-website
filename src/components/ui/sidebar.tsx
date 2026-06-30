@@ -132,7 +132,7 @@ const navigationItems: NavItem[] = [
 
 const adminNavigationItem: NavItem = {
   description: "Manual purchase approval and admin tools",
-  href: "/admin",
+  href: "/dashboard/admin",
   icon: ShieldCheck,
   label: "Admin Panel",
   status: "Admin",

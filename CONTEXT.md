@@ -27,6 +27,7 @@ Implemented:
 - `/login` and `/signup` open the public home experience with the auth modal active.
 - `/signup?accessCode=EG000` style Access Code handling is live.
 - `/dashboard`, `/dashboard/account`, `/dashboard/education`, `/dashboard/journal`, and `/dashboard/community` are live member routes.
+- `/dashboard/admin`, `/dashboard/admin/users`, and `/dashboard/admin/activity` are protected admin routes inside the dashboard shell with email-code step-up verification.
 - Dashboard uses an authenticated member layout with collapsible desktop sidebar, logo home link, profile avatar, mobile bottom navigation, fade-in entry motion, and protected route states.
 - Dashboard overview shows member status, Access Code, Access Link copy, account readiness, mock membership package, and workspace module previews.
 - My Account supports profile details, email verification, resend cooldown, pending email-change messaging, profile save states, Access Code/Access Link copy, membership preview, and security entry points.
@@ -97,6 +98,10 @@ Use this checklist after auth, email, redirect, modal, session, or profile chang
 | `/dashboard/education` | Authenticated Phase 4 starting route; currently preview/protected for active members |
 | `/dashboard/journal` | Authenticated Phase 4 starting route; currently preview/protected for active members |
 | `/dashboard/community` | Authenticated Phase 4 starting route; currently preview/protected for active members |
+| `/dashboard/admin` | Admin-only purchase review route inside the dashboard; requires email-code step-up verification |
+| `/dashboard/admin/users` | Super-admin admin-user management route inside the dashboard; requires email-code step-up verification |
+| `/dashboard/admin/activity` | Super-admin activity log route inside the dashboard; requires email-code step-up verification |
+| `/admin` | Legacy redirect to `/dashboard/admin` |
 | `/privacy` | Phase 1 Privacy Policy |
 | `/terms` | Phase 1 Terms of Service |
 | `/risk-disclosure` | Phase 1 Risk Disclosure |

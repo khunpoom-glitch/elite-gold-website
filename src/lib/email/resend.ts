@@ -39,6 +39,13 @@ type CoursePurchaseRejectedEmailDetails = CoursePurchaseEmailDetails & {
   reason: string;
 };
 
+type AdminVerificationEmailDetails = {
+  code: string;
+  expiresInMinutes: number;
+  name: string;
+  to: string;
+};
+
 const resendApiUrl = "https://api.resend.com/emails";
 const fallbackSiteUrl = productionCanonicalSiteUrl;
 const automatedFooterHtml =
@@ -286,6 +293,57 @@ export async function sendCoursePurchaseRejectedEmail({
   ...details
 }: CoursePurchaseRejectedEmailDetails) {
   const email = buildCoursePurchaseRejectedEmail(details);
+
+  return sendTransactionalEmail({
+    ...email,
+    to,
+  });
+}
+
+export function buildAdminVerificationCodeEmail({
+  code,
+  expiresInMinutes,
+  name,
+}: Omit<AdminVerificationEmailDetails, "to">) {
+  const safeCode = escapeHtml(code);
+  const displayName = name.trim() || "Elite Gold Admin";
+  const title = "Elite Gold Admin verification code";
+  const html = getEmailShell(
+    title,
+    `<p style="margin:0 0 14px;">Hi ${escapeHtml(displayName)},</p>
+     <p style="margin:0 0 18px;color:#CFCFCF;">Use this one-time code to open the Elite Gold Admin Panel.</p>
+     <table role="presentation" width="240" align="center" cellspacing="0" cellpadding="0" style="width:240px;max-width:100%;margin:0 auto 18px;border-collapse:separate;">
+       <tr>
+         <td align="center" style="border:1px solid rgba(246,227,163,0.24);border-radius:18px;background:#101010;padding:16px;color:#F6E3A3;font-size:28px;font-weight:800;letter-spacing:0.18em;">
+           ${safeCode}
+         </td>
+       </tr>
+     </table>
+     <p style="margin:0;color:#8f8f99;font-size:12px;line-height:1.6;">This code expires in ${expiresInMinutes} minutes. If you did not request admin access, ignore this email and review your account security.</p>`,
+  );
+  const text = `Hi ${displayName},
+
+Use this one-time code to open the Elite Gold Admin Panel:
+
+${code}
+
+This code expires in ${expiresInMinutes} minutes.`;
+
+  return {
+    headers: {
+      "X-Entity-Ref-ID": `elite-admin-verification-${getEmailRequestId()}`,
+    },
+    html,
+    subject: title,
+    text,
+  };
+}
+
+export async function sendAdminVerificationCodeEmail({
+  to,
+  ...details
+}: AdminVerificationEmailDetails) {
+  const email = buildAdminVerificationCodeEmail(details);
 
   return sendTransactionalEmail({
     ...email,

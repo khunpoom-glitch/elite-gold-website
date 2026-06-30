@@ -2,11 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getAuthenticatedSuperAdmin } from "@/lib/admin/session";
+import { getVerifiedSuperAdmin } from "@/lib/admin/session";
 import { isAdminRole } from "@/lib/admin/roles";
+import { adminDashboardPath } from "@/lib/admin/verification";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
-const adminUsersPath = "/admin/users";
+const adminUsersPath = `${adminDashboardPath}/users`;
 
 function getStringField(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -51,7 +52,7 @@ async function findAuthUserByEmail(email: string) {
 }
 
 export async function addAdminUserAction(formData: FormData) {
-  const { supabase, user } = await getAuthenticatedSuperAdmin(adminUsersPath);
+  const { supabase, user } = await getVerifiedSuperAdmin(adminUsersPath);
   const email = getStringField(formData, "email").toLowerCase();
   const role = getStringField(formData, "role");
 
@@ -109,7 +110,7 @@ export async function addAdminUserAction(formData: FormData) {
 }
 
 export async function deactivateAdminUserAction(formData: FormData) {
-  const { supabase, user } = await getAuthenticatedSuperAdmin(adminUsersPath);
+  const { supabase, user } = await getVerifiedSuperAdmin(adminUsersPath);
   const adminUserId = getStringField(formData, "adminUserId");
   const targetUserId = getStringField(formData, "targetUserId");
 

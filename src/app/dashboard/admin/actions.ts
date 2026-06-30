@@ -4,14 +4,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { masterClassCourse } from "@/config/education";
 import { siteConfig } from "@/config/site";
-import { getAuthenticatedAdmin } from "@/lib/admin/session";
+import { getVerifiedAdmin } from "@/lib/admin/session";
+import { adminDashboardPath } from "@/lib/admin/verification";
 import { getCoursePurchaseExpiry, parseMasterClassPurchase } from "@/lib/education/purchase";
 import {
   sendCoursePurchaseApprovedEmail,
   sendCoursePurchaseRejectedEmail,
 } from "@/lib/email/resend";
 
-const adminPath = "/admin";
+const adminPath = adminDashboardPath;
 const educationPath = "/dashboard/education";
 
 function getStringField(formData: FormData, name: string) {
@@ -29,7 +30,7 @@ function getEducationUrl() {
 }
 
 export async function approveMasterClassPurchaseAction(formData: FormData) {
-  const { supabase, user } = await getAuthenticatedAdmin(adminPath);
+  const { supabase, user } = await getVerifiedAdmin(adminPath);
   const purchaseId = getStringField(formData, "purchaseId");
 
   if (!purchaseId) {
@@ -119,7 +120,7 @@ export async function approveMasterClassPurchaseAction(formData: FormData) {
 }
 
 export async function rejectMasterClassPurchaseAction(formData: FormData) {
-  const { supabase, user } = await getAuthenticatedAdmin(adminPath);
+  const { supabase, user } = await getVerifiedAdmin(adminPath);
   const purchaseId = getStringField(formData, "purchaseId");
   const reason = getStringField(formData, "reason");
 
