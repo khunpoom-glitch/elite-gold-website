@@ -179,9 +179,11 @@ function NoticeBanner({ notice }: { notice: ReturnType<typeof getNotice> }) {
 function CourseActionCard({
   checkoutHref,
   entitlement,
+  isCheckoutOpen,
 }: {
   checkoutHref: string;
   entitlement: Entitlement | null;
+  isCheckoutOpen: boolean;
 }) {
   return (
     <aside className="member-surface-soft p-4 lg:sticky lg:top-24">
@@ -197,7 +199,10 @@ function CourseActionCard({
             <ArrowRight aria-hidden="true" className="size-4" />
           </Link>
         ) : (
-          <BuyMasterClassButton checkoutHref={checkoutHref} />
+          <BuyMasterClassButton
+            checkoutHref={checkoutHref}
+            key={isCheckoutOpen ? "checkout-open" : "checkout-closed"}
+          />
         )}
       </div>
     </aside>
@@ -423,7 +428,11 @@ export default async function DashboardEducationPage({ searchParams }: Education
               ))}
             </div>
           </div>
-          <CourseActionCard checkoutHref={checkoutHref} entitlement={entitlement} />
+          <CourseActionCard
+            checkoutHref={checkoutHref}
+            entitlement={entitlement}
+            isCheckoutOpen={isCheckoutOpen}
+          />
         </div>
       </header>
 
