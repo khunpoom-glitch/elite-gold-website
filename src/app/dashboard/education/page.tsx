@@ -176,9 +176,11 @@ function NoticeBanner({ notice }: { notice: ReturnType<typeof getNotice> }) {
 
 function CourseActionCard({
   checkoutContent,
+  checkoutStage,
   entitlement,
 }: {
   checkoutContent: ReactNode;
+  checkoutStage: MasterClassCheckoutStage;
   entitlement: Entitlement | null;
 }) {
   return (
@@ -194,6 +196,8 @@ function CourseActionCard({
             Start Learning
             <ArrowRight aria-hidden="true" className="size-4" />
           </Link>
+        ) : checkoutStage === "start_purchase" ? (
+          <StartPurchaseForm label="Buy Master Class" />
         ) : (
           <BuyMasterClassButton>
             {checkoutContent}
@@ -435,6 +439,7 @@ export default async function DashboardEducationPage({ searchParams }: Education
           </div>
           <CourseActionCard
             checkoutContent={checkoutContent}
+            checkoutStage={checkoutStage}
             entitlement={entitlement}
           />
         </div>
