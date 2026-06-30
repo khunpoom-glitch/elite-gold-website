@@ -19,8 +19,9 @@ export function TransferSlipFileInput() {
   return (
     <div className="flex min-h-11 items-center gap-3 rounded-xl border border-white/10 bg-black/32 px-3 py-2 text-sm text-white/72">
       <input
+        aria-hidden="true"
         accept="image/jpeg,image/png,image/webp,application/pdf"
-        className="sr-only pointer-events-none"
+        className="hidden"
         id={inputId}
         name="slip"
         onChange={handleFileChange}
