@@ -194,7 +194,7 @@ function MemberLogoutMenuButton({ pending }: { pending: boolean }) {
             ) : (
                 <LogOut aria-hidden="true" className={memberMenuDangerIconClass} />
             )}
-            <span className={memberMenuLabelClass}>{pending ? 'Signing out...' : 'Sign Out'}</span>
+            <span className={memberMenuLabelClass}>{pending ? 'Logging out...' : 'Log Out'}</span>
         </button>
     )
 }

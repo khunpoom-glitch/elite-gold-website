@@ -44,13 +44,13 @@ function DashboardLogoutButton({ collapsed, pending }: { collapsed: boolean; pen
   return (
     <button
       aria-disabled={pending}
-      aria-label={pending ? "Signing out" : "Logout"}
+      aria-label={pending ? "Logging out" : "Log Out"}
       className={cn(
         "group flex h-10 w-full items-center rounded-xl text-left text-white/42 transition hover:bg-white/7 hover:text-white/72 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/28 disabled:cursor-wait disabled:opacity-75",
         collapsed ? "justify-center px-0" : "gap-3 px-3",
       )}
       disabled={pending}
-      title={pending ? "Signing out..." : "Logout"}
+      title={pending ? "Logging out..." : "Log Out"}
       type="submit"
     >
       {pending ? (
@@ -59,7 +59,7 @@ function DashboardLogoutButton({ collapsed, pending }: { collapsed: boolean; pen
         <LogOut aria-hidden="true" className="size-4" />
       )}
       <span className={cn(sidebarMenuLabelClass, collapsed && "sr-only")}>
-        {pending ? "Signing out..." : "Logout"}
+        {pending ? "Logging out..." : "Log Out"}
       </span>
     </button>
   );

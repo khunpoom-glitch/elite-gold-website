@@ -25,7 +25,7 @@ const noticeCopy = {
     message: "Your member session is now active.",
   },
   signed_out: {
-    title: "Signed out securely",
+    title: "Logged out securely",
     message: "Your session has been cleared.",
   },
 } satisfies Record<HomeAuthNoticeType, { title: string; message: string }>;
