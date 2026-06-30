@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -8,15 +9,12 @@ import {
   FileText,
   GraduationCap,
   LockKeyhole,
-  ReceiptText,
   ShieldCheck,
   UploadCloud,
-  X,
 } from "lucide-react";
 import { masterClassBankTransfer, masterClassCourse } from "@/config/education";
 import {
   formatThaiBaht,
-  getMasterClassCheckoutHref,
   getMasterClassCheckoutStage,
   parseMasterClassPurchase,
   type CoursePurchaseStatus,
@@ -177,13 +175,11 @@ function NoticeBanner({ notice }: { notice: ReturnType<typeof getNotice> }) {
 }
 
 function CourseActionCard({
-  checkoutHref,
+  checkoutContent,
   entitlement,
-  isCheckoutOpen,
 }: {
-  checkoutHref: string;
+  checkoutContent: ReactNode;
   entitlement: Entitlement | null;
-  isCheckoutOpen: boolean;
 }) {
   return (
     <aside className="member-surface-soft p-4 lg:sticky lg:top-24">
@@ -199,10 +195,9 @@ function CourseActionCard({
             <ArrowRight aria-hidden="true" className="size-4" />
           </Link>
         ) : (
-          <BuyMasterClassButton
-            checkoutHref={checkoutHref}
-            key={isCheckoutOpen ? "checkout-open" : "checkout-closed"}
-          />
+          <BuyMasterClassButton>
+            {checkoutContent}
+          </BuyMasterClassButton>
         )}
       </div>
     </aside>
@@ -324,6 +319,31 @@ function CheckoutBody({
   );
 }
 
+function CheckoutModalContent({
+  entitlement,
+  notice,
+  purchase,
+  stage,
+}: {
+  entitlement: Entitlement | null;
+  notice: ReturnType<typeof getNotice>;
+  purchase: MasterClassPurchase | null;
+  stage: MasterClassCheckoutStage;
+}) {
+  return (
+    <>
+      {notice ? (
+        <div className="mt-4">
+          <NoticeBanner notice={notice} />
+        </div>
+      ) : null}
+      <div className="mt-4">
+        <CheckoutBody entitlement={entitlement} purchase={purchase} stage={stage} />
+      </div>
+    </>
+  );
+}
+
 function CheckoutModal({
   entitlement,
   notice,
@@ -342,34 +362,12 @@ function CheckoutModal({
   }
 
   return (
-    <CheckoutModalFrame closeHref="/dashboard/education" labelledBy="master-class-checkout-title">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <span className="member-kicker">
-            <ReceiptText aria-hidden="true" className="size-3.5" />
-            Master Class Checkout
-          </span>
-          <h2 className="mt-3 text-2xl font-semibold text-white" id="master-class-checkout-title">
-            {masterClassCourse.title}
-          </h2>
-        </div>
-        <Link
-          aria-label="Close checkout"
-          className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.035] text-white/58 transition hover:border-white/18 hover:text-white"
-          href="/dashboard/education"
-          scroll={false}
-        >
-          <X aria-hidden="true" className="size-4" />
-        </Link>
-      </div>
-      {notice ? (
-        <div className="mt-4">
-          <NoticeBanner notice={notice} />
-        </div>
-      ) : null}
-      <div className="mt-4">
-        <CheckoutBody entitlement={entitlement} purchase={purchase} stage={stage} />
-      </div>
+    <CheckoutModalFrame
+      closeHref="/dashboard/education"
+      labelledBy="master-class-checkout-title"
+      title={masterClassCourse.title}
+    >
+      <CheckoutModalContent entitlement={entitlement} notice={notice} purchase={purchase} stage={stage} />
     </CheckoutModalFrame>
   );
 }
@@ -381,8 +379,15 @@ export default async function DashboardEducationPage({ searchParams }: Education
   const { entitlement, purchase } = await getMasterClassPurchase(profile.id);
   const status = getEffectiveStatus(purchase, entitlement);
   const checkoutStage = getMasterClassCheckoutStage(status);
-  const checkoutHref = getMasterClassCheckoutHref();
   const isCheckoutOpen = getFirstSearchParam(params.checkout) === "1" || Boolean(notice);
+  const checkoutContent = (
+    <CheckoutModalContent
+      entitlement={entitlement}
+      notice={notice}
+      purchase={purchase}
+      stage={checkoutStage}
+    />
+  );
   const stats = [
     ["Level", masterClassCourse.level],
     ["Duration", masterClassCourse.duration],
@@ -429,9 +434,8 @@ export default async function DashboardEducationPage({ searchParams }: Education
             </div>
           </div>
           <CourseActionCard
-            checkoutHref={checkoutHref}
+            checkoutContent={checkoutContent}
             entitlement={entitlement}
-            isCheckoutOpen={isCheckoutOpen}
           />
         </div>
       </header>
