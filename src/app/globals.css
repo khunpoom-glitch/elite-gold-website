@@ -674,16 +674,6 @@ textarea:-webkit-autofill:active {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
 }
 
-.admin-verification-overlay {
-  left: 0;
-}
-
-@media (min-width: 1024px) {
-  .admin-verification-overlay {
-    left: var(--member-sidebar-width, 18rem);
-  }
-}
-
 .member-kicker {
   display: inline-flex;
   align-items: center;
